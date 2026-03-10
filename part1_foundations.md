@@ -198,6 +198,27 @@ For rollback instructions, see [rollback.md](docs/rollback.md).
 
 **Стандарт Agent Skills** (agentskills.io) — открытый формат, поддерживаемый Claude Code, OpenCode, RooCode, OpenAI Codex CLI.
 
+**Реальный пример Skill (E2E тесты):**
+
+```yaml
+---
+name: write-e2e-test
+description: Use when writing or modifying E2E tests — enforces strict test quality standards.
+---
+
+# Test Writing Protocol
+1. Before writing: read `e2e/tests/`, page source in `src/pages/`, i18n keys in `public/locales/en/`
+2. Selectors: prefer `getByRole/getByText`; avoid fragile class selectors
+3. Assertions: verify concrete content/state, not just URL changes
+4. Waiting: never use `waitForTimeout`; use explicit `expect`/`waitForResponse`
+5. For each form add negative scenario: invalid input, empty required fields, failed submit stays on same URL
+6. After writing run: `npx eslint --ext .ts e2e/tests/<file>.spec.ts` and `npx playwright test e2e/tests/<file>.spec.ts`
+```
+
+Этот skill удобно подключать по триггерам типа: «добавь e2e тест», «обнови e2e после изменения формы», «проверь негативные сценарии логина».
+
+**Рекомендация:** включайте в skill примеры из реального кода проекта (реальные селекторы, тексты из i18n, маршруты, поля форм), а не абстрактные шаблоны. Это резко снижает хрупкость E2E тестов.
+
 **Масштабирование: что происходит, когда skills становится много**
 
 Progressive disclosure смягчает проблему, но не устраняет полностью. На этапе Discovery агент видит name + description каждого skill — ~100 токенов на штуку. При 50 skills это ~5000 токенов в системном промпте *при каждом запросе*, даже когда ни один skill не нужен.
@@ -242,6 +263,20 @@ paths:
 - Keep components focused on a single responsibility
 ```
 
+**Реальный пример Rule (безопасность):**
+
+```markdown
+# .roo/rules-code/security.md
+
+## Security Constraints
+- NEVER read or modify `.env*` files
+- NEVER run destructive commands: `rm -rf`, `DROP TABLE`, `TRUNCATE`
+- Ask for explicit user confirmation before deleting any file
+- Mask secrets in logs and outputs (`token`, `password`, `api_key`)
+```
+
+Такое правило снижает риск критичных ошибок даже при длинных автономных сессиях.
+
 ### 3.3. Rules vs Skills: в чём разница
 
 | | Rules | Skills |
@@ -266,6 +301,18 @@ Tools — это то, что превращает LLM из генератора
 - **Browser** — управление headless-браузером
 - **Notebook** — работа с Jupyter-ноутбуками
 - **Skill** — загрузка и активация Skills
+
+**Реальный пример применения Tools (фикс бага):**
+
+Задача: «Исправить валидацию email в форме регистрации».
+
+1. `Search/Grep` — найти компонент формы: `src/components/RegisterForm.tsx`
+2. `Read` — прочитать код компонента и текущие проверки
+3. `Edit` — заменить regex/валидацию и текст ошибки
+4. `Bash` — запустить `npm test -- RegisterForm` и `npm run lint`
+5. `Read`/`Git diff` — показать итоговые изменения для ревью
+
+Это типичный agentic loop: найти → изменить → проверить → показать diff.
 
 ### 3.5. MCP (Model Context Protocol)
 
@@ -559,38 +606,13 @@ my-project/
 
 ## 5. Рекомендации по работе с AI-агентами
 
-### 5.1. Формулировка задач
-
-- Будьте **конкретны**: «Добавь валидацию email в форму регистрации в src/components/RegisterForm.tsx» вместо «исправь форму»
-- Давайте **контекст**: ссылки на файлы, описание текущего поведения, ожидаемый результат
-- Указывайте **ограничения**: какие файлы не менять, какие паттерны использовать
-- Разбивайте **большие задачи на подзадачи**: вместо «перепиши модуль» — список конкретных изменений
-- Используйте **Plan-режим** для сложных задач: сначала план, потом исполнение
-
-### 5.2. Контроль и ревью
-
-- Всегда **просматривайте diff** перед принятием изменений
-- Запускайте **тесты после каждого изменения** — не ждите конца сессии
-- Используйте **Git для отката**: коммитьте перед запуском агента
-- Не отключайте **human-in-the-loop** для новых задач — включайте auto-approve только для рутины
-- Следите за **контекстным окном**: слишком длинная сессия = деградация качества
-
-### 5.3. Организация работы
+### 5.1. Организация командной работы
 
 - **Один агент — одна задача**: не смешивайте рефакторинг и новые фичи в одной сессии
 - Используйте **ветки**: агент работает в feature-branch, ревью через PR
 - Настройте **Rules для проекта**: это инвестиция, окупающаяся с первого дня
 - Создайте **Skills для повторяющихся задач**: деплой, ревью, генерация тестов
 - Используйте **MCP** для интеграции с рабочими инструментами команды
-
-### 5.4. Чего избегать
-
-- ✗ Слепое принятие изменений без ревью
-- ✗ Передача агенту задач, которые вы не понимаете
-- ✗ Работа без Git (нет возможности откатиться)
-- ✗ Слишком длинные сессии (истощение контекстного окна)
-- ✗ Хранение секретов в конфигурационных файлах агента
-- ✗ Использование auto-approve для деструктивных операций
 
 ---
 
