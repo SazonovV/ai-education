@@ -788,6 +788,134 @@ table.mini th {
 </section>
 
 <section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 01b</span>
+    <h1>Субагенты</h1>
+    <p class="cta">Как один AI-агент запускает других для параллельной работы</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Что такое субагент</h2>
+    <div class="grid-2">
+      <div class="card teal fragment">
+        <h3>Суть</h3>
+        <ul>
+          <li>Отдельный AI-процесс, запущенный основным агентом</li>
+          <li>Своё контекстное окно и набор инструментов</li>
+          <li>Выполняет подзадачу → возвращает результат родителю</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Зачем</h3>
+        <ul>
+          <li><strong>Параллелизм</strong> — несколько задач одновременно</li>
+          <li><strong>Изоляция</strong> — не засоряет контекст родителя</li>
+          <li><strong>Специализация</strong> — своя роль и инструменты</li>
+          <li><strong>Масштаб</strong> — задачи, что не влезут в одну сессию</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Как работают субагенты</h2>
+<pre><code class="language-text">Родительский агент
+│
+├─ Субагент 1 (Explore)          ← исследование
+│  Инструменты: поиск, чтение
+│  Результат: "Нашёл: модуль X в src/lib/"
+│
+├─ Субагент 2 (General-purpose)  ← реализация
+│  Инструменты: чтение, запись, терминал
+│  Результат: "Готово, изменил 3 файла"
+│
+├─ Субагент 3 (Code-reviewer)    ← ревью
+│  Инструменты: чтение, поиск
+│  Результат: "Замечания: 1 баг, 2 стиль"
+│
+└─ Родитель собирает и отвечает пользователю</code></pre>
+    <p class="note fragment">Субагенты 1 и 2 могут работать параллельно, если задачи независимы.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Типы субагентов (Claude Code)</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Explore</h3>
+        <p>Быстрый поиск по коду. Только чтение, без записи. Идеален для исследования большой кодовой базы.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Plan</h3>
+        <p>Проектирование архитектуры. Только чтение. Возвращает план реализации.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>General-purpose</h3>
+        <p>Полный набор инструментов. Может читать, писать, запускать команды. Для реализации.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>Code-reviewer</h3>
+        <p>Ревью написанного кода с чистым контекстом. Объективнее, чем автор.</p>
+      </div>
+    </div>
+    <p class="note fragment">Worktree-изоляция: субагент может работать в отдельной копии репозитория, не трогая основную ветку.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Субагенты в RooCode: Boomerang Tasks</h2>
+<pre><code class="language-text">Orchestrator Mode
+│
+├─→ Architect Mode
+│   "Спроектируй API для экспорта"
+│   ← Возвращает: схему API и план файлов
+│
+├─→ Code Mode
+│   "Реализуй API по этой схеме"
+│   ← Возвращает: "Создал 3 файла"
+│
+└─→ Code Mode
+    "Напиши тесты для нового API"
+    ← Возвращает: "5 тестов, все проходят"</code></pre>
+    <p class="note fragment">Каждая задача выполняется в режиме, подходящем для неё. Результат автоматически возвращается оркестратору.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Когда использовать субагентов</h2>
+    <div class="cards c2">
+      <div class="card green fragment">
+        <h3>Да — используй</h3>
+        <ul>
+          <li>Задача разбивается на независимые части</li>
+          <li>Нужно исследовать большую кодовую базу</li>
+          <li>Изменения в нескольких несвязанных модулях</li>
+          <li>Контекстное окно родителя заполнено</li>
+          <li>Нужен объективный ревью</li>
+        </ul>
+      </div>
+      <div class="card red fragment">
+        <h3>Нет — не нужно</h3>
+        <ul>
+          <li>Задача решается за 2-3 шага</li>
+          <li>Изменения в одном файле</li>
+          <li>Субагенты будут редактировать одни файлы</li>
+          <li>Задача требует полного контекста диалога</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote class="fragment"><p>Параллельные субагенты не должны редактировать одни и те же файлы — будут конфликты. Разделяйте по модулям.</p></blockquote>
+  </div>
+</section>
+
+<section>
   <div class="slide-shell">
     <h2 class="section-title">Сравнительная таблица режимов</h2>
     <div class="table-wrap">
