@@ -7,10 +7,10 @@
     "slides": "../presentations/part0/"
   },
   {
-    "id": "part2_prompt_engineering",
+    "id": "part1_prompt_engineering",
     "title": "Часть 1 · Prompt Engineering, Skills & Rules",
     "description": "От чата к Agentic Engineering: system prompt, chain-of-thought, rules, skills, антипаттерны",
-    "file": "part2_prompt_engineering.md",
-    "slides": "../presentations/part2/"
+    "file": "part1_prompt_engineering.md",
+    "slides": "../presentations/part1/"
   }
 ]

@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107242055', 'ym');
+
+    ym(107242055, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/107242055" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<title>Agentic Engineering: Основные инструменты</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/theme/black.min.css" id="theme">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/monokai.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #090707;
+  --card: #151110;
+  --card-soft: #1d1715;
+  --text: #f6efe4;
+  --muted: #c4ae94;
+  --line: #4a3c32;
+  --teal: #37d6c4;
+  --amber: #f6a44a;
+  --rose: #f6757f;
+  --green: #53d36f;
+  --red: #ff6a6a;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+.reveal {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(55, 214, 196, 0.12), transparent 36%),
+    radial-gradient(circle at 88% 8%, rgba(246, 164, 74, 0.18), transparent 32%),
+    radial-gradient(circle at 74% 84%, rgba(246, 117, 127, 0.12), transparent 36%),
+    linear-gradient(145deg, #0a0808 0%, #110f0d 50%, #0a0807 100%);
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  font-family: "Unbounded", "Manrope", sans-serif;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 0.34em;
+}
+
+.reveal h1 {
+  font-size: 2.3em;
+  color: #fff7ea;
+}
+
+.reveal h2 {
+  font-size: 1.32em;
+  color: var(--teal);
+}
+
+.reveal h3 {
+  font-size: 0.95em;
+  color: #ffe9c8;
+}
+
+.reveal p,
+.reveal li {
+  font-size: 0.62em;
+  color: var(--muted);
+  line-height: 1.52;
+}
+
+.reveal strong {
+  color: #fff8ee;
+}
+
+.reveal em {
+  color: var(--teal);
+  font-style: normal;
+}
+
+.reveal a {
+  color: var(--teal);
+}
+
+.reveal pre {
+  width: 100%;
+  box-shadow: none;
+  margin: 0.3em 0;
+}
+
+.reveal pre code {
+  max-height: 440px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #0f0c0b;
+  padding: 0.9em;
+  font-size: 0.58em;
+  line-height: 1.48;
+}
+
+.reveal blockquote {
+  width: 100%;
+  margin: 0.35em 0;
+  padding: 0.45em 0.7em;
+  border-left: 4px solid var(--amber);
+  border-radius: 0 10px 10px 0;
+  background: rgba(246, 164, 74, 0.08);
+}
+
+.reveal blockquote p {
+  margin: 0;
+  color: #e7d8c6;
+}
+
+.slide-shell,
+.chapter-shell {
+  min-height: 620px;
+  border: 1px solid rgba(255, 241, 224, 0.14);
+  border-radius: 22px;
+  padding: 22px 26px;
+  background:
+    linear-gradient(160deg, rgba(32, 24, 20, 0.88), rgba(17, 13, 11, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 24px 48px rgba(0, 0, 0, 0.38);
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-shell::before,
+.chapter-shell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--teal), var(--amber), transparent);
+  opacity: 0.7;
+}
+
+.chapter-shell {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.4);
+  font-size: 0.42em;
+  letter-spacing: 0.08em;
+  color: #d8f9f3;
+  text-transform: uppercase;
+}
+
+.kicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 0 6px rgba(55, 214, 196, 0.2);
+}
+
+.hero-title {
+  font-size: 3.05em;
+  margin: 0 0 0.24em;
+}
+
+.hero-sub {
+  font-size: 1.1em;
+  color: var(--teal);
+  margin: 0 0 0.32em;
+}
+
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.48em;
+  color: #e6d4bd;
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  transition: border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.pill:hover {
+  color: #fff6e7;
+  border-color: rgba(55, 214, 196, 0.48);
+  transform: translateY(-1px);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.cards {
+  display: grid;
+  gap: 10px;
+}
+
+.cards.c2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.cards.c3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 3px solid var(--teal);
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.card p,
+.card li {
+  font-size: 0.56em;
+}
+
+.card h3 {
+  margin: 0 0 0.34em;
+  font-size: 0.78em;
+}
+
+.card ul {
+  margin: 0.2em 0 0;
+  padding-left: 1.1em;
+}
+
+.card.teal {
+  border-top-color: var(--teal);
+}
+
+.card.amber {
+  border-top-color: var(--amber);
+}
+
+.card.rose {
+  border-top-color: var(--rose);
+}
+
+.card.green {
+  border-top-color: var(--green);
+}
+
+.card.red {
+  border-top-color: var(--red);
+}
+
+.section-title {
+  margin-bottom: 0.74em;
+}
+
+.note {
+  font-size: 0.5em;
+  color: #9f8d77;
+}
+
+.spectrum {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.stage {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  text-align: center;
+}
+
+.stage h4 {
+  font-size: 0.54em;
+  margin: 0;
+  color: #fff2df;
+}
+
+.stage p {
+  font-size: 0.45em;
+  margin: 0.25em 0 0;
+}
+
+.process {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.step {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  text-align: center;
+}
+
+.step h4 {
+  margin: 0;
+  font-size: 0.6em;
+  color: var(--teal);
+}
+
+.step p {
+  margin: 0.2em 0 0;
+  font-size: 0.48em;
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  color: #9e8b75;
+  font-size: 1.1em;
+}
+
+.table-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table.mini {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.49em;
+}
+
+table.mini th,
+table.mini td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+table.mini th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--teal);
+}
+
+.code-list {
+  margin: 0;
+  padding-left: 1.05em;
+}
+
+.code-list li {
+  font-size: 0.55em;
+  margin: 0.25em 0;
+}
+
+.intro-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.photo {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 7px;
+  background: #0d0a09;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.fallback {
+  display: none;
+  text-align: center;
+  color: #b8a189;
+  font-size: 0.54em;
+}
+
+.tree {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px;
+  background: #0f0c0b;
+}
+
+.tree code {
+  white-space: pre-wrap;
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 0.52em;
+  color: #e7d8c3;
+  line-height: 1.45;
+}
+
+.two-col-list {
+  columns: 2;
+  column-gap: 22px;
+  margin: 0;
+  padding-left: 1.1em;
+}
+
+.two-col-list li {
+  break-inside: avoid;
+  margin-bottom: 0.45em;
+}
+
+.cta {
+  font-size: 0.66em;
+  color: #e8d8c2;
+}
+
+.promo-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.promo-photo-box,
+.promo-qr-box {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  padding: 12px;
+}
+
+.promo-photo-box {
+  display: grid;
+  align-items: stretch;
+}
+
+.promo-photo-box img {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.promo-qr-box {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.promo-qr-box h3 {
+  margin: 0;
+}
+
+.promo-qr-box img {
+  width: min(320px, 100%);
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #fff;
+  padding: 8px;
+}
+
+.promo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.55);
+  color: #f5eee4;
+  text-decoration: none;
+  font-size: 0.56em;
+}
+
+.promo-link:hover {
+  border-color: rgba(246, 164, 74, 0.7);
+}
+
+.deck-switcher {
+  position: fixed;
+  top: 12px;
+  right: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+}
+
+.deck-switcher details {
+  position: relative;
+}
+
+.deck-switcher summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 7px 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.45);
+  background: rgba(14, 11, 10, 0.88);
+  color: #f2e8d9;
+  font-size: 12px;
+  user-select: none;
+}
+
+.deck-switcher summary::-webkit-details-marker {
+  display: none;
+}
+
+.deck-switcher-menu {
+  margin-top: 8px;
+  width: 270px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(12, 10, 9, 0.96);
+  padding: 8px;
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.42);
+}
+
+.deck-switcher a {
+  display: block;
+  text-decoration: none;
+  color: #d7c5ae;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  padding: 8px 9px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.deck-switcher a:hover {
+  color: #fff3e0;
+  border-color: rgba(246, 164, 74, 0.55);
+  background: rgba(246, 164, 74, 0.1);
+}
+
+.deck-switcher a.active {
+  color: #ffffff;
+  border-color: rgba(55, 214, 196, 0.6);
+  background: rgba(55, 214, 196, 0.15);
+}
+
+@media (max-width: 1100px) {
+  .grid-2,
+  .grid-3,
+  .cards.c2,
+  .cards.c3,
+  .intro-layout,
+  .promo-layout,
+  .spectrum,
+  .process {
+    grid-template-columns: 1fr;
+  }
+
+  .process .arrow {
+    display: none;
+  }
+
+  .slide-shell,
+  .chapter-shell {
+    min-height: auto;
+  }
+
+  .two-col-list {
+    columns: 1;
+  }
+}
+</style>
+</head>
+<body>
+<nav class="deck-switcher" aria-label="Выбор презентации">
+  <details>
+    <summary>Презентации</summary>
+    <div class="deck-switcher-menu">
+      <a href="../part0/">Слайды · Часть 0</a>
+      <a href="./" class="active">Слайды · Часть 1</a>
+      <a href="../part2/">Слайды · Лекция 2</a>
+      <a href="../../reading/?part=part0_vibecoding">Конспект · Часть 0</a>
+      <a href="../../reading/?part=part1_foundations">Конспект · Часть 1</a>
+      <a href="../../">Главная</a>
+    </div>
+  </details>
+</nav>
+<div class="reveal">
+<div class="slides">
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Agentic Engineering</span>
+    <h1 class="hero-title">Основные инструменты</h1>
+    <p class="hero-sub">Часть 1 из 2 · цикл AI-инструментов для разработки</p>
+    <div class="meta-row">
+      <span class="pill">Аудитория: смешанная техническая команда</span>
+      <span class="pill">Фокус: от режимов работы до командной практики</span>
+      <span class="pill">Основа: <code>content/part1_foundations.md</code></span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Представление</h2>
+    <div class="intro-layout">
+      <div class="photo">
+        <img src="../../assets/avatar.jpg" alt="Аватар спикера" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <div class="fallback">Добавьте фото по пути <code>../../assets/avatar.jpg</code></div>
+      </div>
+      <div class="card teal">
+        <h3>Кто выступает</h3>
+        <ul>
+          <li>ГТЛ в направлении СиВ</li>
+          <li>Процессный менеджер во Взыскании</li>
+          <li>ИИ Евангелист</li>
+          <li>Человек с веником в ...кхм голове (с) по мнению коллег</li>
+        </ul>
+        <p class="note">Формат: практический обзор режимов AI и базовых механизмов настройки агента для командной работы.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Содержание</h2>
+    <div class="cards c3">
+      <div class="card teal"><h3>1. Режимы работы с AI</h3><p>От inline completion до background-агентов</p></div>
+      <div class="card amber"><h3>2. Ключевые понятия</h3><p>Skills, Rules, Tools, MCP, Hooks, Plugins</p></div>
+      <div class="card rose"><h3>3. Репозиторий проекта</h3><p>Что коммитить в Git, а что держать локально</p></div>
+      <div class="card green"><h3>4. Рекомендации</h3><p>Постановка задач, ревью, организация работы</p></div>
+      <div class="card teal"><h3>5. Итоги и что дальше</h3><p>Ключевые выводы и переход к части 2</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 01</span>
+    <h1>Режимы работы с AI</h1>
+    <p class="cta">Спектр автономии: от Tab-подсказки до асинхронного PR от агента</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Шесть режимов в одном спектре</h2>
+    <div class="spectrum">
+      <div class="stage"><h4>Автодоп.</h4><p>Tab / Esc</p></div>
+      <div class="stage"><h4>Чат</h4><p>Copy-paste</p></div>
+      <div class="stage"><h4>Vibe coding</h4><p>Prompt → code</p></div>
+      <div class="stage"><h4>Агент</h4><p>Think-Act-Observe</p></div>
+      <div class="stage"><h4>Мультиагент</h4><p>Orchestrator</p></div>
+      <div class="stage"><h4>Background</h4><p>Async PR/Issue</p></div>
+    </div>
+    <div class="table-wrap" style="margin-top:12px">
+      <table class="mini">
+        <tr><th>Параметр</th><th>Минимальная автономия</th><th>Максимальная автономия</th></tr>
+        <tr><td>Контроль</td><td>Полный ручной (Tab/Esc)</td><td>Через policy + ревью PR</td></tr>
+        <tr><td>Скорость</td><td>Точечная</td><td>Высокая/асинхронная</td></tr>
+        <tr><td>Риск</td><td>Минимальный</td><td>Средний-высокий без guardrails</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Inline completion, чат, vibe coding</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>Автодополнение</h3>
+        <ul>
+          <li>Подсказки в реальном времени в IDE</li>
+          <li>Контекст: текущий файл/вкладки</li>
+          <li>Лучший «вход» в AI-assisted coding</li>
+        </ul>
+        <p class="note">GitHub Copilot, Supermaven, Cursor Tab, Codeium</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Чат</h3>
+        <ul>
+          <li>AI без доступа к файлам/терминалу</li>
+          <li>Контекст задаётся вручную</li>
+          <li>Минимум риска, но медленный цикл</li>
+        </ul>
+        <p class="note">ChatGPT, Claude.ai, встроенные чаты IDE</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Vibe coding</h3>
+        <ul>
+          <li>Максимальная скорость для MVP/демо</li>
+          <li>Код принимается «по ощущению»</li>
+          <li>Требует жёсткого ревью перед продом</li>
+        </ul>
+        <p class="note">Cursor Composer, Bolt, v0, Lovable</p>
+      </div>
+    </div>
+    <blockquote class="fragment"><p>Ключевой риск vibe coding: если не понимаете код, вы не сможете его безопасно развивать.</p></blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Агентский режим: Think → Act → Observe</h2>
+    <div class="process">
+      <div class="step fragment"><h4>THINK</h4><p>Анализ задачи и плана</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>ACT</h4><p>Вызов инструментов</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>OBSERVE</h4><p>Анализ результата</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>DECIDE</h4><p>Продолжить или завершить</p></div>
+    </div>
+    <div class="cards c2" style="margin-top:12px">
+      <div class="card teal fragment"><h3>Сильная сторона</h3><p>Агент опирается на факты из файлов/терминала, а не только на текст запроса.</p></div>
+      <div class="card amber fragment"><h3>Ограничение</h3><p>Без правил, прав доступа и human-in-the-loop автономность превращается в риск.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Мультиагенты и background agents</h2>
+    <div class="grid-2">
+      <div class="card teal fragment">
+        <h3>Мультиагентная оркестрация</h3>
+        <ul>
+          <li>Orchestrator распределяет подзадачи</li>
+          <li>Специализированные субагенты (код, ревью, тесты)</li>
+          <li>Параллельная работа по модулям</li>
+        </ul>
+        <p class="note">Примеры: RooCode Orchestrator, субагенты Claude Code, Devin.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Background / async агенты</h3>
+        <ul>
+          <li>Триггеры: Issue/PR comments, CI/CD, Slack</li>
+          <li>Результат: PR, коммит, отчёт</li>
+          <li>Контроль в основном через ревью результата</li>
+        </ul>
+        <p class="note">Примеры: OpenAI Codex cloud tasks, Copilot Coding Agent.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 01b</span>
+    <h1>Субагенты</h1>
+    <p class="cta">Как один AI-агент запускает других для параллельной работы</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Что такое субагент</h2>
+    <div class="grid-2">
+      <div class="card teal fragment">
+        <h3>Суть</h3>
+        <ul>
+          <li>Отдельный AI-процесс, запущенный основным агентом</li>
+          <li>Своё контекстное окно и набор инструментов</li>
+          <li>Выполняет подзадачу → возвращает результат родителю</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Зачем</h3>
+        <ul>
+          <li><strong>Параллелизм</strong> — несколько задач одновременно</li>
+          <li><strong>Изоляция</strong> — не засоряет контекст родителя</li>
+          <li><strong>Специализация</strong> — своя роль и инструменты</li>
+          <li><strong>Масштаб</strong> — задачи, что не влезут в одну сессию</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Как работают субагенты</h2>
+<pre><code class="language-text">Родительский агент
+│
+├─ Субагент 1 (Explore)          ← исследование
+│  Инструменты: поиск, чтение
+│  Результат: "Нашёл: модуль X в src/lib/"
+│
+├─ Субагент 2 (General-purpose)  ← реализация
+│  Инструменты: чтение, запись, терминал
+│  Результат: "Готово, изменил 3 файла"
+│
+├─ Субагент 3 (Code-reviewer)    ← ревью
+│  Инструменты: чтение, поиск
+│  Результат: "Замечания: 1 баг, 2 стиль"
+│
+└─ Родитель собирает и отвечает пользователю</code></pre>
+    <p class="note fragment">Субагенты 1 и 2 могут работать параллельно, если задачи независимы.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Типы субагентов (Claude Code)</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Explore</h3>
+        <p>Быстрый поиск по коду. Только чтение, без записи. Идеален для исследования большой кодовой базы.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Plan</h3>
+        <p>Проектирование архитектуры. Только чтение. Возвращает план реализации.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>General-purpose</h3>
+        <p>Полный набор инструментов. Может читать, писать, запускать команды. Для реализации.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>Code-reviewer</h3>
+        <p>Ревью написанного кода с чистым контекстом. Объективнее, чем автор.</p>
+      </div>
+    </div>
+    <p class="note fragment">Worktree-изоляция: субагент может работать в отдельной копии репозитория, не трогая основную ветку.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Субагенты в RooCode: Boomerang Tasks</h2>
+<pre><code class="language-text">Orchestrator Mode
+│
+├─→ Architect Mode
+│   "Спроектируй API для экспорта"
+│   ← Возвращает: схему API и план файлов
+│
+├─→ Code Mode
+│   "Реализуй API по этой схеме"
+│   ← Возвращает: "Создал 3 файла"
+│
+└─→ Code Mode
+    "Напиши тесты для нового API"
+    ← Возвращает: "5 тестов, все проходят"</code></pre>
+    <p class="note fragment">Каждая задача выполняется в режиме, подходящем для неё. Результат автоматически возвращается оркестратору.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Когда использовать субагентов</h2>
+    <div class="cards c2">
+      <div class="card green fragment">
+        <h3>Да — используй</h3>
+        <ul>
+          <li>Задача разбивается на независимые части</li>
+          <li>Нужно исследовать большую кодовую базу</li>
+          <li>Изменения в нескольких несвязанных модулях</li>
+          <li>Контекстное окно родителя заполнено</li>
+          <li>Нужен объективный ревью</li>
+        </ul>
+      </div>
+      <div class="card red fragment">
+        <h3>Нет — не нужно</h3>
+        <ul>
+          <li>Задача решается за 2-3 шага</li>
+          <li>Изменения в одном файле</li>
+          <li>Субагенты будут редактировать одни файлы</li>
+          <li>Задача требует полного контекста диалога</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote class="fragment"><p>Параллельные субагенты не должны редактировать одни и те же файлы — будут конфликты. Разделяйте по модулям.</p></blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Сравнительная таблица режимов</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <tr><th>Режим</th><th>Контроль</th><th>Автономия</th><th>Подходит для</th><th>Риск</th></tr>
+        <tr class="fragment"><td>Автодополнение</td><td>Полный</td><td>Минимальная</td><td>Рутинный код</td><td>Минимальный</td></tr>
+        <tr class="fragment"><td>Чат</td><td>Полный</td><td>Нулевая</td><td>Точечные задачи</td><td>Низкий</td></tr>
+        <tr class="fragment"><td>Vibe coding</td><td>Минимальный</td><td>Высокая</td><td>Прототипы, MVP</td><td>Высокий</td></tr>
+        <tr class="fragment"><td>Агентский</td><td>Настраиваемый</td><td>Высокая</td><td>Рабочие задачи</td><td>Средний</td></tr>
+        <tr class="fragment"><td>Мультиагентный</td><td>Настраиваемый</td><td>Очень высокая</td><td>Крупные фичи</td><td>Средний</td></tr>
+        <tr class="fragment"><td>Background</td><td>Через ревью</td><td>Полная</td><td>Рутина, CI/CD</td><td>Средний-высокий</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 02</span>
+    <h1>Ключевые понятия</h1>
+    <p class="cta">Skills, Rules, Tools, MCP, Hooks, Plugins</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Skills: модульные инструкции по требованию</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <tr><th>Уровень</th><th>Когда</th><th>Стоимость контекста</th></tr>
+        <tr><td>Discovery</td><td>Всегда на старте</td><td>~100 токенов на skill</td></tr>
+        <tr><td>Instructions</td><td>При активации skill</td><td>Полный текст SKILL.md</td></tr>
+        <tr><td>Resources</td><td>По необходимости</td><td>Файлы/скрипты без загрузки в discovery</td></tr>
+      </table>
+    </div>
+    <p class="note fragment" style="margin-top:10px">Skills экономят контекст, потому что не активны постоянно, в отличие от rules.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Когда skills становится много</h2>
+    <div class="cards c2">
+      <div class="card rose fragment">
+        <h3>Проблемы при 50+ skills</h3>
+        <ul>
+          <li>Деградация выбора нужного skill</li>
+          <li>Конфликты похожих descriptions</li>
+          <li>Рост базового контекста на каждый запрос</li>
+        </ul>
+      </div>
+      <div class="card teal fragment">
+        <h3>Что помогает</h3>
+        <ul>
+          <li>Специфичные descriptions и trigger-фразы</li>
+          <li>Разделение по режимам (code/architect)</li>
+          <li>Качество важнее количества</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note">Практика: 10 качественных skills обычно эффективнее, чем 50 поверхностных.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Реальный Skill: write-e2e-test</h2>
+<pre><code class="language-yaml">---
+name: write-e2e-test
+description: Use when writing or modifying E2E tests — enforces strict test quality standards.
+---
+
+# Writing E2E Tests
+1. Read tests in e2e/tests/, page code in src/pages/, i18n in public/locales/en/
+2. Prefer accessible selectors: getByRole/getByText
+3. Every test must assert concrete content/state
+4. NEVER use waitForTimeout
+5. Add negative scenarios and run eslint + playwright</code></pre>
+    <p class="note fragment">Рекомендация из практики: добавляйте примеры селекторов и текстов из реального кода проекта.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Rules: рамки поведения, активные всегда</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Уровни правил</h3>
+        <ul>
+          <li>Глобальные</li>
+          <li>Проектные</li>
+          <li>Режимные</li>
+          <li>Условные по путям файлов</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Зачем нужны</h3>
+        <ul>
+          <li>Безопасные границы поведения агента</li>
+          <li>Единый стиль и архитектура</li>
+          <li>Предсказуемость для всей команды</li>
+        </ul>
+      </div>
+    </div>
+<pre class="fragment"><code class="language-markdown"># .roo/rules-code/security.md
+- NEVER read or modify `.env*`
+- NEVER run `rm -rf`, `DROP TABLE`, `TRUNCATE`
+- Ask user confirmation before deleting files</code></pre>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Rules vs Skills: в чём разница</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <tr><th></th><th>Rules</th><th>Skills</th></tr>
+        <tr><td>Когда активны</td><td>Всегда</td><td>On-demand</td></tr>
+        <tr><td>Роль</td><td>Ограничения/стандарты</td><td>Процедуры/знания</td></tr>
+        <tr><td>Контекст</td><td>Постоянный расход</td><td>Только при активации</td></tr>
+      </table>
+    </div>
+    <blockquote class="fragment"><p>Rules задают рамки «что можно/нельзя», Skills описывают «как выполнять конкретную задачу».</p></blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Tools: из текста в действие</h2>
+    <div class="cards c3">
+      <div class="card teal fragment"><h3>Core</h3><ul><li>Read / Write</li><li>Edit / MultiEdit</li><li>Search / Grep</li></ul></div>
+      <div class="card amber fragment"><h3>Execution</h3><ul><li>Bash / Run</li><li>Browser</li><li>Notebook</li></ul></div>
+      <div class="card rose fragment"><h3>Meta</h3><ul><li>Skill loader</li><li>Permission prompts</li><li>JSON schema</li></ul></div>
+    </div>
+    <ol class="code-list" style="margin-top:10px">
+      <li class="fragment"><code>Search</code> находит файл формы</li>
+      <li class="fragment"><code>Read</code> читает текущую логику</li>
+      <li class="fragment"><code>Edit</code> меняет валидацию</li>
+      <li class="fragment"><code>Bash</code> запускает тесты и линт</li>
+      <li class="fragment"><code>git diff</code> показывает итог пользователю</li>
+    </ol>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">MCP: стандарт интеграций</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Как работает</h3>
+        <ul>
+          <li>MCP-сервер отдаёт набор tools</li>
+          <li>Агент вызывает tool через стандартный интерфейс</li>
+          <li>Один агент может подключать много серверов</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Почему важно</h3>
+        <ul>
+          <li>Переносимость между клиентами</li>
+          <li>Меньше vendor lock-in</li>
+          <li>Быстрое расширение возможностей команды</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note fragment">Типичные MCP-серверы: GitHub, Database, Slack/Jira/Notion, Docker, Web scraping.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Hooks: детерминированные триггеры</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <tr><th>Событие</th><th>Когда</th><th>Пример</th></tr>
+        <tr><td>PreToolUse</td><td>Перед инструментом</td><td>Блокировка опасных команд</td></tr>
+        <tr><td>PostToolUse</td><td>После инструмента</td><td>Автоформатирование</td></tr>
+        <tr><td>SessionStart / Stop</td><td>Начало / конец</td><td>Загрузка контекста, уведомление</td></tr>
+        <tr><td>PermissionRequest</td><td>Запрос доступа</td><td>Политика approve/deny</td></tr>
+      </table>
+    </div>
+    <div class="cards c3" style="margin-top:10px">
+      <div class="card teal fragment"><h3>Command</h3><p>Shell-команда с JSON через stdin/stdout.</p></div>
+      <div class="card amber fragment"><h3>Prompt</h3><p>Однопроходная оценка через LLM.</p></div>
+      <div class="card rose fragment"><h3>Agent</h3><p>Запуск субагента для глубокой проверки.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Hooks: практические примеры</h2>
+<pre class="fragment"><code class="language-json">{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit|Write",
+      "hooks": [{
+        "type": "command",
+        "command": "npx prettier --write $FILE_PATH"
+      }]
+    }]
+  }
+}</code></pre>
+<pre class="fragment"><code class="language-python"># PreToolUse hook
+if "rm -rf" in cmd:
+    print("BLOCKED: dangerous deletion", file=sys.stderr)
+    sys.exit(2)</code></pre>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Plugins (OpenCode) и эмуляция hooks</h2>
+    <div class="grid-2">
+      <div class="card teal fragment">
+        <h3>OpenCode plugins</h3>
+        <ul>
+          <li>Полноценный JS/TS-код</li>
+          <li>События: before/after, session, permission</li>
+          <li>Высокая гибкость и интеграция с npm</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Если hooks нет</h3>
+        <ul>
+          <li>Создать кастомный tool (<code>lint_check</code>)</li>
+          <li>Зафиксировать протокол в rules</li>
+          <li>Продублировать требование в mode instructions</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note" style="margin-top:10px">Это не 100% гарантия, но рабочая стратегия для инструментов без нативных hooks.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Сборка: Skills + Rules + Tools + Hooks</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Skills</h3>
+        <p><strong>Что:</strong> процедура конкретной задачи.</p>
+        <p><strong>Когда:</strong> по требованию.</p>
+        <p><strong>Пример:</strong> <code>write-e2e-test</code>.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Rules</h3>
+        <p><strong>Что:</strong> ограничения и стандарты.</p>
+        <p><strong>Когда:</strong> всегда активны.</p>
+        <p><strong>Пример:</strong> запрет <code>rm -rf</code>, <code>.env*</code>.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Tools</h3>
+        <p><strong>Что:</strong> реальные действия в проекте.</p>
+        <p><strong>Когда:</strong> в каждом шаге цикла.</p>
+        <p><strong>Пример:</strong> <code>Read → Edit → Bash → diff</code>.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>Hooks</h3>
+        <p><strong>Что:</strong> гарантированные срабатывания.</p>
+        <p><strong>Когда:</strong> lifecycle-события.</p>
+        <p><strong>Пример:</strong> автоформат после <code>Edit/Write</code>.</p>
+      </div>
+    </div>
+    <blockquote class="fragment"><p><strong>Формула:</strong> Skills = как делать, Rules = что нельзя, Tools = чем делать, Hooks = что произойдёт гарантированно.</p></blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 03</span>
+    <h1>Что хранить в репозитории</h1>
+    <p class="cta">Командные настройки в Git, персональные и секреты — только локально</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Коммитить vs не коммитить</h2>
+    <div class="grid-2">
+      <div class="card green fragment">
+        <h3>Коммитить ✓</h3>
+        <ul>
+          <li><code>AGENTS.md</code>, <code>CLAUDE.md</code></li>
+          <li><code>.clinerules/</code>, <code>.roo/rules*/</code></li>
+          <li>Проектные <code>skills/</code> и <code>commands/</code></li>
+          <li>Проектные hooks/config без секретов</li>
+        </ul>
+      </div>
+      <div class="card red fragment">
+        <h3>Оставлять локально ✗</h3>
+        <ul>
+          <li><code>.env*</code>, API keys, credentials</li>
+          <li>Глобальные пользовательские предпочтения</li>
+          <li><code>*.local.json</code> и локальные overrides</li>
+          <li>Секретные MCP-конфиги</li>
+        </ul>
+      </div>
+    </div>
+    <p class="note" style="margin-top:10px">Добавьте в <code>.gitignore</code>: <code>*.local.json</code>, <code>.env*</code>, любые файлы с API-ключами.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Рекомендуемая структура проекта</h2>
+    <div class="tree">
+      <code>my-project/
+├── AGENTS.md
+├── CLAUDE.md
+├── .clinerules/
+├── .cline/skills/
+├── .roo/
+│   ├── rules/
+│   ├── rules-code/
+│   ├── rules-architect/
+│   └── skills/
+├── .roomodes
+├── .opencode/
+│   ├── commands/
+│   └── agents/
+├── .claude/
+│   ├── skills/
+│   └── settings.json
+└── src/...</code>
+    </div>
+    <p class="note">Минимум: закоммитьте стандарты и процедуры, чтобы поведение агента было одинаковым у всей команды.</p>
+  </div>
+</section>
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 04</span>
+    <h1>Рекомендации по работе с агентами</h1>
+    <p class="cta">Постановка задач, контроль, командные процессы и антипаттерны</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Формулировка задач + контроль</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Формулировка задачи</h3>
+        <ul>
+          <li>Конкретный target-файл и ожидаемый результат</li>
+          <li>Явные ограничения: что не менять</li>
+          <li>Большие задачи делить на подзадачи</li>
+          <li>Для сложных задач: plan first</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Контроль и ревью</h3>
+        <ul>
+          <li>Всегда смотреть <code>git diff</code></li>
+          <li>Запускать тесты после каждого значимого шага</li>
+          <li>Коммитить checkpoint перед автономным запуском</li>
+          <li>Auto-approve только для безопасной рутины</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Организация работы + чего избегать</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Организация</h3>
+        <ul>
+          <li>Один агент = одна задача</li>
+          <li>Feature-branch + ревью через PR</li>
+          <li>Rules и Skills с первого дня</li>
+          <li>MCP для интеграции с командными сервисами</li>
+        </ul>
+      </div>
+      <div class="card red fragment">
+        <h3>Антипаттерны</h3>
+        <ul>
+          <li>Слепое принятие изменений</li>
+          <li>Работа без Git и без отката</li>
+          <li>Слишком длинные сессии</li>
+          <li>Секреты в конфиге агента</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 05</span>
+    <h1>Итоги</h1>
+    <p class="cta">Ключевые выводы и переход к следующей части цикла</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Ключевые выводы</h2>
+    <div class="cards c2">
+      <div class="card teal fragment"><h3>1</h3><p>Шесть режимов AI формируют спектр автономии, а не бинарный выбор.</p></div>
+      <div class="card amber fragment"><h3>2</h3><p>Продуктивность агента определяется настройкой контекста, а не только моделью.</p></div>
+      <div class="card rose fragment"><h3>3</h3><p>Skills, Rules, Tools, Hooks работают как единая система.</p></div>
+      <div class="card green fragment"><h3>4</h3><p>MCP — ключ к переносимости интеграций и снижению vendor lock-in.</p></div>
+      <div class="card amber fragment"><h3>5</h3><p>Командные стандарты нужно коммитить в репозиторий, секреты — держать локально.</p></div>
+      <div class="card teal fragment"><h3>6</h3><p>Human-in-the-loop и ревью остаются обязательными для критичных изменений.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Дальше</span>
+    <h1>Часть 2: инструменты в деталях</h1>
+    <p class="cta">Разберём архитектуру agentic loop и сравним OpenCode, Cline и RooCode на реальных сценариях.</p>
+    <div class="meta-row" style="justify-content:center">
+      <a class="pill" href="../../reading/?part=part0_vibecoding">Конспект · Часть 0</a>
+      <a class="pill" href="../../reading/?part=part1_foundations">Конспект · Часть 1</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Остаёмся на связи</h2>
+    <div class="promo-layout">
+      <div class="promo-photo-box">
+        <img src="../../assets/avatar.jpg" alt="Фото автора канала" onerror="this.style.display='none'">
+      </div>
+      <div class="promo-qr-box">
+        <h3>Telegram канал</h3>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&data=https%3A%2F%2Ft.me%2FSazonovMaybeTalks" alt="QR код на Telegram канал SazonovMaybeTalks">
+        <a class="promo-link" href="https://t.me/SazonovMaybeTalks" target="_blank" rel="noopener noreferrer">t.me/SazonovMaybeTalks</a>
+        <p class="note">Сканируйте QR или переходите по ссылке, чтобы получить обновления по следующим материалам.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: "c/t",
+  width: 1360,
+  height: 768,
+  margin: 0.05,
+  transition: "slide",
+  backgroundTransition: "fade",
+  transitionSpeed: "fast",
+  plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>
