@@ -391,7 +391,7 @@ globs: ["**/*.test.ts", "**/*.spec.ts"]
 
 Skill — это Markdown-файл с YAML frontmatter, описывающий процедуру выполнения конкретного типа задачи:
 
-```yaml
+````yaml
 ---
 name: create-api-endpoint
 description: >
@@ -426,7 +426,7 @@ router.post('/[entity]',
 - [ ] Zod schema validates all inputs
 - [ ] Service has unit tests
 - [ ] Error responses use standard format
-```
+````
 
 ### 4.3. Базовый механизм: как агент узнаёт о skills
 
