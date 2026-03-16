@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107242055', 'ym');
+
+    ym(107242055, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/107242055" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<title>Конспекты лекций</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<style>
+:root {
+  --bg: #faf6f1;
+  --panel: #ffffff;
+  --ink: #1c1410;
+  --body: #3d2e22;
+  --muted: #7a644f;
+  --dim: #a8917a;
+  --line: #e4d7c8;
+  --line-soft: #ede4d8;
+  --accent: #c44b18;
+  --accent-hover: #d95a22;
+  --accent-bg: #fef0e7;
+  --teal: #1a9e8f;
+  --teal-bg: #e6f7f5;
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  color: var(--body);
+  font-family: "Source Serif 4", Georgia, serif;
+  background: var(--bg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Top bar ── */
+
+.topbar {
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.topbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  flex-wrap: wrap;
+  padding: 8px 0;
+}
+
+.btn {
+  text-decoration: none;
+  color: var(--muted);
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover {
+  color: var(--ink);
+  background: var(--line-soft);
+}
+
+.btn.primary {
+  color: var(--accent);
+  background: var(--accent-bg);
+  border-color: rgba(196,75,24,0.15);
+}
+
+/* ── Layout ── */
+
+.layout {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 20px 80px;
+  display: grid;
+  grid-template-columns: 1fr 260px;
+  gap: 32px;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.layout.index-mode {
+  grid-template-columns: 1fr;
+  max-width: 840px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Main Panel ── */
+
+.main {
+  min-width: 0;
+}
+
+/* ── Sidebar ── */
+
+.side {
+  align-self: start;
+  position: sticky;
+  top: 68px;
+}
+
+.side h3 {
+  font-family: "DM Sans", sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--dim);
+  margin: 0 0 12px;
+  padding: 0 8px;
+}
+
+.toc { display: grid; gap: 1px; }
+
+.toc a {
+  text-decoration: none;
+  color: var(--muted);
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  transition: color 0.12s, background 0.12s;
+}
+
+.toc a.depth-3 {
+  padding-left: 22px;
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.toc a:hover {
+  color: var(--ink);
+  background: var(--line-soft);
+}
+
+/* ── Index View ── */
+
+#status {
+  margin: 0;
+  font-family: "DM Sans", sans-serif;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.index-title {
+  font-family: "DM Sans", sans-serif;
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  margin: 0 0 6px;
+}
+
+.index-sub {
+  color: var(--dim);
+  margin: 0 0 32px;
+  font-size: 17px;
+}
+
+.lecture-list {
+  display: grid;
+  gap: 16px;
+}
+
+.lecture-card {
+  display: block;
+  text-decoration: none;
+  color: var(--body);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px 24px;
+  background: var(--panel);
+  position: relative;
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.lecture-card::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: var(--accent);
+  border-radius: 14px 0 0 14px;
+}
+
+.lecture-card:nth-child(2)::before { background: var(--teal); }
+
+.lecture-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.lecture-card h2 {
+  font-family: "DM Sans", sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 6px;
+}
+
+.lecture-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.lecture-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.lecture-meta a {
+  text-decoration: none;
+  font-family: "DM Sans", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid rgba(196,75,24,0.2);
+  border-radius: 999px;
+  padding: 4px 12px;
+  transition: background 0.15s;
+}
+
+.lecture-meta a:hover {
+  background: var(--accent-bg);
+}
+
+/* ── Article Content ── */
+
+#content h1,
+#content h2,
+#content h3,
+#content h4 {
+  font-family: "DM Sans", sans-serif;
+  color: var(--ink);
+  line-height: 1.2;
+  margin-top: 1.8em;
+  margin-bottom: 0.5em;
+}
+
+#content h1 {
+  margin-top: 0;
+  font-size: clamp(28px, 4vw, 38px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+#content h2 {
+  font-size: clamp(22px, 3vw, 28px);
+  color: var(--accent);
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--line-soft);
+}
+
+#content h3 {
+  font-size: clamp(17px, 2.2vw, 21px);
+}
+
+#content h4 {
+  font-size: 15px;
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+#content p,
+#content li,
+#content td,
+#content th {
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+#content p { margin: 0 0 1em; }
+
+#content ul,
+#content ol {
+  padding-left: 1.4em;
+  margin: 0 0 1em;
+}
+
+#content li { margin-bottom: 0.25em; }
+
+#content strong { color: var(--ink); font-weight: 600; }
+
+#content a {
+  color: var(--accent);
+  text-decoration-color: rgba(196,75,24,0.3);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.12s;
+}
+
+#content a:hover {
+  text-decoration-color: var(--accent);
+}
+
+#content blockquote {
+  margin: 20px 0;
+  padding: 16px 20px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-bg);
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+}
+
+#content blockquote p { margin: 0; }
+#content blockquote p + p { margin-top: 0.6em; }
+
+#content hr {
+  border: 0;
+  border-top: 2px solid var(--line-soft);
+  margin: 36px 0;
+}
+
+/* ── Tables ── */
+
+#content table {
+  width: 100%;
+  border-collapse: collapse;
+  display: block;
+  overflow-x: auto;
+  margin: 20px 0;
+  font-size: 15px;
+}
+
+#content th {
+  background: var(--line-soft);
+  color: var(--ink);
+  font-family: "DM Sans", sans-serif;
+  font-weight: 700;
+  font-size: 13px;
+  text-align: left;
+}
+
+#content th,
+#content td {
+  border: 1px solid var(--line);
+  padding: 10px 12px;
+  vertical-align: top;
+}
+
+#content tr:nth-child(even) td {
+  background: rgba(0,0,0,0.015);
+}
+
+/* ── Code blocks ── */
+
+#content code {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.84em;
+  background: #f0e7db;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 0.12em 0.4em;
+  color: var(--accent);
+}
+
+#content pre {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid #2a2420;
+  background: #0d1117;
+  margin: 20px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+#content pre code {
+  border: 0;
+  background: transparent;
+  padding: 1em 1.2em;
+  display: block;
+  color: #e6edf3;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* ── Scrollbar ── */
+
+::-webkit-scrollbar { width: 7px; height: 7px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--dim); }
+
+/* ── Responsive ── */
+
+@media (max-width: 1050px) {
+  .layout { grid-template-columns: 1fr; }
+  .side { position: static; }
+}
+
+@media (max-width: 600px) {
+  .topbar-inner { gap: 6px; }
+  .btn { font-size: 12px; padding: 5px 10px; }
+  .layout { padding: 20px 14px 60px; }
+}
+
+/* ── Print ── */
+
+@media print {
+  .topbar, .side { display: none; }
+  .layout { display: block; max-width: 100%; padding: 0; }
+  body { background: #fff; color: #000; }
+  #content h2 { color: #000; border-bottom-color: #ccc; }
+  #content pre { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <div class="topbar-inner" id="nav"></div>
+  </nav>
+
+  <div class="layout" id="layout">
+    <main class="main">
+      <div id="index-view" hidden>
+        <h1 class="index-title">Конспекты лекций</h1>
+        <p class="index-sub">Выберите лекцию для чтения</p>
+        <div class="lecture-list" id="lecture-list"></div>
+      </div>
+      <p id="status" hidden>Загружаю…</p>
+      <article id="content" hidden></article>
+    </main>
+
+    <aside class="side" id="sidebar" hidden>
+      <h3>Оглавление</h3>
+      <nav id="toc" class="toc"></nav>
+    </aside>
+  </div>
+
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+const LECTURES_URL = "../content/lectures.json";
+const CONTENT_BASE = "../content/";
+
+const layoutEl    = document.getElementById("layout");
+const navEl       = document.getElementById("nav");
+const indexView   = document.getElementById("index-view");
+const listEl      = document.getElementById("lecture-list");
+const statusEl    = document.getElementById("status");
+const contentEl   = document.getElementById("content");
+const sidebarEl   = document.getElementById("sidebar");
+const tocEl       = document.getElementById("toc");
+
+marked.setOptions({ gfm: true, breaks: false });
+
+function getPartId() {
+  return new URLSearchParams(location.search).get("part");
+}
+
+function slugify(text) {
+  const base = text
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+  return base || "section";
+}
+
+function buildToc() {
+  const headings = contentEl.querySelectorAll("h2, h3");
+  tocEl.innerHTML = "";
+  headings.forEach((h, i) => {
+    if (!h.id) h.id = `${slugify(h.textContent)}-${i}`;
+    const a = document.createElement("a");
+    a.href = `#${h.id}`;
+    a.textContent = h.textContent;
+    a.className = h.tagName === "H3" ? "depth-3" : "depth-2";
+    tocEl.appendChild(a);
+  });
+}
+
+function buildNav(lectures, currentId) {
+  navEl.innerHTML = "";
+
+  const homeBtn = document.createElement("a");
+  homeBtn.className = "btn";
+  homeBtn.href = "../";
+  homeBtn.textContent = "Главная";
+  navEl.appendChild(homeBtn);
+
+  const allBtn = document.createElement("a");
+  allBtn.className = currentId ? "btn" : "btn primary";
+  allBtn.href = "./";
+  allBtn.textContent = "Все конспекты";
+  navEl.appendChild(allBtn);
+
+  lectures.forEach(lec => {
+    const btn = document.createElement("a");
+    btn.className = lec.id === currentId ? "btn primary" : "btn";
+    btn.href = `?part=${lec.id}`;
+    btn.textContent = lec.title;
+    navEl.appendChild(btn);
+  });
+}
+
+function renderIndex(lectures) {
+  layoutEl.classList.add("index-mode");
+  sidebarEl.hidden = true;
+  indexView.hidden = false;
+  document.title = "Конспекты лекций";
+
+  buildNav(lectures, null);
+
+  listEl.innerHTML = "";
+  lectures.forEach(lec => {
+    const card = document.createElement("a");
+    card.className = "lecture-card";
+    card.href = `?part=${lec.id}`;
+
+    const h2 = document.createElement("h2");
+    h2.textContent = lec.title;
+    card.appendChild(h2);
+
+    const p = document.createElement("p");
+    p.textContent = lec.description;
+    card.appendChild(p);
+
+    if (lec.slides) {
+      const meta = document.createElement("div");
+      meta.className = "lecture-meta";
+      const slidesLink = document.createElement("a");
+      slidesLink.href = lec.slides;
+      slidesLink.textContent = "Открыть слайды";
+      slidesLink.addEventListener("click", e => e.stopPropagation());
+      meta.appendChild(slidesLink);
+      card.appendChild(meta);
+    }
+
+    listEl.appendChild(card);
+  });
+}
+
+async function renderArticle(lectures, partId) {
+  const lecture = lectures.find(l => l.id === partId);
+  if (!lecture) {
+    statusEl.textContent = `Лекция «${partId}» не найдена.`;
+    statusEl.hidden = false;
+    buildNav(lectures, null);
+    return;
+  }
+
+  document.title = lecture.title + " · Конспект";
+  layoutEl.classList.remove("index-mode");
+  sidebarEl.hidden = false;
+  statusEl.textContent = "Загружаю…";
+  statusEl.hidden = false;
+
+  buildNav(lectures, partId);
+
+  try {
+    const res = await fetch(CONTENT_BASE + lecture.file, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const markdown = await res.text();
+    contentEl.innerHTML = marked.parse(markdown);
+    contentEl.querySelectorAll("pre code").forEach(block => {
+      hljs.highlightElement(block);
+    });
+    contentEl.hidden = false;
+    statusEl.hidden = true;
+    buildToc();
+  } catch (err) {
+    statusEl.textContent = "Не удалось загрузить конспект. Проверьте подключение.";
+    console.error(err);
+  }
+}
+
+async function main() {
+  try {
+    const res = await fetch(LECTURES_URL, { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const lectures = await res.json();
+
+    const partId = getPartId();
+    if (partId) {
+      renderArticle(lectures, partId);
+    } else {
+      renderIndex(lectures);
+    }
+  } catch (err) {
+    statusEl.textContent = "Не удалось загрузить список лекций.";
+    statusEl.hidden = false;
+    console.error(err);
+  }
+}
+
+main();
+</script>
+</body>
+</html>
