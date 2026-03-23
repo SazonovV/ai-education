@@ -1,16 +1,16 @@
 [
   {
-    "id": "part0_vibecoding",
-    "title": "Часть 0 · Введение в вайбкодинг",
+    "id": "part1_vibecoding",
+    "title": "Лекция 1 · Введение в вайбкодинг",
     "description": "Что такое vibe coding, инструменты, живой пример, практические рекомендации",
-    "file": "part0_vibecoding.md",
-    "slides": "../presentations/part0/"
+    "file": "part1_vibecoding.md",
+    "slides": "../presentations/part1/"
   },
   {
-    "id": "part1_prompt_engineering",
-    "title": "Часть 1 · Prompt Engineering, Skills & Rules",
+    "id": "part2_prompt_engineering",
+    "title": "Лекция 2 · Prompt Engineering, Skills & Rules",
     "description": "От чата к Agentic Engineering: system prompt, chain-of-thought, rules, skills, антипаттерны",
-    "file": "part1_prompt_engineering.md",
-    "slides": "../presentations/part1/"
+    "file": "part2_prompt_engineering.md",
+    "slides": "../presentations/part2/"
   }
 ]
