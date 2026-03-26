@@ -384,6 +384,38 @@ table.mini th {
   line-height: 1.45;
 }
 
+.intro-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.photo {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 7px;
+  background: #0d0a09;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.fallback {
+  display: none;
+  text-align: center;
+  color: #b8a189;
+  font-size: 0.54em;
+}
+
 .two-col-list {
   columns: 2;
   column-gap: 22px;
@@ -559,6 +591,7 @@ table.mini th {
   .cards.c3,
   .vs-layout,
   .promo-layout,
+  .intro-layout,
   .process {
     grid-template-columns: 1fr;
   }
@@ -603,7 +636,7 @@ table.mini th {
     <div class="meta-row">
       <span class="pill">Фокус: как управлять поведением агента</span>
     </div>
-  </div>
+</div>
 </section>
 
 <!-- ==================== ПРЕДСТАВЛЕНИЕ ==================== -->
@@ -626,7 +659,7 @@ table.mini th {
         <p class="note">Формат: от чата к агентному подходу — prompt engineering, rules, skills.</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <!-- ==================== СОДЕРЖАНИЕ ==================== -->
@@ -636,11 +669,11 @@ table.mini th {
     <div class="cards c3">
       <div class="card teal"><h3>1. Чат vs Агент</h3><p>Loop, tool use, автономность — в чём принципиальная разница</p><p class="note">5 мин</p></div>
       <div class="card amber"><h3>2. Prompt Engineering</h3><p>System prompt, chain-of-thought, формулировка инструкций</p><p class="note">12 мин</p></div>
-      <div class="card rose"><h3>3. Rules</h3><p>Глобальные и проектные правила: .roo/rules, AGENTS.md, .zed/rules</p><p class="note">12 мин</p></div>
+      <div class="card rose"><h3>3. Rules</h3><p>Глобальные и проектные правила: .roo/rules, AGENTS.md, .rules</p><p class="note">12 мин</p></div>
       <div class="card green"><h3>4. Skills</h3><p>Модульные способности через файлы, шаблоны, примеры</p><p class="note">10 мин</p></div>
       <div class="card red"><h3>5. Антипаттерны</h3><p>Топ-3 ошибки в промптах и правилах, демо-разбор</p><p class="note">6 мин</p></div>
     </div>
-  </div>
+</div>
 </section>
 
 <!-- ==================== РАЗДЕЛ 1: ЧАТ vs АГЕНТ ==================== -->
@@ -649,7 +682,7 @@ table.mini th {
     <span class="kicker">Раздел 01 · 5 мин</span>
     <h1>Чат vs Агент</h1>
     <p class="cta">Loop, tool use, автономность — три признака, которые меняют всё</p>
-  </div>
+</div>
 </section>
 
 <section>
@@ -676,7 +709,7 @@ table.mini th {
       </div>
     </div>
     <blockquote class="fragment"><p>Чат — это <strong>советник</strong>. Он предлагает, но не действует.</p></blockquote>
-  </div>
+</div>
 </section>
 
 <section>
@@ -705,7 +738,7 @@ table.mini th {
         <p>Не останавливается после первого ответа — итерирует до решения</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -722,7 +755,7 @@ table.mini th {
       </table>
     </div>
     <blockquote class="fragment"><p>Агент — это <strong>исполнитель</strong>. Он думает, действует и проверяет результат сам.</p></blockquote>
-  </div>
+</div>
 </section>
 
 <!-- ==================== РАЗДЕЛ 2: PROMPT ENGINEERING ==================== -->
@@ -731,7 +764,7 @@ table.mini th {
     <span class="kicker">Раздел 02 · 12 мин</span>
     <h1>Prompt Engineering</h1>
     <p class="cta">System prompt, chain-of-thought, как формулировать инструкции для агента</p>
-  </div>
+</div>
 </section>
 
 <section>
@@ -758,7 +791,7 @@ table.mini th {
       </div>
     </div>
     <blockquote class="fragment"><p>Агенту не нужен контекст вашего файла в промпте — он прочитает его сам. Ему нужна <strong>цель</strong> и <strong>границы</strong>.</p></blockquote>
-  </div>
+</div>
 </section>
 
 <section>
@@ -786,7 +819,7 @@ table.mini th {
         <p class="note">Primacy + recency bias работает и для моделей</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -813,7 +846,7 @@ table.mini th {
         <p class="note">Extended thinking в Claude, reasoning в OpenAI — встроенный CoT</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -825,13 +858,13 @@ table.mini th {
         <ul>
           <li><strong>Roo Code</strong> — режим Architect: сначала план, потом передача в Code</li>
           <li><strong>Kilo Code</strong> — тот же паттерн + Boomerang-делегация</li>
-          <li><strong>Claude Code</strong> — команда <code>/plan</code>: агент планирует, но не выполняет</li>
+          <li><strong>Claude Code</strong> — режим <code>--permission-mode plan</code>: агент планирует, но не выполняет</li>
           <li><strong>OpenCode</strong> — агент Plan в <code>.opencode/agents/</code></li>
         </ul>
         <p class="note">Принцип: «Сначала скажи что будешь делать, потом делай»</p>
       </div>
       <div class="card amber fragment">
-        <h3>Ralph Loop (итеративная проверка)</h3>
+        <h3>Итеративная проверка (Ralph Loop)</h3>
         <ul>
           <li>Агент работает в цикле: действие → проверка → исправление</li>
           <li>На каждой итерации запускает тесты или линтер</li>
@@ -855,7 +888,7 @@ After each change:
 - Commit only when green</code></pre>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -883,7 +916,7 @@ After each change:
         <p>Не мешать рефакторинг с новой фичей. Один промпт — один фокус.</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -919,7 +952,7 @@ validateCredentials.
       </div>
     </div>
     <blockquote class="fragment"><p><strong>Формула:</strong> Контекст (что сломано) + Локация (где) + Действие (что сделать) + Проверка (как убедиться) + Границы (что не трогать)</p></blockquote>
-  </div>
+</div>
 </section>
 
 <section>
@@ -946,7 +979,7 @@ validateCredentials.
         </tr>
       </table>
     </div>
-  </div>
+</div>
 </section>
 
 <!-- ==================== РАЗДЕЛ 3: RULES ==================== -->
@@ -955,7 +988,7 @@ validateCredentials.
     <span class="kicker">Раздел 03 · 12 мин</span>
     <h1>Rules</h1>
     <p class="cta">Глобальные и проектные правила — как задать рамки поведения агента</p>
-  </div>
+</div>
 </section>
 
 <section>
@@ -980,7 +1013,7 @@ validateCredentials.
         <p class="note">Проектные правила — главный способ сделать поведение агента одинаковым для всей команды</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -989,16 +1022,17 @@ validateCredentials.
     <div class="table-wrap">
       <table class="mini">
         <tr><th>Инструмент</th><th>Глобальные</th><th>Проектные</th></tr>
-        <tr class="fragment"><td><strong>Roo Code / Kilo Code</strong></td><td>Custom instructions в UI</td><td><code>.roo/rules/</code>, <code>.roo/rules-code/</code>, <code>.roo/rules-architect/</code></td></tr>
-        <tr class="fragment"><td><strong>OpenCode</strong></td><td><code>~/.opencode/config.toml</code></td><td><code>AGENTS.md</code>, инструкции в конфиге проекта</td></tr>
-        <tr class="fragment"><td><strong>Zed</strong></td><td>Zed Settings → AI → Rules</td><td><code>.zed/rules/</code> в корне проекта</td></tr>
+        <tr class="fragment"><td><strong>Roo Code</strong></td><td>Custom instructions в UI</td><td><code>.roo/rules/</code>, <code>.roo/rules-code/</code>, <code>.roo/rules-architect/</code></td></tr>
+        <tr class="fragment"><td><strong>Kilo Code</strong></td><td>Custom instructions в UI</td><td><code>.kilocode/rules/</code>, <code>.kilocode/rules-code/</code></td></tr>
+        <tr class="fragment"><td><strong>OpenCode</strong></td><td><code>~/.config/opencode/opencode.jsonc</code></td><td><code>AGENTS.md</code>, <code>.opencode/opencode.jsonc</code></td></tr>
+        <tr class="fragment"><td><strong>Zed</strong></td><td>Rules Library (Agent Panel)</td><td>Файл <code>.rules</code> в корне проекта</td></tr>
         <tr class="fragment"><td><strong>Claude Code</strong></td><td><code>~/.claude/CLAUDE.md</code></td><td><code>CLAUDE.md</code> в корне проекта</td></tr>
         <tr class="fragment"><td><strong>Cursor</strong></td><td>Settings → Rules for AI</td><td><code>.cursor/rules/*.mdc</code></td></tr>
-        <tr class="fragment"><td><strong>AGENTS.md</strong></td><td>—</td><td>Кросс-инструментный: OpenCode, Claude Code, Codex</td></tr>
+        <tr class="fragment"><td><strong>AGENTS.md</strong></td><td>—</td><td>Кросс-инструментный: Claude Code, OpenCode, Codex, Roo Code, Kilo Code, Zed</td></tr>
       </table>
     </div>
     <p class="note fragment">AGENTS.md — универсальная конвенция. Если команда использует разные агенты, начните с него.</p>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1040,7 +1074,7 @@ apps/web, packages/shared.
         <p class="note fragment">Разделение: общие правила в <code>rules/</code>, безопасность для Code-режима в <code>rules-code/</code></p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1070,7 +1104,7 @@ You are a senior React/TypeScript developer.
 - Conventional commits: feat:, fix:, refactor:
 - One logical change per commit</code></pre>
     <p class="note fragment">AGENTS.md работает одинаково в OpenCode, Claude Code и Codex — один файл на всю команду, даже если используете разные инструменты.</p>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1104,7 +1138,7 @@ You are a senior React/TypeScript developer.
         <p class="note">Разделение по режимам снижает расход контекста: агент загружает только релевантные правила</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1142,7 +1176,7 @@ globs: ["**/*.test.ts", "**/*.spec.ts"]
         <p class="note">Cursor: <code>.mdc</code> с <code>globs:</code>. Roo Code / Kilo Code: через режимы + <code>fileRegex</code> в <code>.roomodes</code></p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1171,7 +1205,7 @@ globs: ["**/*.test.ts", "**/*.spec.ts"]
       </div>
     </div>
     <blockquote class="fragment"><p><strong>Практика:</strong> начните с 10-15 правил. Добавляйте новые, только когда агент ошибается в конкретном паттерне.</p></blockquote>
-  </div>
+</div>
 </section>
 
 <!-- ==================== РАЗДЕЛ 4: SKILLS ==================== -->
@@ -1180,7 +1214,7 @@ globs: ["**/*.test.ts", "**/*.spec.ts"]
     <span class="kicker">Раздел 04 · 10 мин</span>
     <h1>Skills</h1>
     <p class="cta">Как давать агенту способности через файлы, шаблоны и примеры</p>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1197,7 +1231,7 @@ globs: ["**/*.test.ts", "**/*.spec.ts"]
       </table>
     </div>
     <blockquote class="fragment"><p>Rules задают <strong>рамки</strong>, Skills дают <strong>способности</strong>.</p></blockquote>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1237,7 +1271,7 @@ router.post('/[entity]',
 - [ ] Zod schema validates all inputs
 - [ ] Service has unit tests
 - [ ] Error responses use standard format</code></pre>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1266,55 +1300,57 @@ router.post('/[entity]',
         <h3>Что отличается: шаг SELECT</h3>
         <ul>
           <li><strong>LLM сама выбирает</strong> — читает описания и решает (OpenCode, Claude Code)</li>
-          <li><strong>Внешний ранкер</strong> — эмбеддинги + косинусное сходство (Kilo Code)</li>
+          <li><strong>Режимы</strong> — фильтрация доступных skills по режиму (Roo Code)</li>
           <li><strong>Режим определяет</strong> — skills привязаны к режимам (Roo Code)</li>
           <li><strong>Пользователь вызывает</strong> — через <code>/command</code> или UI (Zed)</li>
         </ul>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
   <div class="slide-shell">
-    <h2 class="section-title">Два подхода к выбору: LLM vs внешний ранкер</h2>
-    <div class="vs-layout">
-      <div>
-        <div class="vs-label" style="color:var(--teal);background:rgba(55,214,196,0.08)">LLM выбирает сама</div>
-        <div class="card teal fragment" style="margin-top:8px">
-          <ul>
-            <li>Все <code>description</code> skills вставляются в промпт</li>
-            <li>Модель сама решает, какой skill вызвать</li>
-          </ul>
-          <p class="note" style="margin:8px 0 0">OpenCode · Claude Code · Zed</p>
-        </div>
-        <div class="card red fragment" style="margin-top:6px">
-          <h3>Цена простоты</h3>
-          <ul>
-            <li>50+ skills → <strong>раздувание контекста</strong>, рост цены</li>
-            <li>Нет порога: модель может вызвать нерелевантный skill</li>
-          </ul>
-        </div>
+    <h2 class="section-title">Как агент выбирает skill</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>LLM выбирает сама</h3>
+        <ul>
+          <li>Все <code>description</code> skills вставляются в промпт</li>
+          <li>Модель сама решает, какой skill вызвать</li>
+          <li>Это <strong>основной подход</strong> большинства инструментов</li>
+        </ul>
+        <p class="note" style="margin:8px 0 0">Claude Code · OpenCode · Kilo Code · Roo Code</p>
       </div>
-      <div>
-        <div class="vs-label" style="color:var(--amber);background:rgba(246,164,74,0.08)">Внешний ранкер (embeddings)</div>
-        <div class="card amber fragment" style="margin-top:8px">
-          <ul>
-            <li>Эмбеддинг запроса × эмбеддинги descriptions</li>
-            <li><strong>Косинусное сходство</strong> → top-N в промпт</li>
-          </ul>
-          <p class="note" style="margin:8px 0 0">Kilo Code (встроен) · OpenCode (<code>opencode-agent-skills</code>)</p>
-        </div>
-        <div class="card green fragment" style="margin-top:6px">
-          <h3>Выигрыш</h3>
-          <ul>
-            <li>Сотни skills без раздувания контекста</li>
-            <li>Настраиваемый <strong>порог</strong> и <strong>top-k</strong></li>
-          </ul>
-        </div>
+      <div class="card amber fragment">
+        <h3>Усиление: semantic similarity</h3>
+        <ul>
+          <li>Плагин <code>opencode-agent-skills</code> для OpenCode</li>
+          <li>Автоматически обнаруживает релевантные skills</li>
+          <li>Инжектирует промпт, побуждающий агента загрузить skill</li>
+        </ul>
+        <p class="note" style="margin:8px 0 0">Pre-filter поверх LLM-выбора</p>
       </div>
     </div>
-  </div>
+    <div class="cards c2" style="margin-top:10px">
+      <div class="card rose fragment">
+        <h3>Режимы фильтруют набор</h3>
+        <ul>
+          <li>Skills в <code>skills-code/</code>, <code>skills-architect/</code> — только в своём режиме</li>
+          <li>Оркестратор делегирует через Boomerang</li>
+        </ul>
+        <p class="note" style="margin:4px 0 0">Roo Code · Kilo Code</p>
+      </div>
+      <div class="card green fragment">
+        <h3>Итого</h3>
+        <ul>
+          <li><strong>LLM-выбор</strong> — стандарт для всех инструментов</li>
+          <li><strong>Режимы</strong> — дополнительная фильтрация</li>
+          <li><strong>Semantic similarity</strong> — усиление через плагин</li>
+        </ul>
+      </div>
+    </div>
+</div>
 </section>
 
 <section>
@@ -1324,32 +1360,32 @@ router.post('/[entity]',
       <table class="mini">
         <tr><th>Инструмент</th><th>Путь</th><th>Выбор skill</th><th>Масштаб</th></tr>
         <tr class="fragment">
-          <td><strong>Kilo Code</strong></td>
-          <td><code>.kilocode/skills/</code></td>
-          <td>Внешний ранкер (embeddings)</td>
-          <td>Сотни</td>
-        </tr>
-        <tr class="fragment">
-          <td><strong>Roo Code</strong></td>
-          <td><code>.roo/skills/</code> + <code>.roomodes</code></td>
-          <td>Режим определяет набор</td>
-          <td>По режимам</td>
-        </tr>
-        <tr class="fragment">
-          <td><strong>OpenCode</strong></td>
-          <td><code>.opencode/skills/</code></td>
-          <td>LLM или ранкер (плагин)</td>
-          <td>Десятки → сотни</td>
-        </tr>
-        <tr class="fragment">
           <td><strong>Claude Code</strong></td>
-          <td><code>.claude/skills/</code></td>
+          <td><code>.claude/skills/</code>, <code>.agents/skills/</code></td>
           <td>LLM по description</td>
           <td>Десятки</td>
         </tr>
         <tr class="fragment">
+          <td><strong>OpenCode</strong></td>
+          <td><code>.opencode/skills/</code>, <code>.agents/skills/</code></td>
+          <td>LLM + semantic similarity (плагин)</td>
+          <td>Десятки</td>
+        </tr>
+        <tr class="fragment">
+          <td><strong>Kilo Code</strong></td>
+          <td><code>.kilocode/skills/</code>, <code>.agents/skills/</code></td>
+          <td>LLM по description</td>
+          <td>Десятки</td>
+        </tr>
+        <tr class="fragment">
+          <td><strong>Roo Code</strong></td>
+          <td><code>.roo/skills/</code>, <code>.agents/skills/</code></td>
+          <td>LLM + фильтрация по режимам</td>
+          <td>По режимам</td>
+        </tr>
+        <tr class="fragment">
           <td><strong>Zed</strong></td>
-          <td>Prompt Library</td>
+          <td>Rules Library, файл <code>.rules</code></td>
           <td>Пользователь (slash / UI)</td>
           <td>Любой</td>
         </tr>
@@ -1365,7 +1401,7 @@ router.post('/[entity]',
         <p>Глобальные skills в домашней директории, не в репо</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1374,29 +1410,200 @@ router.post('/[entity]',
     <div class="cards c2">
       <div class="card teal fragment">
         <h3>Workflow · <span style="font-weight:400;opacity:.7">write-e2e-test</span></h3>
-        <p class="note" style="margin-bottom:10px">Пошаговая процедура — агент выполняет шаги по порядку, не импровизируя</p>
-        <table class="mini" style="font-size:14px">
-          <tr><td style="width:110px;white-space:nowrap"><strong>description</strong></td><td>«Use when writing E2E tests» — по этой фразе агент решает, что skill нужен</td></tr>
-          <tr><td><strong>Steps</strong></td><td>Изучи существующие тесты в <code>e2e/</code>, пиши через <code>getByRole</code>, запусти playwright — привязка к инструментам проекта</td></tr>
-          <tr><td><strong>Anti-patterns</strong></td><td>Запрет на <code>waitForTimeout</code> — без этого агент будет вставлять sleep-костыли</td></tr>
-          <tr><td><strong>Checklist</strong></td><td>Assert на каждый кейс + eslint clean — критерий завершения, чтобы агент не остановился на полпути</td></tr>
+        <p class="note" style="margin-bottom:6px">Пошаговая процедура — агент выполняет шаги по порядку</p>
+        <table class="mini" style="font-size:13px">
+          <tr><td style="width:100px"><strong>description</strong></td><td>«Use when writing E2E tests» — trigger-фраза</td></tr>
+          <tr><td><strong>Steps</strong></td><td>Изучи тесты в <code>e2e/</code>, пиши через <code>getByRole</code>, запусти playwright</td></tr>
+          <tr><td><strong>Anti-patterns</strong></td><td>Запрет на <code>waitForTimeout</code></td></tr>
+          <tr><td><strong>Checklist</strong></td><td>Assert на каждый кейс + eslint clean</td></tr>
         </table>
       </div>
       <div class="card amber fragment">
         <h3>Guard · <span style="font-weight:400;opacity:.7">debug-production</span></h3>
-        <p class="note" style="margin-bottom:10px">Протокол с точками остановки — агент обязан думать перед каждым действием</p>
-        <table class="mini" style="font-size:14px">
-          <tr><td style="width:110px;white-space:nowrap"><strong>description</strong></td><td>«Use when fixing production bugs» — активируется при упоминании прода, багов, инцидентов</td></tr>
-          <tr><td><strong>Protocol</strong></td><td>Логи → reproduce → root cause → fix — строгий порядок: нельзя чинить, не поняв причину</td></tr>
-          <tr><td><strong>Gates</strong></td><td>Нет root cause — не фикси. DROP/DELETE — спроси юзера. Точки, где агент обязан остановиться</td></tr>
-          <tr><td><strong>Checklist</strong></td><td>Regression test обязателен — гарантия, что этот баг больше не вернётся</td></tr>
+        <p class="note" style="margin-bottom:6px">Протокол с точками остановки — думай перед каждым действием</p>
+        <table class="mini" style="font-size:13px">
+          <tr><td style="width:100px"><strong>description</strong></td><td>«Use when fixing production bugs» — trigger-фраза</td></tr>
+          <tr><td><strong>Protocol</strong></td><td>Логи → reproduce → root cause → fix</td></tr>
+          <tr><td><strong>Gates</strong></td><td>Нет root cause — не фикси. DROP — спроси юзера</td></tr>
+          <tr><td><strong>Checklist</strong></td><td>Regression test обязателен</td></tr>
         </table>
       </div>
     </div>
     <blockquote class="fragment"><p><strong>Workflow</strong> = «сделай по шагам». <strong>Guard</strong> = «думай перед каждым действием».</p></blockquote>
-  </div>
+</div>
 </section>
 
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">.agents/skills/ — открытый стандарт Agent Skills</h2>
+    <div class="grid-2">
+      <div>
+        <div class="card red fragment">
+          <p>В команде разные инструменты → skills <strong>дублируются</strong> в <code>.claude/</code>, <code>.opencode/</code>, <code>.kilocode/</code></p>
+        </div>
+        <div class="tree fragment" style="margin-top:10px">
+          <code>.agents/skills/
+├── write-e2e-test/SKILL.md
+└── manual-qa/
+    ├── SKILL.md
+    └── examples/</code>
+        </div>
+      </div>
+      <div>
+        <div class="card green fragment">
+          <h3>Стандарт Agent Skills</h3>
+          <p>Спецификация <strong>agentskills.io</strong> — единый формат, <strong>30+ инструментов</strong>: Claude Code, OpenCode, Kilo Code, Roo Code, Cursor, Copilot, Gemini CLI</p>
+        </div>
+        <div class="card amber fragment" style="margin-top:10px">
+          <h3>Как работает</h3>
+          <ul>
+            <li>Инструменты сканируют <code>.agents/skills/</code> наряду со своими путями</li>
+            <li>Для rules — файл <code>AGENTS.md</code></li>
+            <li>Коммитится в Git — <code>git clone</code> и всё на месте</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Skill как папка: вынос примеров</h2>
+    <div class="grid-2">
+      <div>
+        <div class="tree fragment">
+          <code>.agents/skills/manual-qa/
+├── SKILL.md            ← description + шаги
+├── examples/
+│   ├── checkout-flow.md
+│   └── login-flow.md
+└── templates/
+    └── bug-report.md</code>
+        </div>
+        <div class="card teal fragment" style="margin-top:10px">
+          <h3>Зачем выносить примеры</h3>
+          <ul>
+            <li>Примеры на 500+ строк <strong>не загружаются</strong> при каждом запросе</li>
+            <li>Можно обновлять независимо от инструкций</li>
+            <li>Агент подгрузит только релевантный пример</li>
+            <li>Шаблоны используются как есть, без «пересказа»</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <h3>Как это работает</h3>
+        <p class="fragment">При старте агент читает только <strong>name + description</strong> из основного файла. Примеры не загружаются.</p>
+        <p class="fragment">Когда skill активирован, агент видит инструкцию:</p>
+<pre class="fragment"><code class="language-markdown">## Примеры
+Перед началом тестирования прочитай
+релевантный пример из `./examples/`.</code></pre>
+        <p class="fragment">Агент сам прочитает нужный файл — это просто <strong>чтение файла с диска</strong>.</p>
+        <blockquote class="fragment"><p>Никакой специальной поддержки не нужно. Любой агент умеет читать файлы — паттерн работает <strong>везде</strong>.</p></blockquote>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Публичные репозитории skills</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>skills.sh</h3>
+        <p>Открытый каталог ready-to-use skills. Издатели: Anthropic, Vercel, Microsoft и сообщество.</p>
+        <ul>
+          <li>Формат Agent Skills с frontmatter</li>
+          <li>Установка: <code>npx skills add &lt;owner/repo&gt;</code></li>
+          <li>Skill скачивается в <code>.agents/skills/</code></li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>neuraldeep.ru</h3>
+        <p>Русскоязычный агрегатор skills, MCP-серверов и AI-инструментов для <strong>российских сервисов</strong>.</p>
+        <ul>
+          <li>Яндекс, Битрикс24, 1C, GigaChat, Wildberries, YooKassa</li>
+          <li>Установка: <code>npx skillsbd add &lt;owner/repo&gt;</code></li>
+        </ul>
+      </div>
+    </div>
+    <div class="card rose fragment" style="margin-top:12px">
+      <h3>Как оценивать чужие skills</h3>
+      <ul class="two-col-list">
+        <li><strong>description</strong> — конкретный trigger, а не «helps with code»?</li>
+        <li><strong>Шаги</strong> — пронумерованный список действий?</li>
+        <li><strong>Примеры</strong> — привязаны к реальному стеку?</li>
+        <li><strong>Чеклист</strong> — есть критерии завершения?</li>
+        <li><strong>Безопасность</strong> — нет деструктивных команд?</li>
+        <li><strong>Итого:</strong> чужой skill — <em>отправная точка</em>, всегда адаптируй</li>
+      </ul>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Пример: skill для ручного QA-тестирования</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Основной файл: SKILL.md</h3>
+<pre><code class="language-yaml">---
+name: manual-qa-test
+description: >
+  Use when asked to manually test
+  a web feature or verify a user flow.
+---
+
+# Testing process
+For each step in the scenario:
+1. **Act** — perform user action
+2. **Observe** — check result:
+   - Page loaded? No console errors?
+   - UI matches expected state?
+3. **Screenshot** — capture state
+4. **Note** — record pass/fail
+
+# If a bug is found
+Create bug report from template:
+→ ./templates/bug-report.md
+
+## Completion checklist
+- [ ] All scenario steps executed
+- [ ] Screenshots taken
+- [ ] Console checked for errors
+- [ ] Bug reports filed
+- [ ] Summary: X passed, Y failed</code></pre>
+      </div>
+      <div>
+        <h3>Пример: examples/checkout-flow.md</h3>
+<pre class="fragment"><code class="language-markdown"># Тестирование оформления заказа
+
+## Предусловия
+- Пользователь авторизован
+- В корзине минимум 1 товар
+
+## Шаги
+1. Открыть корзину → проверить
+   список товаров и сумму
+2. Нажать «Оформить заказ» →
+   форма доставки отобразилась
+3. Заполнить адрес → валидация
+   работает (пустые поля, индекс)
+4. Выбрать оплату → сумма
+   пересчиталась с доставкой
+5. Нажать «Подтвердить» →
+   редирект на страницу успеха
+
+## Граничные случаи
+- Пустая корзина → кнопка
+  «Оформить» недоступна
+- Товар закончился → сообщение
+- Двойной клик → не дублируется</code></pre>
+        <blockquote class="fragment"><p>Skill описывает <strong>процесс</strong>, а не код. Агент с браузером может автоматизировать любую повторяемую процедуру.</p></blockquote>
+      </div>
+    </div>
+</div>
+</section>
 
 <section>
   <div class="slide-shell">
@@ -1422,7 +1629,7 @@ router.post('/[entity]',
         </ul>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <!-- ==================== РАЗДЕЛ 5: АНТИПАТТЕРНЫ ==================== -->
@@ -1431,7 +1638,7 @@ router.post('/[entity]',
     <span class="kicker">Раздел 05 · 6 мин</span>
     <h1>Антипаттерны</h1>
     <p class="cta">Топ-3 ошибки в промптах и правилах — и как их исправить</p>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1477,7 +1684,7 @@ router.post('/[entity]',
         <p class="note fragment">Фокус на критичном. Детали — в отдельных файлах по назначению.</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1512,7 +1719,7 @@ email отсутствует или невалиден.
         <p class="note fragment">Агент сам найдёт нужное место, адаптируется к текущему коду, проверит результат.</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1553,7 +1760,7 @@ try {
       </div>
     </div>
     <blockquote class="fragment"><p><strong>Шаблон:</strong> Правило + Почему + Пример правильно + Пример неправильно</p></blockquote>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1584,7 +1791,7 @@ try {
         <p class="note">Решение: ревью правил при смене зависимостей. Добавьте в чеклист обновления стека.</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <!-- ==================== ИТОГИ ==================== -->
@@ -1593,7 +1800,7 @@ try {
     <span class="kicker">Итоги</span>
     <h1>Ключевые выводы</h1>
     <p class="cta">Что забрать с собой из этой лекции</p>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1621,7 +1828,7 @@ try {
         <p><strong>Коммитьте в Git.</strong> Rules и Skills — часть проекта. Вся команда работает по одним стандартам.</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1631,7 +1838,7 @@ try {
       <div class="card teal">
         <h3>Задание 1: Rules</h3>
         <ul>
-          <li>Создайте rules для своего инструмента: <code>.roo/rules/</code>, <code>AGENTS.md</code> или <code>.zed/rules/</code></li>
+          <li>Создайте rules для своего инструмента: <code>.roo/rules/</code>, <code>AGENTS.md</code> или <code>.rules</code></li>
           <li>Опишите стек, стиль, архитектуру</li>
           <li>Добавьте 5-7 запретов (Forbidden)</li>
           <li>Закоммитьте в репозиторий</li>
@@ -1647,7 +1854,7 @@ try {
         </ul>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1659,7 +1866,7 @@ try {
       <a class="pill" href="../part1/">Слайды · Лекция 1</a>
       <a class="pill" href="../../">Главная</a>
     </div>
-  </div>
+</div>
 </section>
 
 <section>
@@ -1676,7 +1883,7 @@ try {
         <p class="note">Сканируйте QR или переходите по ссылке, чтобы получить обновления по следующим материалам.</p>
       </div>
     </div>
-  </div>
+</div>
 </section>
 
 </div>
