@@ -523,65 +523,26 @@ table.mini th {
   border-color: rgba(246, 164, 74, 0.7);
 }
 
-.deck-switcher {
+.back-home {
   position: fixed;
   top: 12px;
-  right: 14px;
+  left: 14px;
   z-index: 90;
   font-family: "Manrope", "Segoe UI", sans-serif;
-}
-
-.deck-switcher details {
-  position: relative;
-}
-
-.deck-switcher summary {
-  list-style: none;
-  cursor: pointer;
-  padding: 7px 11px;
+  text-decoration: none;
+  padding: 7px 13px;
   border-radius: 999px;
   border: 1px solid rgba(55, 214, 196, 0.45);
   background: rgba(14, 11, 10, 0.88);
   color: #f2e8d9;
   font-size: 12px;
-  user-select: none;
+  transition: border-color 0.2s, background 0.2s;
 }
 
-.deck-switcher summary::-webkit-details-marker {
-  display: none;
-}
-
-.deck-switcher-menu {
-  margin-top: 8px;
-  width: 270px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(12, 10, 9, 0.96);
-  padding: 8px;
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.42);
-}
-
-.deck-switcher a {
-  display: block;
-  text-decoration: none;
-  color: #d7c5ae;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  padding: 8px 9px;
-  font-size: 12px;
-  line-height: 1.35;
-}
-
-.deck-switcher a:hover {
-  color: #fff3e0;
-  border-color: rgba(246, 164, 74, 0.55);
-  background: rgba(246, 164, 74, 0.1);
-}
-
-.deck-switcher a.active {
+.back-home:hover {
+  border-color: rgba(55, 214, 196, 0.8);
+  background: rgba(55, 214, 196, 0.12);
   color: #ffffff;
-  border-color: rgba(55, 214, 196, 0.6);
-  background: rgba(55, 214, 196, 0.15);
 }
 
 @media (max-width: 1100px) {
@@ -612,18 +573,7 @@ table.mini th {
 </style>
 </head>
 <body>
-<nav class="deck-switcher" aria-label="Выбор презентации">
-  <details>
-    <summary>Презентации</summary>
-    <div class="deck-switcher-menu">
-      <a href="../part1/">Слайды · Лекция 1</a>
-      <a href="./" class="active">Слайды · Лекция 2</a>
-      <a href="../../reading/?part=part1_vibecoding">Конспект · Лекция 1</a>
-      <a href="../../reading/?part=part2_prompt_engineering">Конспект · Лекция 2</a>
-      <a href="../../">Главная</a>
-    </div>
-  </details>
-</nav>
+<a class="back-home" href="../../">← На главную</a>
 <div class="reveal">
 <div class="slides">
 
