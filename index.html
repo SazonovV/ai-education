@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AIpresentation</title>
+<title>AI Engineering Course</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@600;700&display=swap" rel="stylesheet">
@@ -16,6 +17,8 @@
   --muted: #c7b095;
   --teal: #38d7c5;
   --amber: #f6a54b;
+  --rose: #e8657a;
+  --green: #5ec269;
 }
 
 * { box-sizing: border-box; }
@@ -29,36 +32,111 @@ body {
     radial-gradient(circle at 90% 10%, rgba(246,165,75,0.14), transparent 28%),
     linear-gradient(145deg, #090807 0%, #0f0d0c 55%, #090807 100%);
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 26px 18px;
+  padding: 40px 18px;
 }
 
 .shell {
   width: min(1120px, 100%);
+  margin: 0 auto;
 }
 
 h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
 
-.head {
-  text-align: center;
-  margin-bottom: 18px;
+/* ---- Author ---- */
+.author {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 32px;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(31,24,20,0.85), rgba(16,13,11,0.95));
 }
 
-.head h1 {
-  font-size: clamp(30px, 5vw, 52px);
+.author-photo {
+  width: 140px;
+  height: 140px;
+  border-radius: 16px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.author-info h2 {
+  font-size: 22px;
+  margin-bottom: 4px;
+}
+
+.author-info .role {
+  color: var(--teal);
+  font-weight: 600;
+  font-size: 14px;
   margin-bottom: 8px;
 }
 
-.head p {
-  margin: 0;
+.author-info .bio {
   color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+  margin: 0 0 10px;
 }
 
+.tg-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(56,215,197,0.45);
+  background: rgba(56,215,197,0.08);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.tg-link:hover {
+  border-color: rgba(56,215,197,0.8);
+  background: rgba(56,215,197,0.14);
+}
+
+/* ---- Intro ---- */
+.intro {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.intro h1 {
+  font-size: clamp(30px, 5vw, 48px);
+  margin-bottom: 12px;
+}
+
+.intro p {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+/* ---- Section headings ---- */
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+/* ---- Lecture grid ---- */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
+  margin-bottom: 32px;
 }
 
 .card {
@@ -66,19 +144,33 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
   border-top: 3px solid var(--teal);
   border-radius: 16px;
   background: linear-gradient(145deg, rgba(31,24,20,0.92), rgba(20,16,13,0.96));
-  padding: 14px;
+  padding: 16px;
 }
 
-.card h2 {
-  font-size: 20px;
+.card h3 {
+  font-size: 17px;
   margin-bottom: 6px;
 }
 
 .card p {
   margin: 0 0 12px;
   color: var(--muted);
+  font-size: 14px;
   line-height: 1.5;
 }
+
+.card .complexity {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  margin-bottom: 8px;
+}
+
+.complexity.low { background: rgba(94,194,105,0.18); color: var(--green); }
+.complexity.mid { background: rgba(246,165,75,0.18); color: var(--amber); }
+.complexity.high { background: rgba(232,101,122,0.18); color: var(--rose); }
 
 .row {
   display: flex;
@@ -90,11 +182,17 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
   text-decoration: none;
   color: #f9f2e8;
   font-weight: 600;
-  font-size: 14px;
-  padding: 8px 12px;
+  font-size: 13px;
+  padding: 7px 12px;
   border-radius: 999px;
   border: 1px solid rgba(56,215,197,0.55);
   background: rgba(56,215,197,0.08);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn:hover {
+  border-color: rgba(56,215,197,0.85);
+  background: rgba(56,215,197,0.16);
 }
 
 .btn.secondary {
@@ -102,8 +200,35 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
   background: rgba(246,165,75,0.08);
 }
 
+.btn.secondary:hover {
+  border-color: rgba(246,165,75,0.85);
+  background: rgba(246,165,75,0.16);
+}
+
+/* ---- Planned cards ---- */
+.card.planned {
+  border-top-color: var(--line);
+  opacity: 0.7;
+}
+
+.card.planned h3 {
+  color: var(--muted);
+}
+
+.badge-planned {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* ---- Footer ---- */
 .footer {
-  margin-top: 12px;
+  margin-top: 20px;
   text-align: center;
   color: #9d886f;
   font-size: 13px;
@@ -111,37 +236,109 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
 
 @media (max-width: 900px) {
   .grid { grid-template-columns: 1fr; }
+  .author { grid-template-columns: 100px 1fr; gap: 16px; padding: 16px; }
+  .author-photo { width: 100px; height: 100px; }
 }
 </style>
 </head>
 <body>
   <main class="shell">
-    <header class="head">
-      <h1>AIpresentation</h1>
-      <p>Навигация по презентациям и красиво оформленным конспектам</p>
-    </header>
 
+    <section class="intro">
+      <h1>AI Engineering Course</h1>
+      <p>Вайбкодинг плотно входит в нашу жизнь, и надеюсь этот набор конспектов и презентаций поможет вам лучше разобраться в материале.</p>
+    </section>
+
+    <section class="author">
+      <img class="author-photo" src="./assets/avatar.jpg" alt="Владислав Сазонов">
+      <div class="author-info">
+        <h2>Владислав Сазонов</h2>
+        <div class="role">Head of Frontend в СиВ · ИИ Евангелист</div>
+        <p class="bio">Исследую как AI-агенты меняют процесс разработки — от вайбкодинга до мультиагентных систем. Делюсь практикой, инструментами и ошибками.</p>
+        <a class="tg-link" href="https://t.me/SazonovMaybeTalks" target="_blank" rel="noopener noreferrer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.53 8.15l-1.78 8.38c-.13.6-.48.74-.98.46l-2.7-1.99-1.3 1.26c-.15.15-.27.27-.55.27l.19-2.74 5-4.52c.22-.19-.05-.3-.34-.12l-6.18 3.89-2.66-.83c-.58-.18-.59-.58.12-.86l10.4-4.01c.48-.18.9.12.74.86z"/></svg>
+          SazonovMaybeTalks
+        </a>
+      </div>
+    </section>
+
+    <div class="section-label">Готовые лекции</div>
     <section class="grid">
       <article class="card">
-        <h2>Лекция 1 · Вайбкодинг</h2>
-        <p>Вводная часть: что такое vibe coding, где полезен, как избежать типовых ошибок и быстро получать результат.</p>
+        <span class="complexity low">Низкая сложность</span>
+        <h3>Лекция 1 · Введение в вайбкодинг</h3>
+        <p>Что такое vibe coding, живое демо, границы подхода, Git как страховка, безопасность секретов.</p>
         <div class="row">
-          <a class="btn" href="./presentations/part1/">Открыть презентацию</a>
-          <a class="btn secondary" href="./reading/?part=part1_vibecoding">Читать конспект</a>
+          <a class="btn" href="./presentations/part1/">Презентация</a>
+          <a class="btn secondary" href="./reading/?part=part1_vibecoding">Конспект</a>
         </div>
       </article>
 
       <article class="card" style="border-top-color: var(--amber)">
-        <h2>Лекция 2 · Prompt Engineering, Skills & Rules</h2>
-        <p>От чата к Agentic Engineering: system prompt, chain-of-thought, rules, skills, антипаттерны.</p>
+        <span class="complexity mid">Средняя сложность</span>
+        <h3>Лекция 2 · Prompt Engineering, Skills & Rules</h3>
+        <p>От чата к агентному подходу: system prompt, chain-of-thought, rules, skills, антипаттерны.</p>
         <div class="row">
-          <a class="btn" href="./presentations/part2/">Открыть презентацию</a>
-          <a class="btn secondary" href="./reading/?part=part2_prompt_engineering">Читать конспект</a>
+          <a class="btn" href="./presentations/part2/">Презентация</a>
+          <a class="btn secondary" href="./reading/?part=part2_prompt_engineering">Конспект</a>
+        </div>
+      </article>
+
+    </section>
+
+    <div class="section-label">В работе</div>
+    <section class="grid">
+      <article class="card" style="border-top-color: var(--rose)">
+        <span class="complexity high">Высокая сложность</span>
+        <h3>Лекция 3 · Tools и MCP</h3>
+        <p>Кастомные инструменты, tool calling, MCP-протокол, подключение внешних сервисов, критерии выбора.</p>
+        <div class="row">
+          <a class="btn" href="./presentations/part3/">Презентация</a>
+          <a class="btn secondary" href="./reading/?part=part3_tools_mcp">Конспект</a>
         </div>
       </article>
     </section>
 
-    <p class="footer">Основное меню: лекции 1 и 2.</p>
+    <div class="section-label">Планируются</div>
+    <section class="grid">
+      <article class="card planned">
+        <span class="complexity high">Высокая сложность</span>
+        <h3>Лекция 4 · Субагенты, оркестрация и Hooks</h3>
+        <p>Делегирование задач, жизненный цикл субагента, декомпозиция, pre/post-action хуки.</p>
+      </article>
+
+      <article class="card planned">
+        <span class="complexity mid">Средняя сложность</span>
+        <h3>Лекция 5 · Безопасность агентов</h3>
+        <p>Prompt injection, MCP-уязвимости, утечки секретов, sandboxing, план реагирования на инцидент.</p>
+      </article>
+
+      <article class="card planned">
+        <span class="complexity mid">Средняя сложность</span>
+        <h3>Лекция 6 · Context Management</h3>
+        <p>Контекстное окно, что съедает токены, summarization, pruning, compact-режимы.</p>
+      </article>
+
+      <article class="card planned">
+        <span class="complexity mid">Средняя сложность</span>
+        <h3>Лекция 7 · RAG</h3>
+        <p>Embedding, vector store, retrieval — собираем RAG руками, подключаем к агенту.</p>
+      </article>
+
+      <article class="card planned">
+        <span class="complexity mid">Средняя сложность</span>
+        <h3>Лекция 8 · Debugging и наблюдаемость</h3>
+        <p>Чтение agent loop, трейсинг, живой разбор сломанного сценария, чекпоинты и откаты.</p>
+      </article>
+
+      <article class="card planned">
+        <span class="complexity high">Высокая сложность</span>
+        <h3>Лекция 9 · Agent Team</h3>
+        <p>Мультиагентные архитектуры: оркестратор, peer-to-peer, pipeline. Собираем команду агентов.</p>
+      </article>
+    </section>
+
+    <p class="footer">9 лекций · от вайбкодинга до мультиагентных систем</p>
   </main>
 </body>
 </html>

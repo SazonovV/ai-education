@@ -12,5 +12,12 @@
     "description": "От чата к Agentic Engineering: system prompt, chain-of-thought, rules, skills, антипаттерны",
     "file": "part2_prompt_engineering.md",
     "slides": "../presentations/part2/"
+  },
+  {
+    "id": "part3_tools_mcp",
+    "title": "Лекция 3 · Tools и MCP",
+    "description": "Кастомные инструменты, tool calling, MCP-протокол, подключение внешних сервисов, критерии выбора",
+    "file": "part3_tools_mcp.md",
+    "slides": "../presentations/part3/"
   }
 ]

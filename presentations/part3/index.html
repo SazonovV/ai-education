@@ -1,0 +1,1584 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107242055', 'ym');
+
+    ym(107242055, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/107242055" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<title>Tools и MCP · Лекция 3</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/theme/black.min.css" id="theme">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/monokai.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #090707;
+  --card: #151110;
+  --card-soft: #1d1715;
+  --text: #f6efe4;
+  --muted: #c4ae94;
+  --line: #4a3c32;
+  --teal: #37d6c4;
+  --amber: #f6a44a;
+  --rose: #f6757f;
+  --green: #53d36f;
+  --red: #ff6a6a;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+.reveal {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(55, 214, 196, 0.12), transparent 36%),
+    radial-gradient(circle at 88% 8%, rgba(246, 164, 74, 0.18), transparent 32%),
+    radial-gradient(circle at 74% 84%, rgba(246, 117, 127, 0.12), transparent 36%),
+    linear-gradient(145deg, #0a0808 0%, #110f0d 50%, #0a0807 100%);
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  font-family: "Unbounded", "Manrope", sans-serif;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 0.34em;
+}
+
+.reveal h1 {
+  font-size: 2.3em;
+  color: #fff7ea;
+}
+
+.reveal h2 {
+  font-size: 1.32em;
+  color: var(--teal);
+}
+
+.reveal h3 {
+  font-size: 0.95em;
+  color: #ffe9c8;
+}
+
+.reveal p,
+.reveal li {
+  font-size: 0.62em;
+  color: var(--muted);
+  line-height: 1.52;
+}
+
+.reveal strong {
+  color: #fff8ee;
+}
+
+.reveal em {
+  color: var(--teal);
+  font-style: normal;
+}
+
+.reveal a {
+  color: var(--teal);
+}
+
+.reveal pre {
+  width: 100%;
+  box-shadow: none;
+  margin: 0.3em 0;
+}
+
+.reveal pre code {
+  max-height: 440px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #0f0c0b;
+  padding: 0.9em;
+  font-size: 0.58em;
+  line-height: 1.48;
+}
+
+.reveal blockquote {
+  width: 100%;
+  margin: 0.35em 0;
+  padding: 0.45em 0.7em;
+  border-left: 4px solid var(--amber);
+  border-radius: 0 10px 10px 0;
+  background: rgba(246, 164, 74, 0.08);
+}
+
+.reveal blockquote p {
+  margin: 0;
+  color: #e7d8c6;
+}
+
+.slide-shell,
+.chapter-shell {
+  min-height: 620px;
+  border: 1px solid rgba(255, 241, 224, 0.14);
+  border-radius: 22px;
+  padding: 22px 26px;
+  background:
+    linear-gradient(160deg, rgba(32, 24, 20, 0.88), rgba(17, 13, 11, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 24px 48px rgba(0, 0, 0, 0.38);
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-shell::before,
+.chapter-shell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--teal), var(--amber), transparent);
+  opacity: 0.7;
+}
+
+.chapter-shell {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.4);
+  font-size: 0.42em;
+  letter-spacing: 0.08em;
+  color: #d8f9f3;
+  text-transform: uppercase;
+}
+
+.kicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 0 6px rgba(55, 214, 196, 0.2);
+}
+
+.hero-title {
+  font-size: 3.05em;
+  margin: 0 0 0.24em;
+}
+
+.hero-sub {
+  font-size: 1.1em;
+  color: var(--teal);
+  margin: 0 0 0.32em;
+}
+
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.48em;
+  color: #e6d4bd;
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  transition: border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.pill:hover {
+  color: #fff6e7;
+  border-color: rgba(55, 214, 196, 0.48);
+  transform: translateY(-1px);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.cards {
+  display: grid;
+  gap: 10px;
+}
+
+.cards.c2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.cards.c3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-top: 3px solid var(--teal);
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.card p,
+.card li {
+  font-size: 0.56em;
+}
+
+.card h3 {
+  margin: 0 0 0.34em;
+  font-size: 0.78em;
+}
+
+.card ul {
+  margin: 0.2em 0 0;
+  padding-left: 1.1em;
+}
+
+.card.teal {
+  border-top-color: var(--teal);
+}
+
+.card.amber {
+  border-top-color: var(--amber);
+}
+
+.card.rose {
+  border-top-color: var(--rose);
+}
+
+.card.green {
+  border-top-color: var(--green);
+}
+
+.card.red {
+  border-top-color: var(--red);
+}
+
+.section-title {
+  margin-bottom: 0.74em;
+}
+
+.note {
+  font-size: 0.5em;
+  color: #9f8d77;
+}
+
+.process {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.process-5 {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.step {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  text-align: center;
+}
+
+.step h4 {
+  margin: 0;
+  font-size: 0.6em;
+  color: var(--teal);
+}
+
+.step p {
+  margin: 0.2em 0 0;
+  font-size: 0.48em;
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  color: #9e8b75;
+  font-size: 1.1em;
+}
+
+.table-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table.mini {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.49em;
+}
+
+table.mini th,
+table.mini td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+table.mini th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--teal);
+}
+
+.intro-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.photo {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 7px;
+  background: #0d0a09;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.fallback {
+  display: none;
+  text-align: center;
+  color: #b8a189;
+  font-size: 0.54em;
+}
+
+.vs-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.vs-label {
+  text-align: center;
+  font-size: 0.52em;
+  font-weight: 700;
+  padding: 4px 0 6px;
+  border-radius: 8px 8px 0 0;
+}
+
+.vs-label.bad {
+  color: var(--red);
+  background: rgba(255, 106, 106, 0.08);
+}
+
+.vs-label.good {
+  color: var(--green);
+  background: rgba(83, 211, 111, 0.08);
+}
+
+.cta {
+  font-size: 0.66em;
+  color: #e8d8c2;
+}
+
+.layer-diagram {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  text-align: center;
+}
+
+.layer {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 14px 16px;
+  position: relative;
+}
+
+.layer h4 {
+  margin: 0;
+  font-size: 0.68em;
+}
+
+.layer p {
+  margin: 0.15em 0 0;
+  font-size: 0.48em;
+}
+
+.layer.l-agent {
+  background: rgba(55, 214, 196, 0.08);
+  border-color: rgba(55, 214, 196, 0.35);
+  border-radius: 12px 12px 0 0;
+}
+
+.layer.l-agent h4 { color: var(--teal); }
+
+.layer.l-tools {
+  background: rgba(246, 164, 74, 0.08);
+  border-color: rgba(246, 164, 74, 0.35);
+}
+
+.layer.l-tools h4 { color: var(--amber); }
+
+.layer.l-mcp {
+  background: rgba(246, 117, 127, 0.08);
+  border-color: rgba(246, 117, 127, 0.35);
+}
+
+.layer.l-mcp h4 { color: var(--rose); }
+
+.layer.l-world {
+  background: rgba(83, 211, 111, 0.08);
+  border-color: rgba(83, 211, 111, 0.35);
+  border-radius: 0 0 12px 12px;
+}
+
+.layer.l-world h4 { color: var(--green); }
+
+.layer-arrow {
+  text-align: center;
+  color: #9e8b75;
+  font-size: 0.7em;
+  padding: 2px 0;
+}
+
+.promo-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.promo-photo-box,
+.promo-qr-box {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  padding: 12px;
+}
+
+.promo-photo-box {
+  display: grid;
+  align-items: stretch;
+}
+
+.promo-photo-box img {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.promo-qr-box {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.promo-qr-box h3 {
+  margin: 0;
+}
+
+.promo-qr-box img {
+  width: min(320px, 100%);
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #fff;
+  padding: 8px;
+}
+
+.promo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.55);
+  color: #f5eee4;
+  text-decoration: none;
+  font-size: 0.56em;
+}
+
+.promo-link:hover {
+  border-color: rgba(246, 164, 74, 0.7);
+}
+
+.back-home {
+  position: fixed;
+  top: 12px;
+  left: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  text-decoration: none;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.45);
+  background: rgba(14, 11, 10, 0.88);
+  color: #f2e8d9;
+  font-size: 12px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.back-home:hover {
+  border-color: rgba(55, 214, 196, 0.8);
+  background: rgba(55, 214, 196, 0.12);
+  color: #ffffff;
+}
+
+@media (max-width: 1100px) {
+  .grid-2,
+  .grid-3,
+  .cards.c2,
+  .cards.c3,
+  .vs-layout,
+  .promo-layout,
+  .intro-layout,
+  .process,
+  .process-5 {
+    grid-template-columns: 1fr;
+  }
+
+  .process .arrow,
+  .process-5 .arrow {
+    display: none;
+  }
+
+  .slide-shell,
+  .chapter-shell {
+    min-height: auto;
+  }
+}
+</style>
+</head>
+<body>
+<a class="back-home" href="../../">← На главную</a>
+<div class="reveal">
+<div class="slides">
+
+<!-- ==================== TITLE ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Лекция 3</span>
+    <h1 class="hero-title">Tools и MCP</h1>
+    <p class="hero-sub">Как расширять возможности агента</p>
+    <div class="meta-row">
+      <span class="pill">Фокус: кастомные инструменты и протокол MCP</span>
+    </div>
+</div>
+</section>
+
+<!-- ==================== ПРЕДСТАВЛЕНИЕ ==================== -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Представление</h2>
+    <div class="intro-layout">
+      <div class="photo">
+        <img src="../../assets/avatar.jpg" alt="Аватар спикера" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <div class="fallback">Добавьте фото по пути <code>../../assets/avatar.jpg</code></div>
+      </div>
+      <div class="card teal">
+        <h3>Кто выступает</h3>
+        <ul>
+          <li>ГТЛ в направлении СиВ</li>
+          <li>Процессный менеджер во Взыскании</li>
+          <li>ИИ Евангелист</li>
+          <li>Человек с веником в ...кхм голове (с) по мнению коллег</li>
+        </ul>
+        <p class="note">Формат: tools, MCP-протокол, интеграция агента с внешним миром.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- ==================== СОДЕРЖАНИЕ ==================== -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Содержание</h2>
+    <div class="cards c3">
+      <div class="card teal"><h3>1. Два слоя расширения</h3><p>Tools (действия) и MCP (протокол) — общая архитектура</p><p class="note">5 мин</p></div>
+      <div class="card amber"><h3>2. Tools</h3><p>Кастомные инструменты, tool calling, как написать свой tool</p><p class="note">15 мин</p></div>
+      <div class="card rose"><h3>3. MCP</h3><p>Протокол, серверы, подключение внешних сервисов</p><p class="note">15 мин</p></div>
+      <div class="card green"><h3>4. Tool vs MCP</h3><p>Когда хватит tool, а когда нужен MCP — критерии выбора</p><p class="note">5 мин</p></div>
+      <div class="card amber"><h3>5. Превью</h3><p>Следующая лекция: субагенты и оркестрация</p><p class="note">5 мин</p></div>
+    </div>
+</div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 1: ДВА СЛОЯ РАСШИРЕНИЯ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 01 · 5 мин</span>
+    <h1>Два слоя расширения</h1>
+    <p class="cta">Tools — действия агента. MCP — протокол связи с внешним миром.</p>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Зачем агенту расширения</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Без tools</h3>
+        <ul>
+          <li>Агент может только генерировать текст</li>
+          <li>Не видит файловую систему</li>
+          <li>Не запускает команды</li>
+          <li>Не обращается к API</li>
+        </ul>
+        <p class="note">По сути — чат-бот</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>С tools</h3>
+        <ul>
+          <li>Читает и пишет файлы</li>
+          <li>Запускает терминал</li>
+          <li>Ищет по кодовой базе</li>
+          <li>Взаимодействует с браузером, БД, API</li>
+        </ul>
+        <p class="note">Полноценный агент, действующий в реальном мире</p>
+      </div>
+    </div>
+    <blockquote class="fragment"><p>Tools превращают <strong>генератор текста</strong> в <strong>агента</strong>, способного действовать.</p></blockquote>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Архитектура: 4 слоя</h2>
+    <div class="grid-2">
+      <div class="layer-diagram">
+        <div class="layer l-agent fragment"><h4>Агент (LLM)</h4><p>Думает, планирует, решает какой tool вызвать</p></div>
+        <div class="layer-arrow">↕</div>
+        <div class="layer l-tools fragment"><h4>Tools (встроенные + кастомные)</h4><p>Read, Edit, Bash, Search + ваши собственные</p></div>
+        <div class="layer-arrow">↕</div>
+        <div class="layer l-mcp fragment"><h4>MCP (протокол)</h4><p>JSON-RPC мост к внешним серверам</p></div>
+        <div class="layer-arrow">↕</div>
+        <div class="layer l-world fragment"><h4>Внешний мир</h4><p>GitHub, Jira, Slack, БД, браузер, любой API</p></div>
+      </div>
+      <div>
+        <div class="card teal fragment">
+          <h3>Tools</h3>
+          <ul>
+            <li>Работают <strong>внутри</strong> процесса агента</li>
+            <li>Определены хостом (IDE, CLI)</li>
+            <li>Быстрые, синхронные</li>
+            <li>Примеры: Read, Edit, Bash, Glob</li>
+          </ul>
+        </div>
+        <div class="card rose fragment" style="margin-top:10px">
+          <h3>MCP</h3>
+          <ul>
+            <li>Работают <strong>снаружи</strong> — отдельный процесс/сервер</li>
+            <li>Стандартный протокол (JSON-RPC)</li>
+            <li>Переиспользуемые между агентами</li>
+            <li>Примеры: GitHub MCP, Playwright MCP, Sentry MCP</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Как агент вызывает tool</h2>
+    <div class="process">
+      <div class="step fragment"><h4>1. Задача</h4><p>Пользователь даёт задачу</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>2. Think</h4><p>LLM решает, какой tool нужен</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>3. Tool Call</h4><p>Отправляет JSON с именем tool и параметрами</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>4. Result</h4><p>Получает результат, решает: продолжить или завершить</p></div>
+    </div>
+    <pre class="fragment" style="margin-top:14px"><code class="language-json">{
+  "type": "tool_use",
+  "name": "Read",
+  "input": {
+    "file_path": "/src/app.ts",
+    "limit": 50
+  }
+}</code></pre>
+    <blockquote class="fragment"><p>Агент <strong>не выполняет</strong> tool — он отправляет <strong>запрос</strong>. Хост (IDE, CLI) выполняет и возвращает результат.</p></blockquote>
+</div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 2: TOOLS ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 02 · 15 мин</span>
+    <h1>Tools</h1>
+    <p class="cta">Встроенные инструменты, tool calling, как создать свой tool</p>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Встроенные tools: что есть из коробки</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>Файловая система</h3>
+        <ul>
+          <li><strong>Read</strong> — прочитать файл</li>
+          <li><strong>Edit</strong> — точечная правка</li>
+          <li><strong>Write</strong> — создать/перезаписать файл</li>
+          <li><strong>Glob</strong> — найти файлы по паттерну</li>
+          <li><strong>Grep</strong> — поиск по содержимому</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Исполнение</h3>
+        <ul>
+          <li><strong>Bash</strong> — терминальные команды</li>
+          <li><strong>Agent</strong> — запуск субагентов</li>
+          <li><strong>Notebook</strong> — ячейки Jupyter</li>
+        </ul>
+        <p class="note">Bash — самый мощный и самый опасный tool</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Навигация</h3>
+        <ul>
+          <li><strong>WebSearch</strong> — поиск в интернете</li>
+          <li><strong>WebFetch</strong> — загрузка страниц</li>
+          <li><strong>LSP</strong> — навигация по коду (go to definition, find references)</li>
+        </ul>
+        <p class="note">Набор зависит от хоста: CLI, VS Code, JetBrains</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Как LLM выбирает tool</h2>
+    <div class="grid-2">
+      <div>
+        <div class="card teal fragment">
+          <h3>Что видит модель</h3>
+          <ul>
+            <li><strong>name</strong> — имя инструмента</li>
+            <li><strong>description</strong> — текстовое описание: когда и зачем использовать</li>
+            <li><strong>parameters</strong> — JSON Schema входных параметров</li>
+          </ul>
+          <p class="note">Description — главный фактор выбора. Если описание плохое — tool не будет вызван</p>
+        </div>
+        <div class="card amber fragment" style="margin-top:10px">
+          <h3>Процесс выбора</h3>
+          <ul>
+            <li>LLM читает описания всех доступных tools</li>
+            <li>Сопоставляет с текущей задачей</li>
+            <li>Генерирует <strong>structured output</strong>: имя tool + параметры</li>
+            <li>Может вызвать несколько tools параллельно</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+<pre class="fragment"><code class="language-json">{
+  "name": "Read",
+  "description": "Reads a file from the filesystem.
+    Use this to read files before editing.
+    Returns content with line numbers.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "file_path": {
+        "type": "string",
+        "description": "Absolute path to file"
+      },
+      "offset": {
+        "type": "number",
+        "description": "Start line number"
+      },
+      "limit": {
+        "type": "number",
+        "description": "Number of lines to read"
+      }
+    },
+    "required": ["file_path"]
+  }
+}</code></pre>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Анатомия tool definition</h2>
+    <div class="grid-2">
+      <div>
+<pre><code class="language-json">{
+  "name": "get_weather",
+  "description": "Get current weather for a city.
+    Use when user asks about weather
+    or needs temperature data.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "city": {
+        "type": "string",
+        "description": "City name, e.g. Moscow"
+      },
+      "units": {
+        "type": "string",
+        "enum": ["celsius", "fahrenheit"],
+        "description": "Temperature units"
+      }
+    },
+    "required": ["city"]
+  }
+}</code></pre>
+      </div>
+      <div>
+        <div class="card teal fragment">
+          <h3>name</h3>
+          <p>Короткое, понятное. snake_case. Модель использует для идентификации.</p>
+        </div>
+        <div class="card amber fragment" style="margin-top:8px">
+          <h3>description</h3>
+          <p>Самая важная часть. Должно быть ясно <strong>когда</strong> вызывать. Плохое описание = tool не используется.</p>
+        </div>
+        <div class="card rose fragment" style="margin-top:8px">
+          <h3>input_schema</h3>
+          <p>JSON Schema параметров. <code>description</code> у каждого поля помогает модели заполнить правильно.</p>
+        </div>
+        <div class="card green fragment" style="margin-top:8px">
+          <h3>required</h3>
+          <p>Обязательные параметры. Всё остальное — optional с дефолтами.</p>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Как написать хороший description</h2>
+    <div class="vs-layout">
+      <div>
+        <div class="vs-label bad">Плохо</div>
+<pre><code class="language-json">{
+  "name": "db_query",
+  "description": "Queries the database"
+}</code></pre>
+        <div class="card red fragment" style="margin-top:8px">
+          <h3>Проблемы</h3>
+          <ul>
+            <li>Не ясно, когда использовать</li>
+            <li>Какую БД? Какие запросы?</li>
+            <li>Модель не знает ограничений</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="vs-label good">Хорошо</div>
+<pre><code class="language-json">{
+  "name": "db_query",
+  "description": "Execute a read-only SQL
+    query against the PostgreSQL
+    analytics database. Use when
+    user asks about metrics, user
+    counts, or revenue data.
+    Returns max 100 rows.
+    Do NOT use for mutations."
+}</code></pre>
+        <div class="card green fragment" style="margin-top:8px">
+          <h3>Почему работает</h3>
+          <ul>
+            <li>Ясно: read-only, PostgreSQL, analytics</li>
+            <li>Когда: metrics, user counts, revenue</li>
+            <li>Ограничения: max 100, no mutations</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Tool calling в Claude API</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Запрос</h3>
+<pre><code class="language-python">import anthropic
+
+client = anthropic.Anthropic()
+
+response = client.messages.create(
+    model="claude-sonnet-4-6",
+    max_tokens=1024,
+    tools=[{
+        "name": "get_weather",
+        "description": "Get current weather",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "city": {"type": "string"}
+            },
+            "required": ["city"]
+        }
+    }],
+    messages=[{
+        "role": "user",
+        "content": "Какая погода в Москве?"
+    }]
+)</code></pre>
+      </div>
+      <div>
+        <h3>Ответ модели</h3>
+<pre class="fragment"><code class="language-json">{
+  "role": "assistant",
+  "content": [
+    {
+      "type": "tool_use",
+      "id": "toolu_01A...",
+      "name": "get_weather",
+      "input": {"city": "Moscow"}
+    }
+  ],
+  "stop_reason": "tool_use"
+}</code></pre>
+        <div class="card amber fragment" style="margin-top:8px">
+          <h3>Что дальше</h3>
+          <ul>
+            <li>Ваш код выполняет запрос к Weather API</li>
+            <li>Результат отправляется обратно как <code>tool_result</code></li>
+            <li>Модель формирует финальный ответ</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Полный цикл tool use</h2>
+    <div class="process-5">
+      <div class="step fragment"><h4>User</h4><p>«Погода в Москве?»</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>LLM</h4><p>tool_use: get_weather({city: "Moscow"})</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>Ваш код</h4><p>Вызывает Weather API → получает данные</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>tool_result</h4><p>{temp: -5, condition: "snow"}</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>LLM</h4><p>«В Москве −5°C, идёт снег»</p></div>
+    </div>
+    <blockquote class="fragment" style="margin-top:14px"><p>Модель <strong>никогда</strong> не вызывает API напрямую. Она <strong>просит</strong> ваш код сделать это и получает результат.</p></blockquote>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Демо: создаём кастомный tool</h2>
+    <div class="cards c2">
+      <div class="card teal">
+        <h3>Задача</h3>
+        <p>Создать tool, который проверяет статус HTTP-эндпоинта и возвращает код ответа, время и заголовки.</p>
+        <ul>
+          <li>Имя: <code>check_endpoint</code></li>
+          <li>Параметры: <code>url</code>, <code>method</code></li>
+          <li>Результат: status, latency, headers</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>План демо</h3>
+        <ul>
+          <li>Определяем tool definition (JSON Schema)</li>
+          <li>Пишем обработчик на Python</li>
+          <li>Подключаем к Claude API</li>
+          <li>Тестируем: «Проверь, работает ли api.example.com»</li>
+          <li>Показываем весь цикл: user → LLM → tool → result → ответ</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote><p><strong>Живое демо</strong> — создаём инструмент с нуля за 5 минут</p></blockquote>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Паттерны работы с tools</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>Параллельный вызов</h3>
+        <ul>
+          <li>Модель может запросить несколько tools одновременно</li>
+          <li>Хост выполняет параллельно</li>
+          <li>Результаты возвращаются пакетом</li>
+        </ul>
+        <p class="note">Ускоряет работу в 2-5 раз</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Цепочка вызовов</h3>
+        <ul>
+          <li>Результат одного tool → вход другого</li>
+          <li>Read файл → Edit файл → Bash (запуск тестов)</li>
+          <li>Модель сама строит цепочку</li>
+        </ul>
+        <p class="note">Это и есть agentic loop</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Fallback</h3>
+        <ul>
+          <li>Если tool вернул ошибку — модель пробует другой подход</li>
+          <li>Grep не нашёл → Glob → Read</li>
+          <li>Bash failed → анализирует stderr → исправляет</li>
+        </ul>
+        <p class="note">Устойчивость = intelligence</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 3: MCP ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 03 · 15 мин</span>
+    <h1>MCP</h1>
+    <p class="cta">Model Context Protocol — стандарт подключения агента к внешнему миру</p>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Что такое MCP</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Суть</h3>
+        <ul>
+          <li><strong>Model Context Protocol</strong> — открытый стандарт от Anthropic</li>
+          <li>JSON-RPC 2.0 между агентом и внешними сервисами</li>
+          <li>Аналогия: <strong>USB для AI</strong> — один протокол, любое устройство</li>
+          <li>Поддержка: Claude Code, VS Code, Cursor, Roo Code, Zed...</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Зачем</h3>
+        <ul>
+          <li>До MCP: каждая интеграция — уникальный код</li>
+          <li>С MCP: один сервер → работает во всех агентах</li>
+          <li>Сообщество: 1000+ готовых серверов</li>
+          <li>Безопасность: изоляция, permissions, audit</li>
+        </ul>
+        <p class="note">mcp.so, awesome-mcp-servers — каталоги</p>
+      </div>
+    </div>
+    <blockquote class="fragment"><p>MCP решает проблему <strong>M×N интеграций</strong>. Вместо M агентов × N сервисов — один протокол для всех.</p></blockquote>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Архитектура MCP</h2>
+    <div class="grid-2">
+      <div>
+        <div class="process" style="grid-template-columns: 1fr auto 1fr auto 1fr;">
+          <div class="step fragment"><h4>Host</h4><p>Claude Code, VS Code, Cursor</p></div>
+          <div class="arrow">↔</div>
+          <div class="step fragment"><h4>Client</h4><p>MCP Client внутри хоста</p></div>
+          <div class="arrow">↔</div>
+          <div class="step fragment"><h4>Server</h4><p>MCP Server (отдельный процесс)</p></div>
+        </div>
+        <div class="card teal fragment" style="margin-top:12px">
+          <h3>Транспорт</h3>
+          <ul>
+            <li><strong>stdio</strong> — сервер как дочерний процесс (stdin/stdout)</li>
+            <li><strong>SSE</strong> — Server-Sent Events по HTTP</li>
+            <li><strong>Streamable HTTP</strong> — двунаправленный HTTP</li>
+          </ul>
+          <p class="note">stdio — самый распространённый. Хост запускает процесс и общается через pipes</p>
+        </div>
+      </div>
+      <div>
+        <div class="card amber fragment">
+          <h3>Что предоставляет сервер</h3>
+          <ul>
+            <li><strong>Tools</strong> — функции, которые модель может вызвать</li>
+            <li><strong>Resources</strong> — данные для чтения (файлы, записи БД)</li>
+            <li><strong>Prompts</strong> — шаблоны промптов от сервера</li>
+          </ul>
+        </div>
+        <div class="card rose fragment" style="margin-top:10px">
+          <h3>Жизненный цикл</h3>
+          <ul>
+            <li>Host запускает Server → <code>initialize</code></li>
+            <li>Server отвечает capabilities</li>
+            <li>Host запрашивает список tools</li>
+            <li>Агент вызывает tools по необходимости</li>
+            <li>Сессия закрывается при завершении</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">MCP Server за 2 минуты (Python)</h2>
+    <div class="grid-2">
+      <div>
+<pre><code class="language-python">from mcp.server.fastmcp import FastMCP
+
+mcp = FastMCP("demo-server")
+
+@mcp.tool()
+def add(a: int, b: int) -> int:
+    """Add two numbers together."""
+    return a + b
+
+@mcp.tool()
+def get_time() -> str:
+    """Get current server time."""
+    from datetime import datetime
+    return datetime.now().isoformat()
+
+@mcp.resource("config://app")
+def get_config() -> str:
+    """Application configuration."""
+    return "debug=true, version=1.0"
+
+if __name__ == "__main__":
+    mcp.run()</code></pre>
+      </div>
+      <div>
+        <div class="card teal fragment">
+          <h3>Что тут происходит</h3>
+          <ul>
+            <li><code>FastMCP</code> — SDK для Python (pip install mcp)</li>
+            <li><code>@mcp.tool()</code> — регистрация tool из обычной функции</li>
+            <li>Docstring → description для модели</li>
+            <li>Type hints → JSON Schema автоматически</li>
+            <li><code>@mcp.resource()</code> — данные для чтения</li>
+          </ul>
+        </div>
+        <div class="card amber fragment" style="margin-top:10px">
+          <h3>Запуск</h3>
+<pre><code class="language-bash"># Запуск
+python server.py
+
+# Или через MCP Inspector
+npx @modelcontextprotocol/inspector \
+  python server.py</code></pre>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Подключение MCP Server к агенту</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Claude Code</h3>
+<pre><code class="language-json">// .mcp.json в корне проекта
+{
+  "mcpServers": {
+    "demo": {
+      "command": "python",
+      "args": ["server.py"]
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "ghp_..."
+      }
+    }
+  }
+}</code></pre>
+      </div>
+      <div>
+        <h3>VS Code / Cursor</h3>
+<pre class="fragment"><code class="language-json">// .vscode/mcp.json
+{
+  "servers": {
+    "demo": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["server.py"]
+    }
+  }
+}</code></pre>
+        <div class="card teal fragment" style="margin-top:10px">
+          <h3>После подключения</h3>
+          <ul>
+            <li>Tools сервера появляются в списке доступных</li>
+            <li>Модель видит их description</li>
+            <li>Вызывает как любой другой tool</li>
+            <li>Результат возвращается в контекст</li>
+          </ul>
+          <p class="note">Пользователь может не знать, что tool — внешний MCP</p>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Популярные MCP-серверы</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <tr><th>Сервер</th><th>Что делает</th><th>Пример использования</th></tr>
+        <tr class="fragment"><td><strong>GitHub</strong></td><td>Issues, PRs, repos, code search</td><td>«Создай PR с этими изменениями»</td></tr>
+        <tr class="fragment"><td><strong>Playwright</strong></td><td>Управление браузером</td><td>«Открой страницу и проверь, что кнопка работает»</td></tr>
+        <tr class="fragment"><td><strong>Sentry</strong></td><td>Ошибки, performance</td><td>«Покажи топ ошибок за сегодня»</td></tr>
+        <tr class="fragment"><td><strong>PostgreSQL</strong></td><td>SQL-запросы к БД</td><td>«Сколько пользователей зарегистрировалось вчера?»</td></tr>
+        <tr class="fragment"><td><strong>Slack</strong></td><td>Сообщения, каналы</td><td>«Отправь результаты деплоя в #releases»</td></tr>
+        <tr class="fragment"><td><strong>Filesystem</strong></td><td>Безопасный доступ к файлам</td><td>Sandbox для файловых операций</td></tr>
+        <tr class="fragment"><td><strong>Context7</strong></td><td>Документация библиотек</td><td>«Покажи как использовать React Query v5»</td></tr>
+      </table>
+    </div>
+    <p class="note fragment">Полный каталог: mcp.so — 1000+ серверов. Большинство — npm или pip install.</p>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Демо: подключаем MCP-сервер</h2>
+    <div class="cards c2">
+      <div class="card teal">
+        <h3>Сценарий</h3>
+        <ul>
+          <li>Подключаем реальный MCP-сервер (Playwright)</li>
+          <li>Даём агенту задачу, требующую браузер</li>
+          <li>Наблюдаем, как агент решает использовать MCP-tools</li>
+          <li>Видим: открытие страницы, поиск элементов, скриншот</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>Что показываем</h3>
+        <ul>
+          <li>Конфигурация в <code>.mcp.json</code></li>
+          <li>Список tools после подключения</li>
+          <li>Tool call от агента → действие в браузере</li>
+          <li>Результат возвращается в контекст</li>
+          <li>Агент продолжает работу с полученными данными</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote><p><strong>Живое демо</strong> — агент управляет браузером через MCP</p></blockquote>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">MCP: ключевые концепции</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>Capabilities</h3>
+        <ul>
+          <li>Сервер декларирует, что умеет</li>
+          <li>Tools, Resources, Prompts</li>
+          <li>Клиент может выбрать подмножество</li>
+        </ul>
+        <p class="note">Похоже на capability negotiation в протоколах</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Resources</h3>
+        <ul>
+          <li>Данные, которые модель может запросить</li>
+          <li>URI-адресация: <code>file:///</code>, <code>db://</code>, <code>config://</code></li>
+          <li>Отличие от tools: read-only, без side effects</li>
+        </ul>
+        <p class="note">Resource = данные. Tool = действие.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Prompts</h3>
+        <ul>
+          <li>Серверные шаблоны промптов</li>
+          <li>Параметризуемые: <code>/review {pr_number}</code></li>
+          <li>Сервер знает контекст лучше модели</li>
+        </ul>
+        <p class="note">Реже используется, но мощный механизм</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Безопасность MCP</h2>
+    <div class="cards c2">
+      <div class="card red fragment">
+        <h3>Риски</h3>
+        <ul>
+          <li><strong>Tool poisoning</strong> — вредоносный сервер внедряет инструкции в description</li>
+          <li><strong>Prompt injection через data</strong> — данные от сервера содержат инструкции для модели</li>
+          <li><strong>Чрезмерные разрешения</strong> — сервер с доступом к БД может удалить данные</li>
+          <li><strong>Утечка секретов</strong> — токены в env переменных сервера</li>
+        </ul>
+      </div>
+      <div class="card green fragment">
+        <h3>Защита</h3>
+        <ul>
+          <li><strong>Permissions</strong> — явное разрешение на каждый tool call</li>
+          <li><strong>Аудит</strong> — логирование всех вызовов</li>
+          <li><strong>Sandbox</strong> — сервер работает в изоляции</li>
+          <li><strong>Проверка серверов</strong> — используйте только из надёжных источников</li>
+          <li><strong>Принцип минимальных привилегий</strong> — read-only токены по умолчанию</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote class="fragment"><p>MCP-сервер — это <strong>расширение</strong> агента. Доверяйте ему как npm-пакету: проверяйте перед установкой.</p></blockquote>
+</div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 4: TOOL vs MCP ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 04 · 5 мин</span>
+    <h1>Tool vs MCP</h1>
+    <p class="cta">Когда хватит tool, а когда нужен MCP — критерии выбора</p>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Сравнение: Tool vs MCP</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <tr><th></th><th>Кастомный Tool (API)</th><th>MCP Server</th></tr>
+        <tr class="fragment"><td><strong>Где живёт</strong></td><td>Внутри вашего кода (обработчик)</td><td>Отдельный процесс/сервер</td></tr>
+        <tr class="fragment"><td><strong>Переиспользование</strong></td><td>Только в вашем приложении</td><td>Любой MCP-совместимый агент</td></tr>
+        <tr class="fragment"><td><strong>Протокол</strong></td><td>Ваш собственный</td><td>Стандартный JSON-RPC</td></tr>
+        <tr class="fragment"><td><strong>Язык</strong></td><td>Тот же, что и приложение</td><td>Любой (Python, TS, Go, Rust...)</td></tr>
+        <tr class="fragment"><td><strong>Изоляция</strong></td><td>В процессе приложения</td><td>Отдельный процесс, sandbox</td></tr>
+        <tr class="fragment"><td><strong>Сложность</strong></td><td>Низкая (одна функция)</td><td>Средняя (сервер + конфиг)</td></tr>
+        <tr class="fragment"><td><strong>Экосистема</strong></td><td>Нет</td><td>1000+ готовых серверов</td></tr>
+      </table>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Когда что выбрать</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Хватит Tool</h3>
+        <ul>
+          <li>Логика специфична для вашего приложения</li>
+          <li>Нужен доступ к внутреннему состоянию (in-memory данные)</li>
+          <li>Одноразовый инструмент, не планируете переиспользовать</li>
+          <li>Простой API: одна функция, несколько параметров</li>
+          <li>Не хотите усложнять инфраструктуру</li>
+        </ul>
+        <p class="note">Пример: валидация бизнес-логики, расчёт скидки, внутренний поиск</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Нужен MCP</h3>
+        <ul>
+          <li>Интеграция с внешним сервисом (GitHub, Jira, Slack)</li>
+          <li>Хотите переиспользовать в разных агентах/IDE</li>
+          <li>Нужна изоляция (sandbox, отдельные permissions)</li>
+          <li>Сложная интеграция с множеством tools</li>
+          <li>Есть готовый MCP-сервер в экосистеме</li>
+        </ul>
+        <p class="note">Пример: работа с GitHub, управление браузером, мониторинг</p>
+      </div>
+    </div>
+    <blockquote class="fragment"><p><strong>Правило:</strong> начните с tool. Если его хочется переиспользовать или изолировать — оберните в MCP.</p></blockquote>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Путь развития: от tool к MCP</h2>
+    <div class="process">
+      <div class="step fragment"><h4>1. Функция</h4><p>Обычная функция в коде приложения</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>2. Tool</h4><p>Подключаем к API как tool definition</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>3. MCP Server</h4><p>Оборачиваем в MCP для переиспользования</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>4. Публикация</h4><p>npm/pip publish → другие команды подключают</p></div>
+    </div>
+    <div class="cards c3 fragment" style="margin-top:14px">
+      <div class="card teal">
+        <h3>Аналогия</h3>
+        <p>Функция → npm-пакет → REST API. Тот же путь, но для AI-инструментов.</p>
+      </div>
+      <div class="card amber">
+        <h3>Не прыгайте</h3>
+        <p>Не нужно сразу писать MCP-сервер. YAGNI — начните с простого tool.</p>
+      </div>
+      <div class="card rose">
+        <h3>Но думайте вперёд</h3>
+        <p>Если tool может быть полезен другим агентам — закладывайте чистый интерфейс.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- ==================== ИТОГИ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Итоги</span>
+    <h1>Ключевые выводы</h1>
+    <p class="cta">Что забрать с собой из этой лекции</p>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">5 вещей, которые стоит запомнить</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>1</h3>
+        <p><strong>Tools = действия.</strong> Без tools агент — просто чат-бот. Tools дают ему возможность действовать в реальном мире.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>2</h3>
+        <p><strong>Description решает всё.</strong> Модель выбирает tool по описанию. Плохое описание = tool не вызывается.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>3</h3>
+        <p><strong>MCP = USB для AI.</strong> Один протокол подключает любой внешний сервис к любому агенту.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>4</h3>
+        <p><strong>Tool → MCP — эволюция.</strong> Начинайте с простого tool. Если нужно переиспользование — оборачивайте в MCP.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>5</h3>
+        <p><strong>Безопасность — приоритет.</strong> MCP-сервер — расширение агента. Проверяйте серверы, ограничивайте разрешения, логируйте вызовы.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Практическое задание</h2>
+    <div class="cards c2">
+      <div class="card teal">
+        <h3>Задание 1: Свой Tool</h3>
+        <ul>
+          <li>Придумайте tool, полезный для вашего проекта</li>
+          <li>Напишите tool definition (name, description, schema)</li>
+          <li>Реализуйте обработчик</li>
+          <li>Подключите через Claude API или как custom tool в IDE</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>Задание 2: MCP Server</h3>
+        <ul>
+          <li>Подключите готовый MCP-сервер к вашему агенту</li>
+          <li>Рекомендация: начните с <code>@modelcontextprotocol/server-filesystem</code></li>
+          <li>Дайте агенту задачу, требующую MCP-tools</li>
+          <li>Проанализируйте tool calls в логах</li>
+        </ul>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Дальше</span>
+    <h1>Лекция 4</h1>
+    <p class="cta">Субагенты, оркестрация и Hooks — как научить агента делегировать работу</p>
+    <div class="meta-row" style="justify-content:center">
+      <a class="pill" href="../part1/">Слайды · Лекция 1</a>
+      <a class="pill" href="../part2/">Слайды · Лекция 2</a>
+      <a class="pill" href="../../">Главная</a>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Остаёмся на связи</h2>
+    <div class="promo-layout">
+      <div class="promo-photo-box">
+        <img src="../../assets/avatar.jpg" alt="Фото автора канала" onerror="this.style.display='none'">
+      </div>
+      <div class="promo-qr-box">
+        <h3>Telegram канал</h3>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&data=https%3A%2F%2Ft.me%2FSazonovMaybeTalks" alt="QR код на Telegram канал SazonovMaybeTalks">
+        <a class="promo-link" href="https://t.me/SazonovMaybeTalks" target="_blank" rel="noopener noreferrer">t.me/SazonovMaybeTalks</a>
+        <p class="note">Сканируйте QR или переходите по ссылке, чтобы получить обновления по следующим материалам.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: "c/t",
+  width: 1360,
+  height: 768,
+  margin: 0.05,
+  transition: "slide",
+  backgroundTransition: "fade",
+  transitionSpeed: "fast",
+  plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>
