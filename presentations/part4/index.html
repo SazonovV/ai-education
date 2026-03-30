@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107242055', 'ym');
+
+    ym(107242055, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/107242055" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<title>Субагенты, оркестрация и Hooks · Лекция 4</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/theme/black.min.css" id="theme">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/monokai.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #090707;
+  --card: #151110;
+  --card-soft: #1d1715;
+  --text: #f6efe4;
+  --muted: #c4ae94;
+  --line: #4a3c32;
+  --teal: #37d6c4;
+  --amber: #f6a44a;
+  --rose: #f6757f;
+  --green: #53d36f;
+  --red: #ff6a6a;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+.reveal {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(55, 214, 196, 0.12), transparent 36%),
+    radial-gradient(circle at 88% 8%, rgba(246, 164, 74, 0.18), transparent 32%),
+    radial-gradient(circle at 74% 84%, rgba(246, 117, 127, 0.12), transparent 36%),
+    linear-gradient(145deg, #0a0808 0%, #110f0d 50%, #0a0807 100%);
+}
+
+/* grain overlay */
+.reveal::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px;
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  font-family: "Unbounded", "Manrope", sans-serif;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 0.34em;
+}
+
+.reveal h1 {
+  font-size: 2.3em;
+  color: #fff7ea;
+}
+
+.reveal h2 {
+  font-size: 1.32em;
+  color: var(--teal);
+}
+
+.reveal h3 {
+  font-size: 0.95em;
+  color: #ffe9c8;
+}
+
+.reveal p,
+.reveal li {
+  font-size: 0.62em;
+  color: var(--muted);
+  line-height: 1.52;
+}
+
+.reveal strong {
+  color: #fff8ee;
+}
+
+.reveal em {
+  color: var(--teal);
+  font-style: normal;
+}
+
+.reveal a {
+  color: var(--teal);
+}
+
+.reveal pre {
+  width: 100%;
+  box-shadow: none;
+  margin: 0.3em 0;
+}
+
+.reveal pre code {
+  max-height: 440px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #0f0c0b;
+  padding: 0.9em;
+  font-size: 0.58em;
+  line-height: 1.48;
+}
+
+.reveal blockquote {
+  width: 100%;
+  margin: 0.35em 0;
+  padding: 0.45em 0.7em;
+  border-left: 4px solid var(--amber);
+  border-radius: 0 10px 10px 0;
+  background: rgba(246, 164, 74, 0.08);
+  box-shadow: -4px 0 20px -6px rgba(246, 164, 74, 0.18);
+}
+
+.reveal blockquote p {
+  margin: 0;
+  color: #e7d8c6;
+}
+
+.slide-shell,
+.chapter-shell {
+  min-height: 620px;
+  border: 1px solid rgba(255, 241, 224, 0.14);
+  border-radius: 22px;
+  padding: 22px 26px;
+  background:
+    linear-gradient(160deg, rgba(32, 24, 20, 0.78), rgba(17, 13, 11, 0.82));
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 48px rgba(0, 0, 0, 0.38);
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-shell::before,
+.chapter-shell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--teal), var(--amber), transparent);
+  opacity: 0.7;
+}
+
+.chapter-shell {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.4);
+  font-size: 0.42em;
+  letter-spacing: 0.08em;
+  color: #d8f9f3;
+  text-transform: uppercase;
+}
+
+.kicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 0 6px rgba(55, 214, 196, 0.2), 0 0 18px 4px rgba(55, 214, 196, 0.25);
+}
+
+.hero-title {
+  font-size: 3.05em;
+  margin: 0 0 0.24em;
+}
+
+.hero-sub {
+  font-size: 1.1em;
+  color: var(--teal);
+  margin: 0 0 0.32em;
+}
+
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.48em;
+  color: #e6d4bd;
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  transition: border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.pill:hover {
+  color: #fff6e7;
+  border-color: rgba(55, 214, 196, 0.48);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(55, 214, 196, 0.12);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.cards {
+  display: grid;
+  gap: 10px;
+}
+
+.cards.c2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.cards.c3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  border-radius: 14px;
+  padding: 10px 12px;
+  position: relative;
+  overflow: hidden;
+  --card-accent: var(--teal);
+  box-shadow: 0 -3px 16px -4px color-mix(in srgb, var(--card-accent) 18%, transparent);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 5%, var(--card-accent), transparent 95%);
+  opacity: 0.85;
+}
+
+.card:hover {
+  box-shadow: 0 -4px 24px -4px color-mix(in srgb, var(--card-accent) 28%, transparent);
+  transform: translateY(-1px);
+}
+
+.card p,
+.card li {
+  font-size: 0.56em;
+}
+
+.card h3 {
+  margin: 0 0 0.34em;
+  font-size: 0.78em;
+}
+
+.card ul {
+  margin: 0.2em 0 0;
+  padding-left: 1.1em;
+}
+
+.card.teal { --card-accent: var(--teal); }
+.card.amber { --card-accent: var(--amber); }
+.card.rose { --card-accent: var(--rose); }
+.card.green { --card-accent: var(--green); }
+.card.red { --card-accent: var(--red); }
+
+.section-title {
+  margin-bottom: 0.74em;
+}
+
+.note {
+  font-size: 0.5em;
+  color: #9f8d77;
+}
+
+.process {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.process-5 {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.step {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  text-align: center;
+}
+
+.step h4 {
+  margin: 0;
+  font-size: 0.6em;
+  color: var(--teal);
+}
+
+.step p {
+  margin: 0.2em 0 0;
+  font-size: 0.48em;
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  color: #9e8b75;
+  font-size: 1.1em;
+}
+
+.table-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table.mini {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.49em;
+}
+
+table.mini th,
+table.mini td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+table.mini th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--teal);
+}
+
+.intro-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.photo {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 7px;
+  background: #0d0a09;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.fallback {
+  display: none;
+  text-align: center;
+  color: #b8a189;
+  font-size: 0.54em;
+}
+
+.vs-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.vs-label {
+  text-align: center;
+  font-size: 0.52em;
+  font-weight: 700;
+  padding: 4px 0 6px;
+  border-radius: 8px 8px 0 0;
+}
+
+.vs-label.bad {
+  color: var(--red);
+  background: rgba(255, 106, 106, 0.08);
+}
+
+.vs-label.good {
+  color: var(--green);
+  background: rgba(83, 211, 111, 0.08);
+}
+
+.cta {
+  font-size: 0.66em;
+  color: #e8d8c2;
+}
+
+.layer-diagram {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  text-align: center;
+}
+
+.layer {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 14px 16px;
+  position: relative;
+}
+
+.layer h4 {
+  margin: 0;
+  font-size: 0.68em;
+}
+
+.layer p {
+  margin: 0.15em 0 0;
+  font-size: 0.48em;
+}
+
+.layer.l-agent {
+  background: rgba(55, 214, 196, 0.08);
+  border-color: rgba(55, 214, 196, 0.35);
+  border-radius: 12px 12px 0 0;
+}
+
+.layer.l-agent h4 { color: var(--teal); }
+
+.layer.l-tools {
+  background: rgba(246, 164, 74, 0.08);
+  border-color: rgba(246, 164, 74, 0.35);
+}
+
+.layer.l-tools h4 { color: var(--amber); }
+
+.layer.l-mcp {
+  background: rgba(246, 117, 127, 0.08);
+  border-color: rgba(246, 117, 127, 0.35);
+}
+
+.layer.l-mcp h4 { color: var(--rose); }
+
+.layer.l-world {
+  background: rgba(83, 211, 111, 0.08);
+  border-color: rgba(83, 211, 111, 0.35);
+  border-radius: 0 0 12px 12px;
+}
+
+.layer.l-world h4 { color: var(--green); }
+
+.layer-arrow {
+  text-align: center;
+  color: #9e8b75;
+  font-size: 0.7em;
+  padding: 2px 0;
+}
+
+.promo-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.promo-photo-box,
+.promo-qr-box {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  padding: 12px;
+}
+
+.promo-photo-box {
+  display: grid;
+  align-items: stretch;
+}
+
+.promo-photo-box img {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.promo-qr-box {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.promo-qr-box h3 {
+  margin: 0;
+}
+
+.promo-qr-box img {
+  width: min(320px, 100%);
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #fff;
+  padding: 8px;
+}
+
+.promo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.55);
+  color: #f5eee4;
+  text-decoration: none;
+  font-size: 0.56em;
+}
+
+.promo-link:hover {
+  border-color: rgba(246, 164, 74, 0.7);
+}
+
+.back-home {
+  position: fixed;
+  top: 12px;
+  left: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  text-decoration: none;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.45);
+  background: rgba(14, 11, 10, 0.65);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  color: #f2e8d9;
+  font-size: 12px;
+  transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+
+.back-home:hover {
+  border-color: rgba(55, 214, 196, 0.8);
+  background: rgba(55, 214, 196, 0.12);
+  box-shadow: 0 0 20px rgba(55, 214, 196, 0.15);
+  color: #ffffff;
+}
+
+@media (max-width: 1100px) {
+  .grid-2,
+  .grid-3,
+  .cards.c2,
+  .cards.c3,
+  .vs-layout,
+  .promo-layout,
+  .intro-layout,
+  .process,
+  .process-5 {
+    grid-template-columns: 1fr;
+  }
+
+  .process .arrow,
+  .process-5 .arrow {
+    display: none;
+  }
+
+  .slide-shell,
+  .chapter-shell {
+    min-height: auto;
+  }
+}
+</style>
+</head>
+<body>
+<a class="back-home" href="../../">← На главную</a>
+<div class="reveal">
+<div class="slides">
+
+<!-- ==================== TITLE ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">AI Engineering Course</span>
+    <h1 class="hero-title">Субагенты, оркестрация и Hooks</h1>
+    <p class="hero-sub">Лекция 4</p>
+    <div class="meta-row">
+      <span class="pill">Аудитория: разработчики</span>
+      <span class="pill">Фокус: делегирование и автоматизация</span>
+    </div>
+</div>
+</section>
+
+<!-- ==================== СОДЕРЖАНИЕ ==================== -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Содержание</h2>
+    <div class="cards c3">
+      <div class="card teal"><h3>1. Зачем делегировать</h3><p>Проблема единого контекста, аналогия с командой</p></div>
+      <div class="card amber"><h3>2. Как устроен субагент</h3><p>Жизненный цикл, наследование, параллельность</p></div>
+      <div class="card rose"><h3>3. Субагенты в инструментах</h3><p>Claude Code, Roo Code, Cursor, Windsurf</p></div>
+      <div class="card green"><h3>4. Декомпозиция и оркестрация</h3><p>Паттерны: fan-out, pipeline, iterative</p></div>
+      <div class="card amber"><h3>5. Hooks</h3><p>Автоматизация через хуки жизненного цикла</p></div>
+      <div class="card rose"><h3>6. Подводные камни</h3><p>Типичные ошибки и как их избежать</p></div>
+      <div class="card teal"><h3>7. Итоги и практика</h3><p>Чеклист, домашнее задание</p></div>
+    </div>
+</div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 1: ЗАЧЕМ ДЕЛЕГИРОВАТЬ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 01</span>
+    <h1>Зачем делегировать</h1>
+    <p class="cta">Контекстное окно конечно. Делегирование сохраняет фокус и ускоряет работу.</p>
+</div>
+</section>
+
+<!-- Проблема единого контекста -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Проблема единого контекста</h2>
+    <div class="grid-2">
+      <div>
+        <p><strong>Контекстное окно агента — ресурс конечный.</strong> У Claude Sonnet — 200K токенов, но эффективность падает задолго до лимита.</p>
+        <ul>
+          <li>После <em>~80-100K токенов</em> модель начинает забывать ранние инструкции</li>
+          <li>Сложная задача (исследование + реализация + тесты) генерирует огромный промежуточный контекст</li>
+          <li>Каждый вызов tool добавляет входные данные <strong>и</strong> результаты — контекст растёт нелинейно</li>
+          <li>Когда контекст переполнен, агент теряет фокус: путает файлы, повторяет действия</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>Симптомы переполнения</h3>
+        <ul>
+          <li>Агент забывает начальные инструкции</li>
+          <li>Повторяет уже выполненные действия</li>
+          <li>Путает имена файлов и переменных</li>
+          <li>Теряет общий план задачи</li>
+        </ul>
+        <p class="note" style="margin-top: 0.6em;">Решение: разделить работу на несколько агентов с чистым контекстом.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Один агент vs Команда -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Один агент vs Команда субагентов</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Один агент</th>
+            <th>Команда субагентов</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Контекст</strong></td>
+            <td>Один на всё</td>
+            <td>У каждого свой, чистый</td>
+          </tr>
+          <tr>
+            <td><strong>Параллельность</strong></td>
+            <td>Последовательно</td>
+            <td>Одновременно</td>
+          </tr>
+          <tr>
+            <td><strong>Фокус</strong></td>
+            <td>Размывается</td>
+            <td>Сохраняется</td>
+          </tr>
+          <tr>
+            <td><strong>Отказоустойчивость</strong></td>
+            <td>Сбой = всё заново</td>
+            <td>Сбой одного не ломает остальных</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote>
+      <p>Один разработчик может написать фичу, тесты и документацию — но последовательно, удерживая всё в голове. Команда из трёх специалистов работает параллельно: каждый сфокусирован на своей части.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Два способа решения -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Два способа решения</h2>
+    <div class="grid-2">
+      <div class="card teal">
+        <h3>Ручная декомпозиция</h3>
+        <p>Человек сам разбивает задачу на подзадачи и запускает агента на каждую.</p>
+        <ul>
+          <li>Простой и предсказуемый подход</li>
+          <li>Требует усилий от пользователя</li>
+          <li>Лучше для критичных задач</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>Автоматическая делегация</h3>
+        <p>Агент сам решает, когда задача слишком велика, и порождает субагентов.</p>
+        <ul>
+          <li>Удобнее для пользователя</li>
+          <li>Требует доверия к агенту</li>
+          <li>Лучше для рутинных задач</li>
+        </ul>
+      </div>
+    </div>
+    <pre><code class="language-text">Ручная декомпозиция:                Автоматическая делегация:
+
+Человек                             Человек
+├── Задача 1 → Агент A              └── "Сделай фичу X"
+├── Задача 2 → Агент B                      │
+└── Задача 3 → Агент C                      ▼
+                                     Родительский агент
+Человек собирает результат           ├── Субагент 1 (исследование)
+                                     ├── Субагент 2 (реализация)
+                                     └── Субагент 3 (тесты)
+
+                                     Родитель собирает результат</code></pre>
+</div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 2: КАК УСТРОЕН СУБАГЕНТ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 02</span>
+    <h1>Как устроен субагент</h1>
+    <p class="cta">Отдельный процесс с чистым контекстом. Получает задачу — возвращает результат.</p>
+</div>
+</section>
+
+<!-- Жизненный цикл -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Жизненный цикл субагента</h2>
+    <div class="process-5">
+      <div class="step">
+        <h4>1. Задача</h4>
+        <p>Родитель формулирует задание</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <h4>2. Spawn</h4>
+        <p>Чистый контекст + tools + rules</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <h4>3. Work</h4>
+        <p>Автономная работа: чтение, вызовы tools, решения</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <h4>4. Return</h4>
+        <p>Только результат, не весь контекст</p>
+      </div>
+      <div class="arrow">→</div>
+      <div class="step">
+        <h4>5. Продолжение</h4>
+        <p>Родитель работает дальше</p>
+      </div>
+    </div>
+    <blockquote>
+      <p>Родитель <strong>не следит</strong> за процессом работы субагента. Он отправляет задачу и ждёт результат. Это асинхронная модель — как задача в трекере, а не парное программирование.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Таблица наследования -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Что наследует субагент</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr>
+            <th>Что</th>
+            <th>Наследуется?</th>
+            <th>Комментарий</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Rules</strong></td>
+            <td><em>Обычно да</em></td>
+            <td>Субагент работает в том же проекте</td>
+          </tr>
+          <tr>
+            <td><strong>Permissions</strong></td>
+            <td><em>Обычно да</em></td>
+            <td>Наследует уровень доступа родителя</td>
+          </tr>
+          <tr>
+            <td><strong>Skills</strong></td>
+            <td>Зависит от инструмента</td>
+            <td>В Claude Code — частично</td>
+          </tr>
+          <tr>
+            <td><strong>Контекст беседы</strong></td>
+            <td style="color: var(--red);">Нет</td>
+            <td>Получает только задачу</td>
+          </tr>
+          <tr>
+            <td><strong>Результаты других субагентов</strong></td>
+            <td style="color: var(--red);">Нет</td>
+            <td>Каждый изолирован</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote>
+      <p>Самая частая ошибка — забыть, что субагент <strong>не видит</strong> контекст чата. Всё важное нужно передать в описании задачи явно.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Параллельность -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Параллельность субагентов</h2>
+    <pre><code class="language-text">Родитель: "Добавить экспорт в CSV"
+         │
+         ├── Субагент 1: исследовать текущий код экспорта
+         ├── Субагент 2: найти и изучить тесты экспорта
+         └── Субагент 3: проверить зависимости в package.json
+         │
+         ▼ (все три завершились)
+Родитель: синтезирует результаты, планирует реализацию</code></pre>
+    <div class="cards c2">
+      <div class="card green">
+        <h3>Преимущество</h3>
+        <p>Несколько субагентов работают одновременно — каждый со своим чистым контекстом. Время = самый долгий субагент, а не сумма всех.</p>
+      </div>
+      <div class="card red">
+        <h3>Правило</h3>
+        <p><strong>Параллельные субагенты не должны редактировать одни и те же файлы.</strong> Иначе возникнут конфликты. Разделяйте работу по модулям или используйте git worktree.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Ключевое ограничение -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Ключевое ограничение</h2>
+    <div class="grid-2">
+      <div>
+        <p>Субагент возвращает родителю только <strong>результат</strong> — текстовое сообщение с итогами работы.</p>
+        <h3>Родитель НЕ получает:</h3>
+        <ul>
+          <li>Полный контекст субагента</li>
+          <li>Какие файлы читал, какие промежуточные решения принимал</li>
+          <li>Логи вызовов tools</li>
+          <li>Промежуточные рассуждения</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>Что это значит на практике</h3>
+        <p><strong>Качество формулировки результата критично.</strong></p>
+        <p>Если субагент написал "Готово, файлы обновлены" — родитель не узнает, что именно сделано.</p>
+        <p style="margin-top: 0.4em;"><em>Хорошая практика</em> — в описании задачи явно указывать формат ожидаемого результата.</p>
+      </div>
+    </div>
+    <blockquote>
+      <p>Субагент — это чёрный ящик. Вход: задача. Выход: результат. Всё остальное теряется.</p>
+    </blockquote>
+</div>
+</section>
+
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: "c/t",
+  width: 1360,
+  height: 768,
+  margin: 0.05,
+  transition: "slide",
+  backgroundTransition: "fade",
+  transitionSpeed: "fast",
+  plugins: [RevealHighlight, RevealNotes]
+});
+</script>
+</body>
+</html>
