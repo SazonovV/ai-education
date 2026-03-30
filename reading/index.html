@@ -132,6 +132,8 @@ body {
   align-self: start;
   position: sticky;
   top: 68px;
+  max-height: calc(100vh - 84px);
+  overflow-y: auto;
 }
 
 .side h3 {
@@ -520,22 +522,20 @@ function buildNav(lectures, currentId) {
   const homeBtn = document.createElement("a");
   homeBtn.className = "btn";
   homeBtn.href = "../";
-  homeBtn.textContent = "Главная";
+  homeBtn.textContent = "На главную";
   navEl.appendChild(homeBtn);
 
-  const allBtn = document.createElement("a");
-  allBtn.className = currentId ? "btn" : "btn primary";
-  allBtn.href = "./";
-  allBtn.textContent = "Все конспекты";
-  navEl.appendChild(allBtn);
-
-  lectures.forEach(lec => {
-    const btn = document.createElement("a");
-    btn.className = lec.id === currentId ? "btn primary" : "btn";
-    btn.href = `?part=${lec.id}`;
-    btn.textContent = lec.title;
-    navEl.appendChild(btn);
-  });
+  if (currentId) {
+    const currentIndex = lectures.findIndex(l => l.id === currentId);
+    if (currentIndex < lectures.length - 1) {
+      const next = lectures[currentIndex + 1];
+      const nextBtn = document.createElement("a");
+      nextBtn.className = "btn primary";
+      nextBtn.href = `?part=${next.id}`;
+      nextBtn.textContent = next.title + " →";
+      navEl.appendChild(nextBtn);
+    }
+  }
 }
 
 function renderIndex(lectures) {
