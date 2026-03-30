@@ -521,9 +521,34 @@ Verify:
 - Lecture 5 teaser matches in both conspect and slides
 - Excluded topics are NOT present (per spec "Что НЕ входит"): no Agent SDK / programmatic orchestration, no background agents rehash, no basic definitions repeated from lecture 1, no timing annotations
 
-- [ ] **Step 3: Final commit (if any fixes needed)**
+- [ ] **Step 3: Fact-check**
+
+Verify factual accuracy of all technical claims in the conspect:
+- **Claude Code:** AGENTS.md format, Agent tool parameters (subagent_type values, isolation, mode), worktree behavior, hook events and handler types — cross-reference with current Claude Code documentation / behavior
+- **Roo Code:** mode names (Code, Architect, Ask, Debug, Orchestrator), .roomodes JSON structure (roleDefinition, groups, customInstructions), Boomerang Tasks behavior — cross-reference with Roo Code docs
+- **Kilo Code:** claimed differences from Roo Code (Task Manager UI, extended modes) — verify these are accurate and current
+- **OpenCode:** agents config format (opencode.json vs .opencode/agents/), plugin event names (tool.execute.before/after, session.created/idle, etc.) — cross-reference with OpenCode docs
+- **Hooks comparison table:** event counts, guarantee claims, mechanism descriptions — verify each cell
+- **Orchestration patterns:** verify that "fan-out is native in Claude Code but sequential in Roo/Kilo" is accurate
+- Config fragments: verify syntax is valid JSON/TypeScript/Markdown, field names are correct
+
+Use web search and official documentation to verify. Flag any inaccuracies found.
+
+- [ ] **Step 4: Output fact-check report**
+
+Write a report to `docs/superpowers/reports/2026-03-30-lecture4-factcheck.md` with:
+- **Status:** PASS / ISSUES FOUND
+- For each tool (Claude Code, Roo Code, Kilo Code, OpenCode):
+  - Claims checked
+  - Verified ✅ or Inaccurate ❌ (with correction)
+- Config fragments: valid ✅ or invalid ❌ (with fix)
+- Summary: total claims checked, total verified, total issues
+
+Present the report to the user for review.
+
+- [ ] **Step 5: Final commit (if any fixes needed)**
 
 ```bash
 git add -A
-git commit -m "fix: lecture 4 cross-check fixes"
+git commit -m "fix: lecture 4 cross-check and fact-check fixes"
 ```
