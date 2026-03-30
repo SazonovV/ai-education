@@ -19,5 +19,12 @@
     "description": "Кастомные инструменты, tool calling, MCP-протокол, подключение внешних сервисов, критерии выбора",
     "file": "part3_tools_mcp.md",
     "slides": "../presentations/part3/"
+  },
+  {
+    "id": "part4_subagents_hooks",
+    "title": "Лекция 4 · Субагенты, оркестрация и Hooks",
+    "description": "Делегирование субагентам, паттерны оркестрации, hooks и автоматизация в Claude Code, Roo Code, Kilo Code, OpenCode",
+    "file": "part4_subagents_hooks.md",
+    "slides": "../presentations/part4/"
   }
 ]
