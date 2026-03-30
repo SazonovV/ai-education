@@ -19,6 +19,7 @@
 | Create | `/content/part4_subagents_hooks.md` | Markdown conspect (~600-700 lines) |
 | Create | `/presentations/part4/index.html` | Reveal.js slides (~35-45 slides, ~1800 lines) |
 | Modify | `/content/lectures.json` | Add lecture 4 entry |
+| Modify | `/presentations/part3/index.html` | Add part4 link to closing slide |
 | Modify | `/index.html:344-348` | Move lecture 4 card from "Планируются" to "В работе", add links |
 
 ---
@@ -64,7 +65,7 @@ git commit -m "feat: add lecture 4 entry to lectures.json"
 
 Start the conspect file with:
 - H1 title: `# Лекция 4 · Субагенты, оркестрация и Hooks`
-- Blockquote metadata (context, audience, focus) — follow format from part3_tools_mcp.md lines 1-4
+- Blockquote metadata with 3 lines (context, audience, focus) — as specified in spec header block (3 lines, not 2 like part3)
 - `## Содержание` with numbered anchor links to all 7 sections — follow format from part3_tools_mcp.md lines 8-15
 - `---`
 - `## 1. Зачем делегировать` — content per spec section 1:
@@ -404,7 +405,7 @@ git commit -m "feat: add lecture 4 slides — section 5 (hooks)"
 - Next lecture teaser: "Лекция 5 · Безопасность агентов"
 
 **Closing slides (2 slides) — copy from part3:**
-- "Дальше → Лекция 5" slide with navigation pills to lectures 1-4 + home
+- "Дальше → Лекция 5" slide with navigation pills to lectures 1, 2, 3 + home (not self-link to part4)
 - "Остаёмся на связи" slide with author photo + Telegram QR code
 
 Total slides should be ~35-45 (comparable to part3: 43 slides).
@@ -427,36 +428,59 @@ git commit -m "feat: complete lecture 4 slides — pitfalls, takeaways, closing"
 
 ---
 
-### Task 12: Update index.html — move lecture 4 card to active
+### Task 12: Update part3 closing slide to link to part4
+
+**Files:**
+- Modify: `/presentations/part3/index.html`
+
+- [ ] **Step 1: Add part4 navigation pill to part3's "Дальше" slide**
+
+In `/presentations/part3/index.html`, find the "Дальше" section (near line 1781). The `<div class="meta-row">` contains pills for lectures 1, 2, and home. Add a pill for lecture 3 (self) is not needed, but add a link to part4:
+
+Add before the "Главная" pill:
+```html
+<a class="pill" href="../part4/">Слайды · Лекция 4</a>
+```
+
+- [ ] **Step 2: Verify**
+
+Open `/presentations/part3/` and navigate to the "Дальше" slide. Confirm the "Слайды · Лекция 4" pill appears and links correctly.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add presentations/part3/index.html
+git commit -m "fix: add lecture 4 link to part3 closing slide"
+```
+
+---
+
+### Task 13: Update index.html — move lecture 4 card to active
+
+> Note: Task numbering updated — this was previously Task 12.
 
 **Files:**
 - Modify: `/index.html:344-348`
 
-- [ ] **Step 1: Move lecture 4 card from "Планируются" to "В работе"**
+- [ ] **Step 1a: Insert active lecture 4 card into "В работе" grid**
 
-Move the lecture 4 `<article>` from the "Планируются" grid (line 344) into the "В работе" grid (after lecture 3, line 339). Transform from `planned` card to active card:
+Insert the following HTML **before** the `</section>` closing tag of the "В работе" grid (line 340 of index.html), after the lecture 3 article:
 
-Replace:
 ```html
-<article class="card planned">
-  <span class="complexity high">Высокая сложность</span>
-  <h3>Лекция 4 · Субагенты, оркестрация и Hooks</h3>
-  <p>Делегирование задач, жизненный цикл субагента, декомпозиция, pre/post-action хуки.</p>
-</article>
+      <article class="card" style="--card-accent: var(--rose)">
+        <span class="complexity high">Высокая сложность</span>
+        <h3>Лекция 4 · Субагенты, оркестрация и Hooks</h3>
+        <p>Делегирование субагентам, паттерны оркестрации, hooks и автоматизация в Claude Code, Roo Code, Kilo Code, OpenCode.</p>
+        <div class="row">
+          <a class="btn" href="./presentations/part4/">Презентация</a>
+          <a class="btn secondary" href="./reading/?part=part4_subagents_hooks">Конспект</a>
+        </div>
+      </article>
 ```
 
-With (inside "В работе" grid):
-```html
-<article class="card" style="--card-accent: var(--rose)">
-  <span class="complexity high">Высокая сложность</span>
-  <h3>Лекция 4 · Субагенты, оркестрация и Hooks</h3>
-  <p>Делегирование субагентам, паттерны оркестрации, hooks и автоматизация в Claude Code, Roo Code, Kilo Code, OpenCode.</p>
-  <div class="row">
-    <a class="btn" href="./presentations/part4/">Презентация</a>
-    <a class="btn secondary" href="./reading/?part=part4_subagents_hooks">Конспект</a>
-  </div>
-</article>
-```
+- [ ] **Step 1b: Delete the old planned lecture 4 card from "Планируются" grid**
+
+Remove the entire `<article class="card planned">` block for lecture 4 (originally lines 344-348). This prevents the card appearing in both sections.
 
 - [ ] **Step 2: Verify index page**
 
@@ -476,7 +500,7 @@ git commit -m "feat: activate lecture 4 card on homepage"
 
 ---
 
-### Task 13: Final cross-check
+### Task 14: Final cross-check
 
 - [ ] **Step 1: Verify all navigation paths**
 
@@ -493,8 +517,9 @@ Check in browser:
 Verify:
 - Conspect and slides cover the same 7 sections
 - All config fragments in conspect match those in slides
-- No content from lecture 1 is duplicated verbatim (only referenced)
+- No content from lecture 1 is duplicated verbatim (only referenced). Compare against the delta table in the spec.
 - Lecture 5 teaser matches in both conspect and slides
+- Excluded topics are NOT present (per spec "Что НЕ входит"): no Agent SDK / programmatic orchestration, no background agents rehash, no basic definitions repeated from lecture 1, no timing annotations
 
 - [ ] **Step 3: Final commit (if any fixes needed)**
 
