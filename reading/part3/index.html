@@ -89,12 +89,15 @@ body {
   font-family: "Manrope", "Segoe UI", sans-serif;
   font-size: 13px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .btn.primary {
   border-color: #cfb192;
   background: #f5dfc6;
 }
+
+.btn.mobile-only { display: none; }
 
 #status {
   margin: 0;
@@ -219,6 +222,11 @@ body {
   .layout { grid-template-columns: 1fr; }
   .side { position: static; }
 }
+
+@media (max-width: 600px) {
+  .nav .btn.desktop-only { display: none; }
+  .nav .btn.mobile-only { display: inline-flex; }
+}
 </style>
 </head>
 <body>
@@ -226,11 +234,11 @@ body {
     <main class="main">
       <div class="nav">
         <a class="btn" href="../../">Главная</a>
-        <a class="btn" href="../../presentations/part1/">Слайды · Лекция 1</a>
-        <a class="btn" href="../../presentations/part2/">Слайды · Лекция 2</a>
-        <a class="btn primary" href="../../presentations/part3/">Слайды · Лекция 3</a>
-        <a class="btn" href="../part1/">Конспект · Лекция 1</a>
-        <a class="btn" href="../part2/">Конспект · Лекция 2</a>
+        <a class="btn desktop-only" href="../../presentations/part1/">Слайды · Лекция 1</a>
+        <a class="btn desktop-only" href="../../presentations/part2/">Слайды · Лекция 2</a>
+        <a class="btn primary desktop-only" href="../../presentations/part3/">Слайды · Лекция 3</a>
+        <a class="btn desktop-only" href="../part1/">Конспект · Лекция 1</a>
+        <a class="btn desktop-only" href="../part2/">Конспект · Лекция 2</a>
       </div>
       <p id="status">Загружаю markdown…</p>
       <article id="content" hidden></article>
