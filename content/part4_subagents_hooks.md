@@ -141,3 +141,166 @@
 - Промежуточные рассуждения
 
 Это значит, что **качество формулировки результата критично**. Если субагент написал «Готово, файлы обновлены» — родитель не узнает, что именно сделано. Хорошая практика — в описании задачи явно указывать формат ожидаемого результата.
+
+---
+
+## 3. Субагенты в инструментах
+
+В лекции 1 мы рассмотрели субагентов на уровне концепции. Теперь разберём конкретные механизмы четырёх инструментов: как они реализуют делегацию, какие конфигурации нужны и чем отличаются друг от друга.
+
+### 3.1 Claude Code
+
+Claude Code реализует субагентность через встроенный **Agent tool** — инструмент, доступный модели наравне с Read, Edit, Bash и другими.
+
+**Запуск субагента.** Родительский агент вызывает Agent tool с параметрами:
+
+- `prompt` — описание задачи для субагента
+- `subagent_type` — тип субагента, определяющий набор доступных инструментов
+- `isolation` — уровень изоляции файловой системы
+- `run_in_background` — запуск в фоновом режиме
+
+**Типы субагентов (`subagent_type`):**
+
+| Тип | Доступные инструменты | Когда использовать |
+|---|---|---|
+| `Explore` | Только поиск (Grep, Glob, Read) | Исследование кодовой базы |
+| `Plan` | Чтение + анализ (Read, Grep, Glob, LSP) | Планирование без изменений |
+| `General-purpose` | Все инструменты | Полноценная реализация |
+| `code-review` | Чтение + комментирование | Ревью кода |
+| Кастомный (из AGENTS.md) | Определяется в конфигурации | Специализированные задачи |
+
+**AGENTS.md** — файл в корне репозитория, описывающий кастомных агентов. Claude Code подхватывает его автоматически:
+
+```markdown
+# AGENTS.md
+
+## code-reviewer
+You are a senior code reviewer. Focus on:
+- Security vulnerabilities (injection, auth bypass, data exposure)
+- Performance anti-patterns (N+1 queries, missing indexes)
+- API contract violations
+
+Tools: Read, Grep, Glob
+Constraints: Never modify files. Always cite file:line in feedback.
+Output format: list of findings with severity (critical/warning/info).
+
+## test-writer
+You are a test engineer. Given a source file, write comprehensive tests.
+Tools: Read, Grep, Glob, Edit, Bash
+Constraints: Use existing test framework in the project. Run tests before returning.
+Output format: summary of tests added and their pass/fail status.
+```
+
+**Параллельный запуск.** Родитель может вызвать несколько Agent tool одновременно в одном сообщении — например, один субагент исследует frontend, другой — backend, третий — тесты. Все работают параллельно с изолированными контекстами.
+
+**Worktree-изоляция.** Параметр `isolation: "worktree"` создаёт для субагента отдельную git worktree — полную копию репозитория в отдельной директории. Субагент пишет код в своей копии, не мешая ни родителю, ни другим субагентам. Результат интегрируется через git merge.
+
+**Фоновый режим.** `run_in_background: true` — субагент работает в фоне, родитель не ждёт результата и продолжает выполнение. Удобно для долгих задач: прогон тестов, масштабный рефакторинг, генерация документации.
+
+### 3.2 Roo Code / Kilo Code
+
+Roo Code реализует субагентность через систему **режимов (Modes)**. Kilo Code — форк Roo Code с идентичной архитектурой режимов и дополнительным UI для управления задачами, поэтому рассматриваем их вместе.
+
+**Встроенные режимы:**
+
+- **Code** — полный доступ к редактированию и выполнению команд
+- **Architect** — только чтение, фокус на проектировании и планировании
+- **Ask** — ответы на вопросы, без доступа к инструментам изменения
+- **Debug** — анализ ошибок, чтение логов, диагностика
+- **Orchestrator** — специальный режим для делегации задач другим режимам
+
+**Orchestrator + Boomerang Tasks.** Orchestrator — ключевой механизм субагентности в Roo Code. Он анализирует задачу, разбивает на подзадачи и делегирует их другим режимам через Boomerang Tasks. Каждый режим выполняет свою часть и возвращает результат обратно Orchestrator'у.
+
+```
+Пользователь: "Добавить авторизацию в API"
+         │
+    Orchestrator
+    ├── → Architect: спроектировать схему auth
+    │   ← архитектурный план
+    ├── → Code: реализовать middleware
+    │   ← код готов
+    ├── → Code: написать тесты
+    │   ← тесты написаны
+    └── → Debug: проверить интеграцию
+        ← всё работает
+
+    Orchestrator: собирает итог, отвечает пользователю
+```
+
+Boomerang Tasks работают **последовательно** — Orchestrator ждёт завершения текущей подзадачи, прежде чем отправить следующую. Это проще в реализации, но медленнее параллельного запуска.
+
+**Кастомные режимы через `.roomodes`.** Файл `.roomodes` в корне проекта позволяет определять свои режимы:
+
+```json
+{
+  "customModes": [
+    {
+      "slug": "doc-writer",
+      "name": "Documentation Writer",
+      "roleDefinition": "You are a technical writer. Generate clear, structured documentation for the codebase. Use JSDoc/TSDoc style for code comments. Write README sections in markdown.",
+      "groups": ["read", "command"],
+      "customInstructions": "Always include usage examples. Follow the existing documentation style in the project."
+    },
+    {
+      "slug": "security-audit",
+      "name": "Security Auditor",
+      "roleDefinition": "You are a security engineer. Analyze code for vulnerabilities, check dependencies for known CVEs, review auth and data handling.",
+      "groups": ["read"],
+      "customInstructions": "Classify findings by OWASP Top 10. Output a structured report."
+    }
+  ]
+}
+```
+
+Поле `groups` определяет, какие группы инструментов доступны режиму: `read` (чтение файлов), `edit` (редактирование), `command` (выполнение команд), `browser` (браузер), `mcp` (MCP-серверы).
+
+**Переключение режимов:** Orchestrator переключает режимы автоматически при делегации. Пользователь тоже может переключиться вручную — например, из Code в Debug, если что-то пошло не так.
+
+**Особенность Kilo Code:** встроенный **Task Manager UI** — визуальная панель, показывающая дерево подзадач, их статус (в очереди / выполняется / завершено / ошибка) и результаты. Конфигурация `.roomodes` полностью совместима между Roo Code и Kilo Code.
+
+### 3.3 OpenCode
+
+OpenCode определяет агентов декларативно — через конфигурационный файл `opencode.json` или отдельные markdown-файлы в директории `.opencode/agents/`.
+
+**Конфигурация в `opencode.json`:**
+
+```json
+{
+  "agents": {
+    "reviewer": {
+      "model": "anthropic:claude-sonnet-4-20250514",
+      "systemPrompt": "You are a code reviewer. Analyze changes for bugs, security issues, and style violations. Always reference specific lines.",
+      "tools": ["read", "glob", "grep"]
+    },
+    "implementer": {
+      "model": "anthropic:claude-sonnet-4-20250514",
+      "systemPrompt": "You are a senior developer. Implement features following existing code patterns. Write tests for new code.",
+      "tools": ["read", "glob", "grep", "edit", "bash"]
+    },
+    "planner": {
+      "model": "anthropic:claude-sonnet-4-20250514",
+      "systemPrompt": "You are a technical architect. Analyze requirements and create implementation plans. Never modify code directly.",
+      "tools": ["read", "glob", "grep"]
+    }
+  }
+}
+```
+
+**Альтернативный формат — markdown-файлы:** каждый агент описывается в отдельном файле `.opencode/agents/reviewer.md`, где заголовок — имя агента, а содержимое — системный промпт. Формат удобен для длинных инструкций и поддерживает full markdown.
+
+**Переключение между агентами:** в UI OpenCode доступен список агентов — переключение по клику или через команду. Каждый агент работает со своим системным промптом и набором инструментов, но в общем контексте проекта.
+
+Ключевое отличие от Claude Code: в OpenCode агенты — это **предустановленные профили**, а не динамически порождаемые субагенты. Переключение между ними — смена конфигурации внутри одного сеанса, а не spawn отдельного процесса.
+
+### 3.4 Сводная таблица
+
+| Критерий | Claude Code | Roo Code / Kilo Code | OpenCode |
+|---|---|---|---|
+| Модель субагентности | Явный spawn через Agent tool | Режимы + Orchestrator / Boomerang | Агенты в конфигурации |
+| Конфигурация | `AGENTS.md` + `subagent_type` | `.roomodes` (JSON) | `opencode.json` / `.opencode/agents/` |
+| Параллельность | Да (несколько Agent-вызовов) | Последовательная (Boomerang) | Зависит от реализации |
+| Изоляция | Worktree (git-копия) | Отдельный контекст (общая FS) | Отдельный контекст (общая FS) |
+| Кастомные типы | `AGENTS.md` | `.roomodes` | Агенты в конфиге |
+| Фоновый запуск | `run_in_background: true` | Нет | Нет |
+
+Самая продвинутая модель субагентности — у Claude Code: полная изоляция через worktree, параллелизм и фоновый режим. Roo Code / Kilo Code берут удобством Orchestrator-паттерна и визуализацией в Kilo. OpenCode — минимальный, но достаточный подход для проектов, где нужны предустановленные профили без динамического порождения агентов.
