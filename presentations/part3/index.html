@@ -671,12 +671,12 @@ table.mini th {
   <div class="slide-shell">
     <h2 class="section-title">Содержание</h2>
     <div class="cards c3">
-      <div class="card teal"><h3>1. Два слоя расширения</h3><p>Tools (действия) и MCP (протокол) — общая архитектура</p><p class="note">5 мин</p></div>
-      <div class="card amber"><h3>2. Tools</h3><p>Кастомные инструменты, tool calling, как написать свой tool</p><p class="note">15 мин</p></div>
-      <div class="card rose"><h3>3. MCP</h3><p>Протокол, серверы, подключение внешних сервисов</p><p class="note">15 мин</p></div>
-      <div class="card green"><h3>4. Tool vs MCP</h3><p>Когда хватит tool, а когда нужен MCP — критерии выбора</p><p class="note">5 мин</p></div>
-      <div class="card rose"><h3>5. CLI vs MCP</h3><p>Когда CLI утилита лучше MCP-сервера</p><p class="note">5 мин</p></div>
-      <div class="card amber"><h3>6. Превью</h3><p>Следующая лекция: субагенты и оркестрация</p><p class="note">5 мин</p></div>
+      <div class="card teal"><h3>1. Два слоя расширения</h3><p>Tools (действия) и MCP (протокол) — общая архитектура</p></div>
+      <div class="card amber"><h3>2. Tools</h3><p>Кастомные инструменты, tool calling, как написать свой tool</p></div>
+      <div class="card rose"><h3>3. MCP</h3><p>Протокол, серверы, подключение внешних сервисов</p></div>
+      <div class="card green"><h3>4. Tool vs MCP</h3><p>Когда хватит tool, а когда нужен MCP — критерии выбора</p></div>
+      <div class="card rose"><h3>5. CLI vs MCP</h3><p>Когда CLI утилита лучше MCP-сервера</p></div>
+      <div class="card amber"><h3>6. Превью</h3><p>Следующая лекция: субагенты и оркестрация</p></div>
     </div>
 </div>
 </section>
@@ -684,7 +684,7 @@ table.mini th {
 <!-- ==================== РАЗДЕЛ 1: ДВА СЛОЯ РАСШИРЕНИЯ ==================== -->
 <section>
   <div class="chapter-shell">
-    <span class="kicker">Раздел 01 · 5 мин</span>
+    <span class="kicker">Раздел 01</span>
     <h1>Два слоя расширения</h1>
     <p class="cta">Tools — действия агента. MCP — протокол связи с внешним миром.</p>
 </div>
@@ -721,35 +721,40 @@ table.mini th {
 
 <section>
   <div class="slide-shell">
-    <h2 class="section-title">Архитектура: 4 слоя</h2>
+    <h2 class="section-title">Два способа дать агенту инструменты</h2>
     <div class="grid-2">
       <div class="layer-diagram">
-        <div class="layer l-agent fragment"><h4>Агент (LLM)</h4><p>Думает, планирует, решает какой tool вызвать</p></div>
+        <div class="layer l-agent fragment"><h4>Агент (LLM)</h4><p>Видит <strong>единый список</strong> tools — не различает встроенные и MCP</p></div>
         <div class="layer-arrow">↕</div>
-        <div class="layer l-tools fragment"><h4>Tools (встроенные + кастомные)</h4><p>Read, Edit, Bash, Search + ваши собственные</p></div>
-        <div class="layer-arrow">↕</div>
-        <div class="layer l-mcp fragment"><h4>MCP (протокол)</h4><p>JSON-RPC мост к внешним серверам</p></div>
-        <div class="layer-arrow">↕</div>
-        <div class="layer l-world fragment"><h4>Внешний мир</h4><p>GitHub, Jira, Slack, БД, браузер, любой API</p></div>
+        <div class="layer l-tools fragment"><h4>Хост (IDE, CLI, ваш сервер)</h4><p>Принимает tool_use, решает как выполнить</p></div>
+        <div class="layer-arrow" style="display:flex;gap:40px;justify-content:center">
+          <span>↙</span><span>↘</span>
+        </div>
+        <div style="display:flex;gap:10px">
+          <div class="layer l-tools fragment" style="flex:1"><h4>Локально</h4><p>Read, Edit, Bash, кастомные</p></div>
+          <div class="layer l-mcp fragment" style="flex:1"><h4>MCP Server(ы)</h4><p>GitHub, Sentry, Playwright</p></div>
+        </div>
       </div>
       <div>
         <div class="card teal fragment">
-          <h3>Tools</h3>
+          <h3>Встроенные / кастомные</h3>
           <ul>
-            <li>Работают <strong>внутри</strong> процесса агента</li>
-            <li>Определены хостом (IDE, CLI)</li>
-            <li>Быстрые, синхронные</li>
+            <li>Хост выполняет <strong>сам</strong>, в своём процессе</li>
+            <li>Определены хостом или вами через API</li>
             <li>Примеры: Read, Edit, Bash, Glob</li>
           </ul>
         </div>
         <div class="card rose fragment" style="margin-top:10px">
-          <h3>MCP</h3>
+          <h3>MCP tools</h3>
           <ul>
-            <li>Работают <strong>снаружи</strong> — отдельный процесс/сервер</li>
-            <li>Стандартный протокол (JSON-RPC)</li>
-            <li>Переиспользуемые между агентами</li>
+            <li>Хост <strong>пересылает</strong> вызов MCP-серверу через JSON-RPC</li>
+            <li>Отдельный процесс, переиспользуемый между агентами</li>
             <li>Примеры: GitHub MCP, Playwright MCP, Sentry MCP</li>
           </ul>
+        </div>
+        <div class="card amber fragment" style="margin-top:10px">
+          <h3>Для модели — без разницы</h3>
+          <p>name + description + input_schema. Модель не знает и не должна знать, как хост выполнит вызов.</p>
         </div>
       </div>
     </div>
@@ -783,7 +788,7 @@ table.mini th {
 <!-- ==================== РАЗДЕЛ 2: TOOLS ==================== -->
 <section>
   <div class="chapter-shell">
-    <span class="kicker">Раздел 02 · 15 мин</span>
+    <span class="kicker">Раздел 02</span>
     <h1>Tools</h1>
     <p class="cta">Встроенные инструменты, tool calling, как создать свой tool</p>
 </div>
@@ -827,6 +832,33 @@ table.mini th {
 
 <section>
   <div class="slide-shell">
+    <h2 class="section-title">Встроенные vs кастомные tools</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Встроенные</h3>
+        <ul>
+          <li>Уже определены хостом (IDE, CLI)</li>
+          <li>Вам не нужно их описывать</li>
+          <li>Read, Edit, Bash, Grep, WebSearch...</li>
+        </ul>
+        <p class="note">Доступны сразу при запуске агента</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Кастомные</h3>
+        <ul>
+          <li>Вы определяете сами через Claude API</li>
+          <li>Передаёте в параметре <code>tools</code> каждого запроса</li>
+          <li>get_weather, db_query, check_endpoint...</li>
+        </ul>
+        <p class="note">Модель видит их точно так же, как встроенные</p>
+      </div>
+    </div>
+    <blockquote class="fragment"><p>Дальше — как создать кастомный tool: описание, схема параметров, подключение к API.</p></blockquote>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
     <h2 class="section-title">Как LLM выбирает tool</h2>
     <div class="grid-2">
       <div>
@@ -835,9 +867,9 @@ table.mini th {
           <ul>
             <li><strong>name</strong> — имя инструмента</li>
             <li><strong>description</strong> — текстовое описание: когда и зачем использовать</li>
-            <li><strong>parameters</strong> — JSON Schema входных параметров</li>
+            <li><strong>input_schema</strong> — JSON Schema входных параметров</li>
           </ul>
-          <p class="note">Description — главный фактор выбора. Если описание плохое — tool не будет вызван</p>
+          <p class="note">Description — главный фактор выбора. Если описание плохое — tool не будет вызван. Tools занимают токены контекста!</p>
         </div>
         <div class="card amber fragment" style="margin-top:10px">
           <h3>Процесс выбора</h3>
@@ -855,7 +887,7 @@ table.mini th {
   "description": "Reads a file from the filesystem.
     Use this to read files before editing.
     Returns content with line numbers.",
-  "parameters": {
+  "input_schema": {
     "type": "object",
     "properties": {
       "file_path": {
@@ -909,7 +941,7 @@ table.mini th {
       <div>
         <div class="card teal fragment">
           <h3>name</h3>
-          <p>Короткое, понятное. snake_case. Модель использует для идентификации.</p>
+          <p>Короткое, понятное. Для кастомных — snake_case. Встроенные могут быть PascalCase (Read, Bash).</p>
         </div>
         <div class="card amber fragment" style="margin-top:8px">
           <h3>description</h3>
@@ -983,7 +1015,7 @@ table.mini th {
 client = anthropic.Anthropic()
 
 response = client.messages.create(
-    model="claude-sonnet-4-6",
+    model="claude-sonnet-4-20250514",
     max_tokens=1024,
     tools=[{
         "name": "get_weather",
@@ -1049,6 +1081,64 @@ response = client.messages.create(
 
 <section>
   <div class="slide-shell">
+    <h2 class="section-title">Замыкаем цикл: tool_result</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Отправляем результат</h3>
+<pre><code class="language-python"># Получили tool_use от модели
+tool_block = response.content[0]
+
+# Выполняем действие
+weather = call_weather_api(
+    tool_block.input["city"]
+)
+
+# Отправляем результат обратно
+final = client.messages.create(
+    model="claude-sonnet-4-20250514",
+    tools=tools,
+    messages=[
+        {"role": "user",
+         "content": "Погода в Москве?"},
+        {"role": "assistant",
+         "content": response.content},
+        {"role": "user",
+         "content": [{
+           "type": "tool_result",
+           "tool_use_id": tool_block.id,
+           "content": json.dumps(weather)
+         }]}
+    ]
+)</code></pre>
+      </div>
+      <div>
+        <div class="card teal fragment">
+          <h3>Обработка ошибок</h3>
+          <p>Если tool вернул ошибку — используйте <code>is_error</code>:</p>
+<pre><code class="language-json">{
+  "type": "tool_result",
+  "tool_use_id": "toolu_01A...",
+  "content": "City not found",
+  "is_error": true
+}</code></pre>
+          <p class="note">Модель увидит ошибку и скорректирует подход</p>
+        </div>
+        <div class="card amber fragment" style="margin-top:10px">
+          <h3>tool_choice</h3>
+          <ul>
+            <li><code>"auto"</code> — модель сама решает (по умолчанию)</li>
+            <li><code>"any"</code> — обязана вызвать какой-либо tool</li>
+            <li><code>{"type": "tool", "name": "..."}</code> — обязана вызвать конкретный</li>
+          </ul>
+          <p class="note">Полезно для structured extraction</p>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<section>
+  <div class="slide-shell">
     <h2 class="section-title">Демо: создаём кастомный tool</h2>
     <div class="cards c2">
       <div class="card teal">
@@ -1086,7 +1176,7 @@ response = client.messages.create(
           <li>Хост выполняет параллельно</li>
           <li>Результаты возвращаются пакетом</li>
         </ul>
-        <p class="note">Ускоряет работу в 2-5 раз</p>
+        <p class="note">Значительно ускоряет I/O-bound операции</p>
       </div>
       <div class="card amber fragment">
         <h3>Цепочка вызовов</h3>
@@ -1110,10 +1200,34 @@ response = client.messages.create(
 </div>
 </section>
 
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Подводные камни (gotchas)</h2>
+    <div class="cards c2">
+      <div class="card red fragment">
+        <h3>Размер tool_result</h3>
+        <p>Tool вернул 100KB текста? Всё это попадает в контекст и уменьшает окно. Фильтруйте вывод, используйте <code>limit</code>/<code>offset</code>.</p>
+      </div>
+      <div class="card red fragment">
+        <h3>Стоимость agentic loop</h3>
+        <p>Read → Edit → Bash → Read → Edit → Bash = 6+ API-вызовов. Десятки витков = ощутимые деньги. Используйте <code>cache_control</code> на tool definitions.</p>
+      </div>
+      <div class="card red fragment">
+        <h3>Галлюцинации tool calls</h3>
+        <p>Модель может выдумать имя tool, неправильно заполнить параметры или вызвать tool без надобности. Защита: хорошие description + валидация на хосте.</p>
+      </div>
+      <div class="card red fragment">
+        <h3>Слишком много tools</h3>
+        <p>50+ tools — модель теряется. Решение: dynamic tool selection, группировка, двухступенчатый выбор.</p>
+      </div>
+    </div>
+</div>
+</section>
+
 <!-- ==================== РАЗДЕЛ 3: MCP ==================== -->
 <section>
   <div class="chapter-shell">
-    <span class="kicker">Раздел 03 · 15 мин</span>
+    <span class="kicker">Раздел 03</span>
     <h1>MCP</h1>
     <p class="cta">Model Context Protocol — стандарт подключения агента к внешнему миру</p>
 </div>
@@ -1137,7 +1251,7 @@ response = client.messages.create(
         <ul>
           <li>До MCP: каждая интеграция — уникальный код</li>
           <li>С MCP: один сервер → работает во всех агентах</li>
-          <li>Сообщество: 1000+ готовых серверов</li>
+          <li>Сообщество: Тысячи готовых серверов</li>
           <li>Безопасность: изоляция, permissions, audit</li>
         </ul>
         <p class="note">mcp.so, awesome-mcp-servers — каталоги</p>
@@ -1163,19 +1277,20 @@ response = client.messages.create(
           <h3>Транспорт</h3>
           <ul>
             <li><strong>stdio</strong> — сервер как дочерний процесс (stdin/stdout)</li>
-            <li><strong>SSE</strong> — Server-Sent Events по HTTP</li>
-            <li><strong>Streamable HTTP</strong> — двунаправленный HTTP</li>
+            <li><strong>Streamable HTTP</strong> — основной HTTP-транспорт (JSON или SSE-поток)</li>
+            <li><s>SSE</s> — deprecated, заменён на Streamable HTTP</li>
           </ul>
-          <p class="note">stdio — самый распространённый. Хост запускает процесс и общается через pipes</p>
+          <p class="note">stdio — для локальных серверов. Streamable HTTP — для удалённых</p>
         </div>
       </div>
       <div>
         <div class="card amber fragment">
-          <h3>Что предоставляет сервер</h3>
+          <h3>Capabilities сервера</h3>
           <ul>
             <li><strong>Tools</strong> — функции, которые модель может вызвать</li>
-            <li><strong>Resources</strong> — данные для чтения (файлы, записи БД)</li>
+            <li><strong>Resources</strong> — данные для чтения (с подписками на изменения)</li>
             <li><strong>Prompts</strong> — шаблоны промптов от сервера</li>
+            <li><strong>Sampling</strong> — сервер запрашивает LLM через клиента</li>
           </ul>
         </div>
         <div class="card rose fragment" style="margin-top:10px">
@@ -1251,9 +1366,8 @@ npx @modelcontextprotocol/inspector \
     <h2 class="section-title">Подключение MCP Server к агенту</h2>
     <div class="grid-2">
       <div>
-        <h3>Claude Code</h3>
-<pre><code class="language-json">// .mcp.json в корне проекта
-{
+        <h3>Claude Code <span class="note">(.mcp.json)</span></h3>
+<pre><code class="language-json">{
   "mcpServers": {
     "demo": {
       "command": "python",
@@ -1273,9 +1387,8 @@ npx @modelcontextprotocol/inspector \
 }</code></pre>
       </div>
       <div>
-        <h3>VS Code / Cursor</h3>
-<pre class="fragment"><code class="language-json">// .vscode/mcp.json
-{
+        <h3>VS Code / Cursor <span class="note">(.vscode/mcp.json)</span></h3>
+<pre class="fragment"><code class="language-json">{
   "servers": {
     "demo": {
       "type": "stdio",
@@ -1314,7 +1427,7 @@ npx @modelcontextprotocol/inspector \
         <tr class="fragment"><td><strong>Context7</strong></td><td>Документация библиотек</td><td>«Покажи как использовать React Query v5»</td></tr>
       </table>
     </div>
-    <p class="note fragment">Полный каталог: mcp.so — 1000+ серверов. Большинство — npm или pip install.</p>
+    <p class="note fragment">Каталоги: mcp.so, smithery.ai, glama.ai — тысячи серверов. Большинство — npm или pip install.</p>
 </div>
 </section>
 
@@ -1351,31 +1464,31 @@ npx @modelcontextprotocol/inspector \
     <h2 class="section-title">MCP: ключевые концепции</h2>
     <div class="cards c3">
       <div class="card teal fragment">
-        <h3>Capabilities</h3>
+        <h3>Tools</h3>
         <ul>
-          <li>Сервер декларирует, что умеет</li>
-          <li>Tools, Resources, Prompts</li>
-          <li>Клиент может выбрать подмножество</li>
+          <li>Функции с side effects</li>
+          <li>Модель вызывает по необходимости</li>
+          <li>Основная capability для агентов</li>
         </ul>
-        <p class="note">Похоже на capability negotiation в протоколах</p>
+        <p class="note">Tool = действие</p>
       </div>
       <div class="card amber fragment">
         <h3>Resources</h3>
         <ul>
-          <li>Данные, которые модель может запросить</li>
+          <li>Данные для чтения (read-only)</li>
           <li>URI-адресация: <code>file:///</code>, <code>db://</code>, <code>config://</code></li>
-          <li>Отличие от tools: read-only, без side effects</li>
+          <li>Подписки: сервер уведомляет об изменениях</li>
         </ul>
-        <p class="note">Resource = данные. Tool = действие.</p>
+        <p class="note">Resource = данные. Без side effects.</p>
       </div>
       <div class="card rose fragment">
-        <h3>Prompts</h3>
+        <h3>Prompts & Sampling</h3>
         <ul>
-          <li>Серверные шаблоны промптов</li>
-          <li>Параметризуемые: <code>/review {pr_number}</code></li>
-          <li>Сервер знает контекст лучше модели</li>
+          <li><strong>Prompts</strong> — серверные шаблоны: <code>/review {pr}</code></li>
+          <li><strong>Sampling</strong> — сервер запрашивает LLM-completions через клиента</li>
+          <li>Capability negotiation при initialize</li>
         </ul>
-        <p class="note">Реже используется, но мощный механизм</p>
+        <p class="note">Сервер декларирует, что умеет. Клиент выбирает подмножество.</p>
       </div>
     </div>
 </div>
@@ -1412,7 +1525,7 @@ npx @modelcontextprotocol/inspector \
 <!-- ==================== РАЗДЕЛ 4: TOOL vs MCP ==================== -->
 <section>
   <div class="chapter-shell">
-    <span class="kicker">Раздел 04 · 5 мин</span>
+    <span class="kicker">Раздел 04</span>
     <h1>Tool vs MCP</h1>
     <p class="cta">Когда хватит tool, а когда нужен MCP — критерии выбора</p>
 </div>
@@ -1427,10 +1540,11 @@ npx @modelcontextprotocol/inspector \
         <tr class="fragment"><td><strong>Где живёт</strong></td><td>Внутри вашего кода (обработчик)</td><td>Отдельный процесс/сервер</td></tr>
         <tr class="fragment"><td><strong>Переиспользование</strong></td><td>Только в вашем приложении</td><td>Любой MCP-совместимый агент</td></tr>
         <tr class="fragment"><td><strong>Протокол</strong></td><td>Ваш собственный</td><td>Стандартный JSON-RPC</td></tr>
-        <tr class="fragment"><td><strong>Язык</strong></td><td>Тот же, что и приложение</td><td>Любой (Python, TS, Go, Rust...)</td></tr>
+        <tr class="fragment"><td><strong>Язык</strong></td><td>Любой (обработчик отделён от API)</td><td>Любой (Python, TS, Go, Rust...)</td></tr>
         <tr class="fragment"><td><strong>Изоляция</strong></td><td>В процессе приложения</td><td>Отдельный процесс, sandbox</td></tr>
+        <tr class="fragment"><td><strong>Latency</strong></td><td>Минимальная (in-process)</td><td>Overhead JSON-RPC через stdio/HTTP</td></tr>
         <tr class="fragment"><td><strong>Сложность</strong></td><td>Низкая (одна функция)</td><td>Средняя (сервер + конфиг)</td></tr>
-        <tr class="fragment"><td><strong>Экосистема</strong></td><td>Нет</td><td>1000+ готовых серверов</td></tr>
+        <tr class="fragment"><td><strong>Экосистема</strong></td><td>Нет</td><td>Тысячи готовых серверов</td></tr>
       </table>
     </div>
 </div>
@@ -1499,7 +1613,7 @@ npx @modelcontextprotocol/inspector \
 <!-- ==================== РАЗДЕЛ 5: CLI vs MCP ==================== -->
 <section>
   <div class="chapter-shell">
-    <span class="kicker">Раздел 05 · 5 мин</span>
+    <span class="kicker">Раздел 05</span>
     <h1>CLI vs MCP</h1>
     <p class="cta">Когда CLI утилита лучше MCP-сервера</p>
 </div>
@@ -1571,7 +1685,8 @@ gh api repos/myorg/myrepo/actions/runs \
         <tr><th>Ситуация</th><th>Почему MCP лучше</th></tr>
         <tr class="fragment"><td><strong>OAuth/токены</strong></td><td>MCP управляет сессией; CLI требует настройки на каждой машине</td></tr>
         <tr class="fragment"><td><strong>Нет CLI у сервиса</strong></td><td>Sentry, Linear, Notion — MCP заменяет curl к REST API</td></tr>
-        <tr class="fragment"><td><strong>Streaming / подписки</strong></td><td>MCP поддерживает SSE, CLI — только polling</td></tr>
+        <tr class="fragment"><td><strong>Безопасность</strong></td><td>MCP ограничивает набор операций; Bash — полный доступ к shell</td></tr>
+        <tr class="fragment"><td><strong>Structured output</strong></td><td>MCP возвращает JSON; CLI — текст, в котором модель может ошибиться</td></tr>
         <tr class="fragment"><td><strong>Нет доступа к shell</strong></td><td>Веб-агенты, ограниченные среды без Bash</td></tr>
         <tr class="fragment"><td><strong>Типизация и валидация</strong></td><td>JSON Schema параметров vs свободная строка в Bash</td></tr>
         <tr class="fragment"><td><strong>Несколько IDE/агентов</strong></td><td>Конфиг один раз → работает в любом MCP-клиенте</td></tr>
@@ -1640,22 +1755,24 @@ gh api repos/myorg/myrepo/actions/runs \
     <h2 class="section-title">Практическое задание</h2>
     <div class="cards c2">
       <div class="card teal">
-        <h3>Задание 1: Свой Tool</h3>
+        <h3>Задание 1: Tool <code>check_endpoint</code></h3>
         <ul>
-          <li>Придумайте tool, полезный для вашего проекта</li>
-          <li>Напишите tool definition (name, description, schema)</li>
-          <li>Реализуйте обработчик</li>
-          <li>Подключите через Claude API или как custom tool в IDE</li>
+          <li>Напишите tool definition: url + method → status, latency, headers</li>
+          <li>Реализуйте обработчик на Python (<code>httpx</code>)</li>
+          <li>Подключите к Claude API (tool_use → tool_result → ответ)</li>
+          <li>Тест: «Проверь, работает ли httpbin.org/get»</li>
         </ul>
+        <p class="note">Полный код — в конспекте лекции</p>
       </div>
       <div class="card amber">
-        <h3>Задание 2: MCP Server</h3>
+        <h3>Задание 2: MCP Filesystem</h3>
         <ul>
-          <li>Подключите готовый MCP-сервер к вашему агенту</li>
-          <li>Рекомендация: начните с <code>@modelcontextprotocol/server-filesystem</code></li>
-          <li>Дайте агенту задачу, требующую MCP-tools</li>
-          <li>Проанализируйте tool calls в логах</li>
+          <li>Добавьте <code>server-filesystem</code> в <code>.mcp.json</code></li>
+          <li>Ограничьте доступ: только <code>/tmp/sandbox</code></li>
+          <li>Задача агенту: «Создай report.md с текущей датой»</li>
+          <li>Проверьте: какие tool calls использовал агент?</li>
         </ul>
+        <p class="note">Ожидание: агент использует write_file от MCP, не встроенный Write</p>
       </div>
     </div>
 </div>
