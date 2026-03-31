@@ -925,6 +925,298 @@ table.mini th {
 </div>
 </section>
 
+<!-- ==================== РАЗДЕЛ 3: СУБАГЕНТЫ В ИНСТРУМЕНТАХ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 03</span>
+    <h1>Субагенты в инструментах</h1>
+    <p class="cta">Как Claude Code, Roo Code, Kilo Code и OpenCode реализуют делегацию на практике.</p>
+</div>
+</section>
+
+<!-- Claude Code — Agent tool -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Claude Code — Agent tool</h2>
+    <p>Родительский агент вызывает <strong>Agent tool</strong> с параметрами: <em>prompt</em>, <em>subagent_type</em>, <em>isolation</em>, <em>run_in_background</em>.</p>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr>
+            <th>Тип (subagent_type)</th>
+            <th>Доступные инструменты</th>
+            <th>Когда использовать</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Explore</strong></td>
+            <td>Grep, Glob, Read</td>
+            <td>Исследование кодовой базы</td>
+          </tr>
+          <tr>
+            <td><strong>Plan</strong></td>
+            <td>Read, Grep, Glob, LSP</td>
+            <td>Планирование без изменений</td>
+          </tr>
+          <tr>
+            <td><strong>General-purpose</strong></td>
+            <td>Все инструменты</td>
+            <td>Полноценная реализация</td>
+          </tr>
+          <tr>
+            <td><strong>code-review</strong></td>
+            <td>Чтение + комментирование</td>
+            <td>Ревью кода</td>
+          </tr>
+          <tr>
+            <td><strong>Кастомный</strong></td>
+            <td>Из AGENTS.md</td>
+            <td>Специализированные задачи</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote>
+      <p>Agent tool — полноценный инструмент, доступный модели наравне с Read, Edit, Bash. Субагент получает чистый контекст и возвращает только результат.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Claude Code — AGENTS.md -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Claude Code — AGENTS.md</h2>
+    <p>Файл <strong>AGENTS.md</strong> в корне репозитория описывает кастомных агентов. Claude Code подхватывает его автоматически.</p>
+    <pre><code class="language-markdown"># AGENTS.md
+
+## code-reviewer
+You are a senior code reviewer. Focus on:
+- Security vulnerabilities (injection, auth bypass, data exposure)
+- Performance anti-patterns (N+1 queries, missing indexes)
+- API contract violations
+
+Tools: Read, Grep, Glob
+Constraints: Never modify files. Always cite file:line.
+Output format: list of findings with severity (critical/warning/info).
+
+## test-writer
+You are a test engineer. Given a source file, write comprehensive tests.
+Tools: Read, Grep, Glob, Edit, Bash
+Constraints: Use existing test framework. Run tests before returning.
+Output format: summary of tests added and pass/fail status.</code></pre>
+    <p class="note">Каждый блок определяет: роль, доступные инструменты, ограничения и формат выходных данных.</p>
+</div>
+</section>
+
+<!-- Claude Code — параллелизм и изоляция -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Claude Code — параллелизм и изоляция</h2>
+    <div class="cards c3">
+      <div class="card teal">
+        <h3>Параллельный запуск</h3>
+        <p>Родитель вызывает несколько Agent tool одновременно в одном сообщении.</p>
+        <ul>
+          <li>Один исследует frontend</li>
+          <li>Другой — backend</li>
+          <li>Третий — тесты</li>
+        </ul>
+        <p>Все работают параллельно с изолированными контекстами.</p>
+      </div>
+      <div class="card amber">
+        <h3>Worktree-изоляция</h3>
+        <p><strong>isolation: "worktree"</strong> — создаёт отдельную git worktree (полную копию репозитория).</p>
+        <ul>
+          <li>Субагент пишет код в своей копии</li>
+          <li>Не мешает родителю и другим</li>
+          <li>Результат — через git merge</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>Фоновый режим</h3>
+        <p><strong>run_in_background: true</strong> — субагент работает в фоне, родитель не ждёт.</p>
+        <ul>
+          <li>Прогон тестов</li>
+          <li>Масштабный рефакторинг</li>
+          <li>Генерация документации</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote>
+      <p>Worktree + параллелизм + фоновый режим — главные преимущества модели субагентности Claude Code перед конкурентами.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Roo Code / Kilo Code — режимы -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Roo Code / Kilo Code — режимы</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Встроенные режимы</h3>
+        <div class="cards">
+          <div class="card teal"><h3>Code</h3><p>Полный доступ к редактированию и выполнению команд</p></div>
+          <div class="card amber"><h3>Architect</h3><p>Только чтение, фокус на проектировании</p></div>
+          <div class="card rose"><h3>Ask</h3><p>Ответы на вопросы, без инструментов изменения</p></div>
+          <div class="card green"><h3>Debug</h3><p>Анализ ошибок, чтение логов, диагностика</p></div>
+          <div class="card amber"><h3>Orchestrator</h3><p>Делегация задач другим режимам</p></div>
+        </div>
+      </div>
+      <div>
+        <h3>Orchestrator + Boomerang Tasks</h3>
+        <pre><code class="language-text">Пользователь: "Добавить авторизацию"
+         │
+    Orchestrator
+    ├── → Architect: спроектировать
+    │   ← архитектурный план
+    ├── → Code: реализовать
+    │   ← код готов
+    ├── → Code: написать тесты
+    │   ← тесты написаны
+    └── → Debug: проверить
+        ← всё работает
+
+    Orchestrator → итог пользователю</code></pre>
+        <p class="note">Boomerang Tasks работают <strong>последовательно</strong> — Orchestrator ждёт завершения текущей подзадачи.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Roo Code / Kilo Code — .roomodes -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Roo Code / Kilo Code — .roomodes</h2>
+    <p>Файл <strong>.roomodes</strong> в корне проекта определяет кастомные режимы. Совместим между Roo Code и Kilo Code.</p>
+    <pre><code class="language-json">{
+  "customModes": [
+    {
+      "slug": "doc-writer",
+      "name": "Documentation Writer",
+      "roleDefinition": "You are a technical writer. Generate clear,
+        structured documentation for the codebase.",
+      "groups": ["read", "command"],
+      "customInstructions": "Always include usage examples."
+    },
+    {
+      "slug": "security-audit",
+      "name": "Security Auditor",
+      "roleDefinition": "You are a security engineer.
+        Analyze code for vulnerabilities.",
+      "groups": ["read"],
+      "customInstructions": "Classify findings by OWASP Top 10."
+    }
+  ]
+}</code></pre>
+    <div class="grid-2" style="margin-top: 0.5em;">
+      <div class="card teal">
+        <h3>Поле groups</h3>
+        <p>Определяет доступные группы инструментов: <em>read</em>, <em>edit</em>, <em>command</em>, <em>browser</em>, <em>mcp</em>.</p>
+      </div>
+      <div class="card amber">
+        <h3>Kilo Code — Task Manager UI</h3>
+        <p>Визуальная панель с деревом подзадач, статусами (в очереди / выполняется / завершено) и результатами.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- OpenCode — agents -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">OpenCode — agents</h2>
+    <p>Агенты определяются декларативно в <strong>opencode.json</strong> или как markdown-файлы в <strong>.opencode/agents/</strong>.</p>
+    <pre><code class="language-json">{
+  "agents": {
+    "reviewer": {
+      "model": "anthropic:claude-sonnet-4-20250514",
+      "systemPrompt": "You are a code reviewer. Analyze changes
+        for bugs, security issues, and style violations.",
+      "tools": ["read", "glob", "grep"]
+    },
+    "implementer": {
+      "model": "anthropic:claude-sonnet-4-20250514",
+      "systemPrompt": "You are a senior developer. Implement
+        features following existing code patterns.",
+      "tools": ["read", "glob", "grep", "edit", "bash"]
+    }
+  }
+}</code></pre>
+    <div class="grid-2" style="margin-top: 0.5em;">
+      <div class="card rose">
+        <h3>Ключевое отличие</h3>
+        <p>Агенты в OpenCode — <strong>предустановленные профили</strong>, а не динамически порождаемые субагенты. Переключение — смена конфигурации внутри одного сеанса.</p>
+      </div>
+      <div class="card green">
+        <h3>Markdown-формат</h3>
+        <p>Альтернатива: отдельные файлы <em>.opencode/agents/reviewer.md</em>. Заголовок — имя, содержимое — системный промпт. Удобно для длинных инструкций.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Сводная таблица -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Сводная таблица: субагенты</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr>
+            <th>Критерий</th>
+            <th>Claude Code</th>
+            <th>Roo / Kilo Code</th>
+            <th>OpenCode</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Модель</strong></td>
+            <td>Явный spawn через Agent tool</td>
+            <td>Режимы + Orchestrator / Boomerang</td>
+            <td>Агенты в конфигурации</td>
+          </tr>
+          <tr>
+            <td><strong>Конфигурация</strong></td>
+            <td><em>AGENTS.md</em> + subagent_type</td>
+            <td><em>.roomodes</em> (JSON)</td>
+            <td><em>opencode.json</em> / .opencode/agents/</td>
+          </tr>
+          <tr>
+            <td><strong>Параллельность</strong></td>
+            <td style="color: var(--green);">Да (несколько Agent-вызовов)</td>
+            <td style="color: var(--red);">Последовательная</td>
+            <td>Зависит от реализации</td>
+          </tr>
+          <tr>
+            <td><strong>Изоляция</strong></td>
+            <td style="color: var(--green);">Worktree (git-копия)</td>
+            <td>Отдельный контекст (общая FS)</td>
+            <td>Отдельный контекст (общая FS)</td>
+          </tr>
+          <tr>
+            <td><strong>Кастомные типы</strong></td>
+            <td>AGENTS.md</td>
+            <td>.roomodes</td>
+            <td>Агенты в конфиге</td>
+          </tr>
+          <tr>
+            <td><strong>Фоновый запуск</strong></td>
+            <td style="color: var(--green);">run_in_background</td>
+            <td style="color: var(--red);">Нет</td>
+            <td style="color: var(--red);">Нет</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote>
+      <p>Самая продвинутая модель — у Claude Code: worktree-изоляция, параллелизм и фоновый режим. Roo/Kilo Code берут удобством Orchestrator-паттерна. OpenCode — минимальный подход с предустановленными профилями.</p>
+    </blockquote>
+</div>
+</section>
+
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
