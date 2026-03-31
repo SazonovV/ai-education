@@ -1758,6 +1758,211 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 </div>
 </section>
 
+<!-- ==================== РАЗДЕЛ 6: ПОДВОДНЫЕ КАМНИ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 6</span>
+    <h1>Подводные камни</h1>
+    <p class="cta">Типичные ловушки мультиагентных систем — и как их избежать</p>
+</div>
+</section>
+
+<!-- Потеря контекста + Дублирование -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Ловушки: контекст и дублирование</h2>
+    <div class="cards c2">
+      <div class="card rose">
+        <h3>Потеря контекста</h3>
+        <p><strong>Проблема:</strong> субагент не знает, что делают другие. Тестировщик пишет тесты для старого кода, потому что не знает о рефакторинге.</p>
+        <ul>
+          <li>Чёткие описания задач с полным контекстом</li>
+          <li>Общие артефакты: <code>AGENTS.md</code>, <code>TODO.md</code></li>
+          <li>Для зависимых задач — Pipeline вместо Fan-out</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>Дублирование работы</h3>
+        <p><strong>Проблема:</strong> два субагента параллельно редактируют один файл — merge-конфликты, дубли в конфигах.</p>
+        <ul>
+          <li>Разделяйте работу по файлам и директориям</li>
+          <li>Worktree-изоляция (Claude Code)</li>
+          <li>Явные границы: «Редактируй только <code>src/api/</code>»</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote>
+      <p><strong>Общий принцип:</strong> субагент получает только текстовое описание задачи — детали теряются при пересказе. Чем точнее задание, тем меньше ошибок.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Зацикливание + Избыточная декомпозиция -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Ловушки: зацикливание и оверхед</h2>
+    <div class="cards c2">
+      <div class="card red">
+        <h3>Зацикливание</h3>
+        <p><strong>Проблема:</strong> исправляет один тест — ломается другой. Бесконечный цикл «почти готово», пока не кончится бюджет токенов.</p>
+        <ul>
+          <li>Лимит итераций: «3 попытки — потом верни ошибку»</li>
+          <li>Чёткие критерии завершения</li>
+          <li>Паттерн Supervisor — родитель прерывает зацикленного субагента</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <h3>Избыточная декомпозиция</h3>
+        <p><strong>Проблема:</strong> 5-минутная задача разбивается на 4 субагентов. Overhead на координацию превышает стоимость самой работы.</p>
+        <ul>
+          <li>Задача умещается в один контекст? <strong>Не декомпозируйте</strong></li>
+          <li>Оценивайте до запуска: файлы, параллельность, независимость</li>
+          <li>Субагент оправдан, когда задача <em>реально</em> не помещается</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote>
+      <p><strong>Правило:</strong> все четыре ловушки решаются одним подходом — чёткие границы, лимиты и правильный выбор паттерна оркестрации.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 7: ИТОГИ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 7</span>
+    <h1>Итоги</h1>
+    <p class="cta">Что забрать с собой из этой лекции</p>
+</div>
+</section>
+
+<!-- Ключевые выводы -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">6 вещей, которые стоит запомнить</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>1</h3>
+        <p><strong>Субагент = чистый контекст.</strong> Делегирование — не «больше агентов», а фокус и изоляция. Каждый субагент получает только то, что нужно.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>2</h3>
+        <p><strong>Паттерны решают.</strong> Fan-out для независимых, Pipeline для зависимых, Specialist для экспертизы, Supervisor для контроля.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>3</h3>
+        <p><strong>Каждый инструмент — своя модель.</strong> Claude Code: Agent tool + worktree. Roo/Kilo: Orchestrator + Boomerang. OpenCode: агенты-профили.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>4</h3>
+        <p><strong>Hooks — гарантированная автоматизация.</strong> Хост выполняет hook, а не модель. Форматирование, линтинг, блокировка — без исключений.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>5</h3>
+        <p><strong>Не всё нужно декомпозировать.</strong> Субагент — это overhead. Если задача укладывается в один контекст — делайте в основном агенте.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>6</h3>
+        <p><strong>Знайте ловушки.</strong> Потеря контекста, дублирование, зацикливание, оверхед — решаются чёткими границами и правильным паттерном.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Практическое задание -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Практическое задание</h2>
+    <div class="cards c2">
+      <div class="card teal">
+        <h3>Задание 1: Настроить субагентов</h3>
+        <ul>
+          <li><strong>Claude Code:</strong> создайте <code>AGENTS.md</code> с описанием специализированного агента (<code>code-reviewer</code>). Дайте задачу, требующую делегации</li>
+          <li><strong>Roo/Kilo Code:</strong> создайте кастомный режим в <code>.roomodes</code>. Переключитесь в Orchestrator и делегируйте задачу</li>
+          <li><strong>OpenCode:</strong> определите агента в <code>opencode.json</code> с ограниченным набором инструментов. Проверьте блокировку</li>
+        </ul>
+      </div>
+      <div class="card amber">
+        <h3>Задание 2: Настроить Hook</h3>
+        <ul>
+          <li><strong>Claude Code:</strong> hook в <code>.claude/settings.json</code> — форматирование после каждого Edit</li>
+          <li><strong>OpenCode:</strong> плагин <code>.opencode/plugins/logger.ts</code> — логирование всех вызовов инструментов</li>
+          <li><strong>Roo/Kilo Code:</strong> MCP-инструмент <code>pre_edit_check</code> + правило, обязывающее проверку перед редактированием</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote>
+      <p>Полные примеры кода — в конспекте лекции. Выберите один инструмент (Claude Code / Roo / OpenCode) и выполните оба задания.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Лекция 5 teaser -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Лекция 5 · Безопасность агентов</h2>
+    <div class="cards c3">
+      <div class="card rose">
+        <h3>Модель угроз</h3>
+        <p>Что может пойти не так, когда агент имеет доступ к файлам, shell и API</p>
+      </div>
+      <div class="card red">
+        <h3>Prompt injection</h3>
+        <p>Как атакующий может перехватить управление агентом через данные</p>
+      </div>
+      <div class="card amber">
+        <h3>MCP-уязвимости</h3>
+        <p>Rug pull, tool poisoning, shadow tools — специфические атаки на MCP-серверы</p>
+      </div>
+      <div class="card teal">
+        <h3>Утечки секретов</h3>
+        <p>Агент видит <code>.env</code>, токены в истории — как ограничить exposure</p>
+      </div>
+      <div class="card green">
+        <h3>Защита</h3>
+        <p>Принцип наименьших привилегий, allow-lists, sandboxing, approval flows</p>
+      </div>
+      <div class="card amber">
+        <h3>Реагирование</h3>
+        <p>Что делать, когда инцидент уже произошёл — логи, откат, remediation</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Дальше → Лекция 5 -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Дальше</span>
+    <h1>Лекция 5</h1>
+    <p class="cta">Безопасность агентов — модель угроз, prompt injection, защита и реагирование</p>
+    <div class="meta-row" style="justify-content:center">
+      <a class="pill" href="../part1/">Слайды · Лекция 1</a>
+      <a class="pill" href="../part2/">Слайды · Лекция 2</a>
+      <a class="pill" href="../part3/">Слайды · Лекция 3</a>
+      <a class="pill" href="../../">Главная</a>
+    </div>
+</div>
+</section>
+
+<!-- Остаёмся на связи -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Остаёмся на связи</h2>
+    <div class="promo-layout">
+      <div class="promo-photo-box">
+        <img src="../../assets/avatar.jpg" alt="Фото автора канала" onerror="this.style.display='none'">
+      </div>
+      <div class="promo-qr-box">
+        <h3>Telegram канал</h3>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&data=https%3A%2F%2Ft.me%2FSazonovMaybeTalks" alt="QR код на Telegram канал SazonovMaybeTalks">
+        <a class="promo-link" href="https://t.me/SazonovMaybeTalks" target="_blank" rel="noopener noreferrer">t.me/SazonovMaybeTalks</a>
+        <p class="note">Сканируйте QR или переходите по ссылке, чтобы получить обновления по следующим материалам.</p>
+      </div>
+    </div>
+</div>
+</section>
+
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
