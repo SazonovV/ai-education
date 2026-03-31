@@ -971,7 +971,7 @@ table.mini th {
           </tr>
           <tr>
             <td><strong>Кастомный</strong></td>
-            <td>Из AGENTS.md</td>
+            <td>Из AGENTS.md / .claude/agents/</td>
             <td>Специализированные задачи</td>
           </tr>
         </tbody>
@@ -987,7 +987,7 @@ table.mini th {
 <section>
   <div class="slide-shell">
     <h2 class="section-title">Claude Code — AGENTS.md</h2>
-    <p>Файл <strong>AGENTS.md</strong> в корне репозитория описывает кастомных агентов. Claude Code подхватывает его автоматически.</p>
+    <p>Файл <strong>AGENTS.md</strong> в корне репо или отдельные файлы в <strong>.claude/agents/*.md</strong> описывают кастомных агентов. Claude Code подхватывает их автоматически.</p>
     <pre><code class="language-markdown"># AGENTS.md
 
 ## code-reviewer
@@ -1016,35 +1016,31 @@ Output format: summary of tests added and pass/fail status.</code></pre>
     <div class="cards c3">
       <div class="card teal">
         <h3>Параллельный запуск</h3>
-        <p>Родитель вызывает несколько Agent tool одновременно в одном сообщении.</p>
+        <p>Несколько Agent tool одновременно в одном сообщении.</p>
         <ul>
-          <li>Один исследует frontend</li>
-          <li>Другой — backend</li>
-          <li>Третий — тесты</li>
+          <li>Один — frontend, другой — backend</li>
+          <li>Изолированные контексты</li>
         </ul>
-        <p>Все работают параллельно с изолированными контекстами.</p>
       </div>
       <div class="card amber">
         <h3>Worktree-изоляция</h3>
-        <p><strong>isolation: "worktree"</strong> — создаёт отдельную git worktree (полную копию репозитория).</p>
+        <p><strong>isolation: "worktree"</strong> — отдельная git worktree для каждого субагента.</p>
         <ul>
-          <li>Субагент пишет код в своей копии</li>
-          <li>Не мешает родителю и другим</li>
+          <li>Субагент пишет в своей копии</li>
           <li>Результат — через git merge</li>
         </ul>
       </div>
       <div class="card green">
         <h3>Фоновый режим</h3>
-        <p><strong>run_in_background: true</strong> — субагент работает в фоне, родитель не ждёт.</p>
+        <p><strong>run_in_background: true</strong> — субагент в фоне, родитель не ждёт.</p>
         <ul>
           <li>Прогон тестов</li>
-          <li>Масштабный рефакторинг</li>
-          <li>Генерация документации</li>
+          <li>Рефакторинг и генерация</li>
         </ul>
       </div>
     </div>
     <blockquote>
-      <p>Worktree + параллелизм + фоновый режим — главные преимущества модели субагентности Claude Code перед конкурентами.</p>
+      <p>Worktree + параллелизм + фон — главные преимущества субагентности Claude Code.</p>
     </blockquote>
 </div>
 </section>
@@ -1056,12 +1052,12 @@ Output format: summary of tests added and pass/fail status.</code></pre>
     <div class="grid-2">
       <div>
         <h3>Встроенные режимы</h3>
-        <div class="cards">
-          <div class="card teal"><h3>Code</h3><p>Полный доступ к редактированию и выполнению команд</p></div>
-          <div class="card amber"><h3>Architect</h3><p>Только чтение, фокус на проектировании</p></div>
-          <div class="card rose"><h3>Ask</h3><p>Ответы на вопросы, без инструментов изменения</p></div>
-          <div class="card green"><h3>Debug</h3><p>Анализ ошибок, чтение логов, диагностика</p></div>
-          <div class="card amber"><h3>Orchestrator</h3><p>Делегация задач другим режимам</p></div>
+        <div class="cards c2" style="gap:6px">
+          <div class="card teal" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">Code</h3><p style="margin:0">Полный доступ</p></div>
+          <div class="card amber" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">Architect</h3><p style="margin:0">Только чтение</p></div>
+          <div class="card rose" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">Ask</h3><p style="margin:0">Вопросы-ответы</p></div>
+          <div class="card green" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">Debug</h3><p style="margin:0">Диагностика</p></div>
+          <div class="card amber" style="padding:6px 10px;grid-column:span 2"><h3 style="margin:0;font-size:0.8em">Orchestrator</h3><p style="margin:0">Делегация задач другим режимам</p></div>
         </div>
       </div>
       <div>
@@ -1090,34 +1086,23 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   <div class="slide-shell">
     <h2 class="section-title">Roo Code / Kilo Code — .roomodes</h2>
     <p>Файл <strong>.roomodes</strong> в корне проекта определяет кастомные режимы. Совместим между Roo Code и Kilo Code.</p>
-    <pre><code class="language-json">{
-  "customModes": [
-    {
-      "slug": "doc-writer",
-      "name": "Documentation Writer",
-      "roleDefinition": "You are a technical writer. Generate clear,
-        structured documentation for the codebase.",
-      "groups": ["read", "command"],
-      "customInstructions": "Always include usage examples."
-    },
-    {
-      "slug": "security-audit",
-      "name": "Security Auditor",
-      "roleDefinition": "You are a security engineer.
-        Analyze code for vulnerabilities.",
-      "groups": ["read"],
-      "customInstructions": "Classify findings by OWASP Top 10."
-    }
-  ]
-}</code></pre>
-    <div class="grid-2" style="margin-top: 0.5em;">
+    <pre><code class="language-json">{ "customModes": [{
+    "slug": "doc-writer",
+    "name": "Documentation Writer",
+    "roleDefinition": "You are a technical writer...",
+    "groups": ["read", "command"],
+    "customInstructions": "Always include usage examples."
+  },
+  { "slug": "security-audit", "groups": ["read"], ... }
+]}</code></pre>
+    <div class="grid-2" style="margin-top: 0.4em;">
       <div class="card teal">
         <h3>Поле groups</h3>
-        <p>Определяет доступные группы инструментов: <em>read</em>, <em>edit</em>, <em>command</em>, <em>browser</em>, <em>mcp</em>.</p>
+        <p>Доступные инструменты: <em>read</em>, <em>edit</em>, <em>command</em>, <em>browser</em>, <em>mcp</em>.</p>
       </div>
       <div class="card amber">
         <h3>Kilo Code — Task Manager UI</h3>
-        <p>Визуальная панель с деревом подзадач, статусами (в очереди / выполняется / завершено) и результатами.</p>
+        <p>Визуальная панель: дерево подзадач, статусы, результаты.</p>
       </div>
     </div>
 </div>
@@ -1132,15 +1117,13 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   "agents": {
     "reviewer": {
       "model": "anthropic:claude-sonnet-4-20250514",
-      "systemPrompt": "You are a code reviewer. Analyze changes
-        for bugs, security issues, and style violations.",
-      "tools": ["read", "glob", "grep"]
+      "prompt": ".opencode/agents/reviewer.md",
+      "permission": ["read", "glob", "grep"]
     },
     "implementer": {
       "model": "anthropic:claude-sonnet-4-20250514",
-      "systemPrompt": "You are a senior developer. Implement
-        features following existing code patterns.",
-      "tools": ["read", "glob", "grep", "edit", "bash"]
+      "prompt": ".opencode/agents/implementer.md",
+      "permission": ["read", "glob", "grep", "edit", "bash"]
     }
   }
 }</code></pre>
@@ -1180,7 +1163,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           </tr>
           <tr>
             <td><strong>Конфигурация</strong></td>
-            <td><em>AGENTS.md</em> + subagent_type</td>
+            <td><em>AGENTS.md / .claude/agents/</em> + subagent_type</td>
             <td><em>.roomodes</em> (JSON)</td>
             <td><em>opencode.json</em> / .opencode/agents/</td>
           </tr>
@@ -1236,19 +1219,15 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         <div class="cards">
           <div class="card amber">
             <h3>Зависимости между частями</h3>
-            <p>Сначала миграция БД, потом код, потом тесты — порядок критичен, ошибка дорого стоит.</p>
-          </div>
-          <div class="card amber">
-            <h3>Строгий порядок выполнения</h3>
-            <p>Шаг 2 зависит от результата шага 1 — лучше запускать вручную, чем надеяться на оркестратор.</p>
+            <p>Миграция БД → код → тесты — порядок критичен.</p>
           </div>
           <div class="card amber">
             <h3>Риск конфликтов</h3>
-            <p>Два субагента редактируют один файл — рецепт для проблем. Безопаснее разделить самому.</p>
+            <p>Два субагента редактируют один файл — безопаснее разделить.</p>
           </div>
           <div class="card rose">
             <h3>Критичные задачи</h3>
-            <p>Рефакторинг ядра, миграция данных, изменение API — предсказуемость важнее скорости.</p>
+            <p>Ядро, миграция данных, API — предсказуемость важнее.</p>
           </div>
         </div>
       </div>
@@ -1257,19 +1236,15 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         <div class="cards">
           <div class="card green">
             <h3>Задача чётко описана</h3>
-            <p>«Добавь валидацию email в форму регистрации» — понятная, изолированная задача.</p>
+            <p>Понятная изолированная задача с ясным результатом.</p>
           </div>
           <div class="card green">
             <h3>Агент «знает» проект</h3>
-            <p>Настроены AGENTS.md, rules, контекст проекта. Агент может исследовать код и принимать решения.</p>
+            <p>Настроены AGENTS.md, rules и контекст проекта.</p>
           </div>
           <div class="card green">
             <h3>Подзадачи независимы</h3>
-            <p>Обновить документацию, написать тесты, исправить линтер — три задачи, которые не пересекаются.</p>
-          </div>
-          <div class="card teal">
-            <h3>Рутинные задачи</h3>
-            <p>Генерация boilerplate, обновление зависимостей, форматирование — цена ошибки невелика.</p>
+            <p>Доки, тесты, линтер — задачи не пересекаются.</p>
           </div>
         </div>
       </div>
@@ -1455,13 +1430,11 @@ Output format: summary of tests added and pass/fail status.</code></pre>
     </blockquote>
     <p>Hook — реакция на событие жизненного цикла агента, выполняемая <strong>хостом</strong>, а не моделью. Модель не решает, запускать ли hook, — он срабатывает автоматически.</p>
     <div class="cards c3" style="margin-top: 0.5em;">
-      <div class="card teal"><h3>1. Автоформат</h3><p>prettier / black / gofmt после каждого Edit — агент всегда видит чистый код</p></div>
-      <div class="card teal"><h3>2. Линтинг</h3><p>ESLint / ruff после записи файла — ошибки возвращаются модели через stderr</p></div>
-      <div class="card amber"><h3>3. Автокоммит</h3><p>Hook на Stop: <em>git add -A && git commit</em> — каждый логический блок фиксируется</p></div>
-      <div class="card amber"><h3>4. Уведомления</h3><p>Slack webhook / push при ошибке — узнаёте о проблеме сразу</p></div>
-      <div class="card rose"><h3>5. Тесты</h3><p>PostToolUse (Edit) → прогон релевантных тестов до завершения задачи</p></div>
-      <div class="card rose"><h3>6. Контекст</h3><p>SessionStart: git status + open issues → агент начинает «в курсе»</p></div>
-      <div class="card green"><h3>7. Блокировка</h3><p>PreToolUse проверяет <em>rm -rf</em>, <em>push --force</em>, <em>DROP TABLE</em> → exit 2 = deny</p></div>
+      <div class="card teal"><h3>1. Автоформат и линтинг</h3><p>prettier / ESLint после Edit — чистый код, ошибки через stderr</p></div>
+      <div class="card amber"><h3>2. Автокоммит</h3><p>Hook на Stop: <em>git add -A && git commit</em></p></div>
+      <div class="card amber"><h3>3. Уведомления</h3><p>Slack webhook / push при ошибке</p></div>
+      <div class="card rose"><h3>4. Тесты и контекст</h3><p>PostToolUse → тесты; SessionStart → git status + issues</p></div>
+      <div class="card green"><h3>5. Блокировка</h3><p>PreToolUse: <em>rm -rf</em>, <em>push --force</em> → exit 2 = deny</p></div>
     </div>
 </div>
 </section>
@@ -1481,34 +1454,27 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         "type": "command",
         "command": "npx prettier --write \"$FILEPATH\""
       }]
-    }],
-    "Stop": [{
-      "matcher": "",
-      "hooks": [{
-        "type": "command",
-        "command": "npm test 2>&1 | tail -5"
-      }]
     }]
   }
 }</code></pre>
       </div>
       <div>
-        <div class="cards">
+        <div class="cards c2">
           <div class="card teal">
-            <h3>12 событий</h3>
-            <p>PreToolUse, PostToolUse, Stop, SessionStart, UserPromptSubmit, PermissionRequest и другие. Полное покрытие жизненного цикла.</p>
+            <h3>20+ событий</h3>
+            <p>PreToolUse, PostToolUse, Stop, SessionStart и др.</p>
           </div>
           <div class="card amber">
-            <h3>3 типа обработчиков</h3>
-            <p><strong>command</strong> (shell), <strong>prompt</strong> (однопроходная оценка), <strong>agent</strong> (субагент с инструментами).</p>
+            <h3>4 типа</h3>
+            <p><strong>command</strong>, <strong>prompt</strong>, <strong>agent</strong>, <strong>http</strong></p>
           </div>
           <div class="card rose">
             <h3>Matcher</h3>
-            <p>Регулярное выражение для фильтрации по имени инструмента. Пустой matcher = для всех.</p>
+            <p>Regex по имени tool. Пустой = для всех.</p>
           </div>
           <div class="card green">
             <h3>Exit codes</h3>
-            <p><strong>0</strong> = OK, <strong>1</strong> = ошибка (stderr → модели), <strong>2</strong> = заблокировать действие.</p>
+            <p><strong>0</strong>=OK, <strong>1</strong>=не-блок., <strong>2</strong>=блок+stderr</p>
           </div>
         </div>
       </div>
@@ -1520,60 +1486,29 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 <section>
   <div class="slide-shell">
     <h2 class="section-title">Claude Code — типы обработчиков</h2>
-    <div class="cards c3">
+    <div class="cards c2">
       <div class="card teal">
         <h3>command (shell)</h3>
-        <p>Shell-команда, выполняемая хостом. Доступны переменные окружения: <em>$FILEPATH</em>, <em>$TOOL_NAME</em>, <em>$TOOL_INPUT</em>.</p>
-        <pre><code class="language-json">{
-  "type": "command",
-  "command": "npx prettier --write \"$FILEPATH\""
-}</code></pre>
+        <p>Shell-команда хоста. Переменные: <em>$FILEPATH</em>, <em>$TOOL_NAME</em>.</p>
+        <pre><code class="language-json">{ "type": "command", "command": "npx prettier --write \"$FILEPATH\"" }</code></pre>
       </div>
       <div class="card amber">
         <h3>prompt (инъекция)</h3>
-        <p>Однопроходная оценка моделью — результат добавляется в контекст. Не запускает инструменты.</p>
-        <pre><code class="language-json">{
-  "type": "prompt",
-  "prompt": "Check if changes follow our API naming conventions"
-}</code></pre>
+        <p>Однопроходная оценка моделью, результат в контекст.</p>
+        <pre><code class="language-json">{ "type": "prompt", "prompt": "Check API naming conventions" }</code></pre>
       </div>
       <div class="card rose">
         <h3>agent (субагент)</h3>
-        <p>Полноценный субагент с доступом к инструментам. Уникальная возможность Claude Code.</p>
-        <pre><code class="language-json">{
-  "type": "agent",
-  "prompt": "Review all changes for security vulnerabilities"
-}</code></pre>
+        <p>Субагент с инструментами. Уникально для Claude Code.</p>
+        <pre><code class="language-json">{ "type": "agent", "prompt": "Review changes for security" }</code></pre>
+      </div>
+      <div class="card green">
+        <h3>http (webhook)</h3>
+        <p>POST-запрос на URL для внешних интеграций.</p>
+        <pre><code class="language-json">{ "type": "http", "url": "https://hooks.example.com/notify" }</code></pre>
       </div>
     </div>
-    <div class="table-wrap" style="margin-top: 0.6em;">
-      <table class="mini">
-        <thead>
-          <tr>
-            <th>Exit code</th>
-            <th>Значение</th>
-            <th>Поведение</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>0</strong></td>
-            <td>OK</td>
-            <td>Продолжить выполнение</td>
-          </tr>
-          <tr>
-            <td><strong>1</strong></td>
-            <td>Ошибка</td>
-            <td>Показать stderr модели — она попытается исправить</td>
-          </tr>
-          <tr>
-            <td><strong>2</strong></td>
-            <td>Блокировка</td>
-            <td>Действие заблокировано (аналог deny)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <p style="margin-top: 0.4em;"><strong>Exit codes:</strong> <strong>0</strong> = OK → продолжить · <strong>1</strong> = не-блокирующая ошибка, stderr в лог · <strong>2</strong> = блокировка, stderr → модели</p>
 </div>
 </section>
 
@@ -1589,14 +1524,9 @@ Output format: summary of tests added and pass/fail status.</code></pre>
     "tool.execute.after": async (input, output) => {
       if (input.tool === "write" || input.tool === "edit") {
         const filePath = output.args?.filePath || ""
-        if (filePath.match(/\.(ts|tsx|js|jsx)$/)) {
+        if (filePath.match(/\.(ts|tsx|js|jsx)$/))
           await $`npx prettier --write ${filePath}`
-        }
       }
-    },
-    "session.idle": async () => {
-      await $`osascript -e 'display notification
-        "Done!" with title "OpenCode"'`
     }
   }
 }</code></pre>
@@ -1604,7 +1534,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
       <div>
         <div class="cards">
           <div class="card teal">
-            <h3>8 событий</h3>
+            <h3>Основные события</h3>
             <p>tool.execute.before/after, session.created, session.idle, session.error, file.edited, permission.asked, shell.env</p>
           </div>
           <div class="card amber">
@@ -1616,8 +1546,8 @@ Output format: summary of tests added and pass/fail status.</code></pre>
             <p>Локально: <em>.opencode/plugins/</em>. Через npm: <em>"plugin": ["package-name"]</em> в opencode.json.</p>
           </div>
         </div>
-        <blockquote style="margin-top: 0.5em;">
-          <p>Больше гибкости, чем Claude Code (условная логика, async, API), но выше порог входа — нужен TypeScript вместо JSON.</p>
+        <blockquote style="margin-top: 0.4em;">
+          <p>Гибче Claude Code (логика, async, API), но нужен TypeScript вместо JSON.</p>
         </blockquote>
       </div>
     </div>
@@ -1628,30 +1558,26 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 <section>
   <div class="slide-shell">
     <h2 class="section-title">Roo Code / Kilo Code — эмуляция hooks</h2>
-    <p><strong>Нативных hooks нет.</strong> Единственный путь — эмуляция через MCP-инструмент + правила + .roomodes.</p>
+    <p><strong>Нативных hooks нет.</strong> Эмуляция: MCP-tool + правила + .roomodes.</p>
     <div class="grid-3">
       <div class="card teal">
         <h3>Шаг 1: MCP-tool</h3>
         <pre><code class="language-typescript">async function execute({ scope }) {
-  const target = scope || "."
   const { stdout } = await execAsync(
-    `npm run lint -- ${target}`
+    `npm run lint -- ${scope || "."}`
   )
-  return `ok: lint passed.\n${stdout}`
+  return `ok: ${stdout}`
 }</code></pre>
-        <p>Кастомный MCP-инструмент <em>lint_check</em> с shell-командой внутри.</p>
+        <p>MCP-инструмент <em>lint_check</em> с shell-командой.</p>
       </div>
       <div class="card amber">
         <h3>Шаг 2: Правило</h3>
         <pre><code class="language-markdown">## .roo/rules-code/lint.md
-
-КРИТИЧЕСКИ ВАЖНО: перед ЛЮБЫМ
-изменением файлов ты ОБЯЗАН
+Перед ЛЮБЫМ изменением ОБЯЗАН
 вызвать `lint_check`.
-
-- `ok:` → можно вносить изменения
-- `fail:` → ЗАПРЕЩЕНО изменять</code></pre>
-        <p>Правило в инструкциях режима заставляет модель вызывать tool.</p>
+- `ok:` → можно изменять
+- `fail:` → ЗАПРЕЩЕНО</code></pre>
+        <p>Правило заставляет модель вызывать tool.</p>
       </div>
       <div class="card rose">
         <h3>Шаг 3: .roomodes</h3>
@@ -1659,17 +1585,16 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   "customModes": [{
     "slug": "safe-code",
     "name": "Safe Code",
-    "groups": ["read", "edit",
-      "command", "mcp"],
+    "groups": ["read","edit","mcp"],
     "customInstructions":
       "Always call lint_check"
   }]
 }</code></pre>
-        <p>Режим объединяет tool и правило в единый workflow.</p>
+        <p>Режим объединяет tool и правило.</p>
       </div>
     </div>
     <blockquote>
-      <p><strong>Ограничение:</strong> это <strong>не гарантия</strong>. Модель <em>может</em> пропустить проверку — особенно при сложных задачах или длинном контексте. Для критичных сценариев — недостаточно.</p>
+      <p><strong>Ограничение:</strong> это <strong>не гарантия</strong> — модель может пропустить проверку. Для критичных сценариев недостаточно.</p>
     </blockquote>
 </div>
 </section>
@@ -1703,14 +1628,14 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           </tr>
           <tr>
             <td><strong>Язык обработчика</strong></td>
-            <td>Shell / prompt / agent</td>
+            <td>Shell / prompt / agent / http</td>
             <td>JS / TypeScript</td>
             <td>Shell (через MCP tool)</td>
           </tr>
           <tr>
             <td><strong>Количество событий</strong></td>
-            <td>12</td>
-            <td>8</td>
+            <td>20+</td>
+            <td>7+</td>
             <td>Нет нативных</td>
           </tr>
           <tr>
@@ -1723,7 +1648,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
       </table>
     </div>
     <blockquote>
-      <p>Claude Code — самая зрелая реализация: JSON-конфиг, 12 событий, три типа обработчиков, включая уникальный тип <em>agent</em>. OpenCode — больше гибкости через код. Roo/Kilo — только эмуляция.</p>
+      <p>Claude Code — самая зрелая реализация: JSON-конфиг, 20+ событий, четыре типа обработчиков, включая уникальные типы <em>agent</em> и <em>http</em>. OpenCode — больше гибкости через код. Roo/Kilo — только эмуляция.</p>
     </blockquote>
 </div>
 </section>
