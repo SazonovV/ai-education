@@ -1437,6 +1437,327 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 </div>
 </section>
 
+<!-- ==================== РАЗДЕЛ 5: HOOKS ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 05</span>
+    <h1>Hooks</h1>
+    <p class="cta">Автоматизация жизненного цикла агента. Промпты — предложения. Hooks — гарантии.</p>
+</div>
+</section>
+
+<!-- Напоминание + сценарии -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Напоминание и продвинутые сценарии</h2>
+    <blockquote>
+      <p><strong>«Промпты — предложения. Hooks — гарантии.»</strong> (лекция 1, секция 3.6)</p>
+    </blockquote>
+    <p>Hook — реакция на событие жизненного цикла агента, выполняемая <strong>хостом</strong>, а не моделью. Модель не решает, запускать ли hook, — он срабатывает автоматически.</p>
+    <div class="cards c3" style="margin-top: 0.5em;">
+      <div class="card teal"><h3>1. Автоформат</h3><p>prettier / black / gofmt после каждого Edit — агент всегда видит чистый код</p></div>
+      <div class="card teal"><h3>2. Линтинг</h3><p>ESLint / ruff после записи файла — ошибки возвращаются модели через stderr</p></div>
+      <div class="card amber"><h3>3. Автокоммит</h3><p>Hook на Stop: <em>git add -A && git commit</em> — каждый логический блок фиксируется</p></div>
+      <div class="card amber"><h3>4. Уведомления</h3><p>Slack webhook / push при ошибке — узнаёте о проблеме сразу</p></div>
+      <div class="card rose"><h3>5. Тесты</h3><p>PostToolUse (Edit) → прогон релевантных тестов до завершения задачи</p></div>
+      <div class="card rose"><h3>6. Контекст</h3><p>SessionStart: git status + open issues → агент начинает «в курсе»</p></div>
+      <div class="card green"><h3>7. Блокировка</h3><p>PreToolUse проверяет <em>rm -rf</em>, <em>push --force</em>, <em>DROP TABLE</em> → exit 2 = deny</p></div>
+    </div>
+</div>
+</section>
+
+<!-- Claude Code hooks -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Claude Code hooks</h2>
+    <div class="grid-2">
+      <div>
+        <p>Конфигурация в <strong>.claude/settings.json</strong> (проектные) или <strong>~/.claude/settings.json</strong> (глобальные).</p>
+        <pre><code class="language-json">{
+  "hooks": {
+    "PostToolUse": [{
+      "matcher": "Edit|Write",
+      "hooks": [{
+        "type": "command",
+        "command": "npx prettier --write \"$FILEPATH\""
+      }]
+    }],
+    "Stop": [{
+      "matcher": "",
+      "hooks": [{
+        "type": "command",
+        "command": "npm test 2>&1 | tail -5"
+      }]
+    }]
+  }
+}</code></pre>
+      </div>
+      <div>
+        <div class="cards">
+          <div class="card teal">
+            <h3>12 событий</h3>
+            <p>PreToolUse, PostToolUse, Stop, SessionStart, UserPromptSubmit, PermissionRequest и другие. Полное покрытие жизненного цикла.</p>
+          </div>
+          <div class="card amber">
+            <h3>3 типа обработчиков</h3>
+            <p><strong>command</strong> (shell), <strong>prompt</strong> (однопроходная оценка), <strong>agent</strong> (субагент с инструментами).</p>
+          </div>
+          <div class="card rose">
+            <h3>Matcher</h3>
+            <p>Регулярное выражение для фильтрации по имени инструмента. Пустой matcher = для всех.</p>
+          </div>
+          <div class="card green">
+            <h3>Exit codes</h3>
+            <p><strong>0</strong> = OK, <strong>1</strong> = ошибка (stderr → модели), <strong>2</strong> = заблокировать действие.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Claude Code — типы обработчиков -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Claude Code — типы обработчиков</h2>
+    <div class="cards c3">
+      <div class="card teal">
+        <h3>command (shell)</h3>
+        <p>Shell-команда, выполняемая хостом. Доступны переменные окружения: <em>$FILEPATH</em>, <em>$TOOL_NAME</em>, <em>$TOOL_INPUT</em>.</p>
+        <pre><code class="language-json">{
+  "type": "command",
+  "command": "npx prettier --write \"$FILEPATH\""
+}</code></pre>
+      </div>
+      <div class="card amber">
+        <h3>prompt (инъекция)</h3>
+        <p>Однопроходная оценка моделью — результат добавляется в контекст. Не запускает инструменты.</p>
+        <pre><code class="language-json">{
+  "type": "prompt",
+  "prompt": "Check if changes follow our API naming conventions"
+}</code></pre>
+      </div>
+      <div class="card rose">
+        <h3>agent (субагент)</h3>
+        <p>Полноценный субагент с доступом к инструментам. Уникальная возможность Claude Code.</p>
+        <pre><code class="language-json">{
+  "type": "agent",
+  "prompt": "Review all changes for security vulnerabilities"
+}</code></pre>
+      </div>
+    </div>
+    <div class="table-wrap" style="margin-top: 0.6em;">
+      <table class="mini">
+        <thead>
+          <tr>
+            <th>Exit code</th>
+            <th>Значение</th>
+            <th>Поведение</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>0</strong></td>
+            <td>OK</td>
+            <td>Продолжить выполнение</td>
+          </tr>
+          <tr>
+            <td><strong>1</strong></td>
+            <td>Ошибка</td>
+            <td>Показать stderr модели — она попытается исправить</td>
+          </tr>
+          <tr>
+            <td><strong>2</strong></td>
+            <td>Блокировка</td>
+            <td>Действие заблокировано (аналог deny)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+</section>
+
+<!-- OpenCode плагины -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">OpenCode плагины</h2>
+    <div class="grid-2">
+      <div>
+        <p>Hooks реализованы через <strong>JS/TS-плагины</strong> — полноценный код с доступом к SDK, а не JSON-конфиги.</p>
+        <pre><code class="language-typescript">export const AutoFormatPlugin = async ({ $ }) => {
+  return {
+    "tool.execute.after": async (input, output) => {
+      if (input.tool === "write" || input.tool === "edit") {
+        const filePath = output.args?.filePath || ""
+        if (filePath.match(/\.(ts|tsx|js|jsx)$/)) {
+          await $`npx prettier --write ${filePath}`
+        }
+      }
+    },
+    "session.idle": async () => {
+      await $`osascript -e 'display notification
+        "Done!" with title "OpenCode"'`
+    }
+  }
+}</code></pre>
+      </div>
+      <div>
+        <div class="cards">
+          <div class="card teal">
+            <h3>8 событий</h3>
+            <p>tool.execute.before/after, session.created, session.idle, session.error, file.edited, permission.asked, shell.env</p>
+          </div>
+          <div class="card amber">
+            <h3>Полный доступ к SDK</h3>
+            <p><em>$</em> (shell), <em>client</em> (API), <em>project</em> (метаданные). Можно импортировать npm-пакеты.</p>
+          </div>
+          <div class="card rose">
+            <h3>Подключение</h3>
+            <p>Локально: <em>.opencode/plugins/</em>. Через npm: <em>"plugin": ["package-name"]</em> в opencode.json.</p>
+          </div>
+        </div>
+        <blockquote style="margin-top: 0.5em;">
+          <p>Больше гибкости, чем Claude Code (условная логика, async, API), но выше порог входа — нужен TypeScript вместо JSON.</p>
+        </blockquote>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Roo Code / Kilo Code — эмуляция -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Roo Code / Kilo Code — эмуляция hooks</h2>
+    <p><strong>Нативных hooks нет.</strong> Единственный путь — эмуляция через MCP-инструмент + правила + .roomodes.</p>
+    <div class="grid-3">
+      <div class="card teal">
+        <h3>Шаг 1: MCP-tool</h3>
+        <pre><code class="language-typescript">async function execute({ scope }) {
+  const target = scope || "."
+  const { stdout } = await execAsync(
+    `npm run lint -- ${target}`
+  )
+  return `ok: lint passed.\n${stdout}`
+}</code></pre>
+        <p>Кастомный MCP-инструмент <em>lint_check</em> с shell-командой внутри.</p>
+      </div>
+      <div class="card amber">
+        <h3>Шаг 2: Правило</h3>
+        <pre><code class="language-markdown">## .roo/rules-code/lint.md
+
+КРИТИЧЕСКИ ВАЖНО: перед ЛЮБЫМ
+изменением файлов ты ОБЯЗАН
+вызвать `lint_check`.
+
+- `ok:` → можно вносить изменения
+- `fail:` → ЗАПРЕЩЕНО изменять</code></pre>
+        <p>Правило в инструкциях режима заставляет модель вызывать tool.</p>
+      </div>
+      <div class="card rose">
+        <h3>Шаг 3: .roomodes</h3>
+        <pre><code class="language-json">{
+  "customModes": [{
+    "slug": "safe-code",
+    "name": "Safe Code",
+    "groups": ["read", "edit",
+      "command", "mcp"],
+    "customInstructions":
+      "Always call lint_check"
+  }]
+}</code></pre>
+        <p>Режим объединяет tool и правило в единый workflow.</p>
+      </div>
+    </div>
+    <blockquote>
+      <p><strong>Ограничение:</strong> это <strong>не гарантия</strong>. Модель <em>может</em> пропустить проверку — особенно при сложных задачах или длинном контексте. Для критичных сценариев — недостаточно.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Сводная таблица hooks -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Сводная таблица: hooks</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr>
+            <th>Критерий</th>
+            <th>Claude Code</th>
+            <th>OpenCode</th>
+            <th>Roo / Kilo Code</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Механизм</strong></td>
+            <td>Нативные hooks (settings.json)</td>
+            <td>Плагины (JS/TS)</td>
+            <td>Эмуляция (rules + MCP tools)</td>
+          </tr>
+          <tr>
+            <td><strong>Гарантия срабатывания</strong></td>
+            <td style="color: var(--green);">Да</td>
+            <td style="color: var(--green);">Да</td>
+            <td style="color: var(--red);">Нет (зависит от модели)</td>
+          </tr>
+          <tr>
+            <td><strong>Язык обработчика</strong></td>
+            <td>Shell / prompt / agent</td>
+            <td>JS / TypeScript</td>
+            <td>Shell (через MCP tool)</td>
+          </tr>
+          <tr>
+            <td><strong>Количество событий</strong></td>
+            <td>12</td>
+            <td>8</td>
+            <td>Нет нативных</td>
+          </tr>
+          <tr>
+            <td><strong>Сложность настройки</strong></td>
+            <td style="color: var(--green);">Низкая (JSON)</td>
+            <td style="color: var(--amber);">Средняя (TypeScript)</td>
+            <td style="color: var(--red);">Высокая (workaround)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote>
+      <p>Claude Code — самая зрелая реализация: JSON-конфиг, 12 событий, три типа обработчиков, включая уникальный тип <em>agent</em>. OpenCode — больше гибкости через код. Roo/Kilo — только эмуляция.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Стратегия выбора -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Стратегия выбора hooks</h2>
+    <div class="cards c3">
+      <div class="card green">
+        <h3>Нужна гарантия</h3>
+        <p>Блокировка опасных операций, обязательное форматирование, автокоммиты — только хост-уровень.</p>
+        <p style="margin-top: 0.4em;"><strong>→ Claude Code hooks</strong> или <strong>OpenCode plugins</strong></p>
+        <p class="note">Хост выполняет hook безусловно — модель не может его пропустить.</p>
+      </div>
+      <div class="card amber">
+        <h3>Нужна гибкость</h3>
+        <p>Условная логика, API-вызовы, проверка coverage, метрики в Grafana, сложные проверки.</p>
+        <p style="margin-top: 0.4em;"><strong>→ OpenCode plugins</strong></p>
+        <p class="note">Полноценный TypeScript с доступом к npm, SDK и shell.</p>
+      </div>
+      <div class="card rose">
+        <h3>Roo / Kilo Code</h3>
+        <p>Эмуляция работает для «мягких» сценариев: напоминание о линтере, рекомендация запустить тесты.</p>
+        <p style="margin-top: 0.4em;"><strong>→ Комбинируйте с CI/CD</strong></p>
+        <p class="note">Эмулированный hook ловит ~90% случаев, CI/CD pipeline гарантирует остальные 10%.</p>
+      </div>
+    </div>
+    <blockquote>
+      <p><strong>Правило:</strong> для критичных сценариев (безопасность, деплой) — только нативные hooks. Для «мягких» рекомендаций — эмуляция допустима, но страхуйте CI/CD.</p>
+    </blockquote>
+</div>
+</section>
+
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
