@@ -1217,6 +1217,226 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 </div>
 </section>
 
+<!-- ==================== РАЗДЕЛ 4: ДЕКОМПОЗИЦИЯ ЗАДАЧ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Раздел 04</span>
+    <h1>Декомпозиция задач</h1>
+    <p class="cta">Когда разбивать руками, когда доверять агенту и четыре паттерна оркестрации.</p>
+</div>
+</section>
+
+<!-- Когда разбивать руками vs доверять агенту -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Когда разбивать руками vs доверять агенту</h2>
+    <div class="grid-2">
+      <div>
+        <h3 style="color: var(--amber);">Разбивать руками</h3>
+        <div class="cards">
+          <div class="card amber">
+            <h3>Зависимости между частями</h3>
+            <p>Сначала миграция БД, потом код, потом тесты — порядок критичен, ошибка дорого стоит.</p>
+          </div>
+          <div class="card amber">
+            <h3>Строгий порядок выполнения</h3>
+            <p>Шаг 2 зависит от результата шага 1 — лучше запускать вручную, чем надеяться на оркестратор.</p>
+          </div>
+          <div class="card amber">
+            <h3>Риск конфликтов</h3>
+            <p>Два субагента редактируют один файл — рецепт для проблем. Безопаснее разделить самому.</p>
+          </div>
+          <div class="card rose">
+            <h3>Критичные задачи</h3>
+            <p>Рефакторинг ядра, миграция данных, изменение API — предсказуемость важнее скорости.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="color: var(--green);">Доверять агенту</h3>
+        <div class="cards">
+          <div class="card green">
+            <h3>Задача чётко описана</h3>
+            <p>«Добавь валидацию email в форму регистрации» — понятная, изолированная задача.</p>
+          </div>
+          <div class="card green">
+            <h3>Агент «знает» проект</h3>
+            <p>Настроены AGENTS.md, rules, контекст проекта. Агент может исследовать код и принимать решения.</p>
+          </div>
+          <div class="card green">
+            <h3>Подзадачи независимы</h3>
+            <p>Обновить документацию, написать тесты, исправить линтер — три задачи, которые не пересекаются.</p>
+          </div>
+          <div class="card teal">
+            <h3>Рутинные задачи</h3>
+            <p>Генерация boilerplate, обновление зависимостей, форматирование — цена ошибки невелика.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Fan-out / fan-in -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Паттерн 1: Fan-out / fan-in</h2>
+    <p>Родитель порождает несколько субагентов одновременно, каждый работает над своей частью, затем родитель <strong>собирает и синтезирует</strong> результаты.</p>
+    <pre><code class="language-text">         Родитель
+        /   |   \
+       /    |    \
+      v     v     v
+   Sub-1  Sub-2  Sub-3   ← параллельно
+      \     |    /
+       \    |   /
+        v   v  v
+    Родитель собирает
+        результаты</code></pre>
+    <div class="grid-2" style="margin-top: 0.5em;">
+      <div class="card teal">
+        <h3>Пример</h3>
+        <p>Обновить 5 микросервисов одновременно — каждый субагент получает свой сервис, вносит изменения, возвращает результат.</p>
+      </div>
+      <div class="card amber">
+        <h3>Поддержка</h3>
+        <ul>
+          <li><strong>Claude Code</strong> — нативные параллельные вызовы Agent tool</li>
+          <li><strong>Roo / Kilo Code</strong> — только последовательный Boomerang</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote>
+      <p>Лучший паттерн по скорости — все субагенты работают параллельно. Но требует полной независимости подзадач.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Pipeline (конвейер) -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Паттерн 2: Pipeline (конвейер)</h2>
+    <p>Цепочка субагентов, где каждый следующий получает <strong>результат предыдущего</strong>. Порядок строго определён.</p>
+    <pre><code class="language-text">Задача → Sub-1 → результат → Sub-2 → результат → Sub-3 → итог
+
+Пример:
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│  Генерация   │───►│  Написать    │───►│  Запустить   │
+│  кода        │    │  тесты       │    │  и исправить │
+└──────────────┘    └──────────────┘    └──────────────┘</code></pre>
+    <div class="grid-2" style="margin-top: 0.5em;">
+      <div class="card green">
+        <h3>Когда использовать</h3>
+        <p>Каждый шаг зависит от предыдущего: код → тесты к этому коду → прогон тестов и исправление ошибок.</p>
+      </div>
+      <div class="card teal">
+        <h3>Поддержка</h3>
+        <p><strong>Все инструменты</strong> — паттерн не требует параллелизма, достаточно последовательной делегации.</p>
+      </div>
+    </div>
+    <blockquote>
+      <p>Самый простой паттерн. Подходит для задач с чёткой последовательностью шагов, где каждый этап нуждается в результате предыдущего.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- Specialist + Supervisor -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Паттерны 3-4: Specialist и Supervisor</h2>
+    <div class="grid-2">
+      <div>
+        <h3 style="color: var(--teal);">Specialist (специалист)</h3>
+        <pre><code class="language-text">      Родитель
+     /   |   \
+    v    v    v
+Ревьюер Тестер Докум.
+(только  (только  (только
+чтение)  тесты)   docs)</code></pre>
+        <div class="cards" style="margin-top: 0.5em;">
+          <div class="card teal">
+            <h3>Суть</h3>
+            <p>Субагенты с <strong>узкой специализацией</strong> и ограниченными инструментами. Ревьюер не может редактировать, тестер не трогает документацию.</p>
+          </div>
+          <div class="card teal">
+            <h3>Реализация</h3>
+            <p>AGENTS.md (Claude Code), .roomodes (Roo/Kilo), конфиг агентов (OpenCode).</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="color: var(--amber);">Supervisor (супервизор)</h3>
+        <pre><code class="language-text">Родитель: поручает задачу
+       │
+   Субагент: выполняет
+       │
+Родитель: проверяет
+   ┌────┴────┐
+   v         v
+  OK     Не OK → повтор
+         с правками</code></pre>
+        <div class="cards" style="margin-top: 0.5em;">
+          <div class="card amber">
+            <h3>Суть</h3>
+            <p>Цикл: <strong>делегировать → проверить → принять или вернуть</strong> на исправление с уточнённым промптом.</p>
+          </div>
+          <div class="card amber">
+            <h3>Реализация</h3>
+            <p>Claude Code — повторный Agent tool. Roo/Kilo — Orchestrator перенаправляет Boomerang Task.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- Сводная таблица паттернов -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Сводная таблица паттернов</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr>
+            <th>Паттерн</th>
+            <th>Как работает</th>
+            <th>Пример</th>
+            <th>Поддержка</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Fan-out / fan-in</strong></td>
+            <td>Параллельные субагенты, родитель собирает</td>
+            <td>Обновление 5 микросервисов</td>
+            <td>Claude Code <span style="color: var(--green);">(параллельно)</span>, Roo/Kilo <span style="color: var(--red);">(последовательно)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Pipeline</strong></td>
+            <td>Цепочка: результат одного → вход другого</td>
+            <td>Код → тесты → прогон</td>
+            <td><span style="color: var(--green);">Все инструменты</span></td>
+          </tr>
+          <tr>
+            <td><strong>Specialist</strong></td>
+            <td>Узкие специалисты по доменам</td>
+            <td>Ревьюер + тестер + документатор</td>
+            <td><span style="color: var(--green);">Все инструменты</span></td>
+          </tr>
+          <tr>
+            <td><strong>Supervisor</strong></td>
+            <td>Делегация → проверка → принятие/возврат</td>
+            <td>Ревью кода субагента</td>
+            <td>Claude Code, Roo/Kilo <span style="color: var(--green);">(Orchestrator)</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote>
+      <p>На практике паттерны комбинируются: Pipeline из трёх шагов, где на первом — Fan-out для исследования, а на последнем — Supervisor для финальной проверки.</p>
+    </blockquote>
+</div>
+</section>
+
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
