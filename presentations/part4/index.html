@@ -624,6 +624,33 @@ table.mini th {
     min-height: auto;
   }
 }
+/* --- Fragment toggle mode --- */
+.no-fragments .fragment {
+  opacity: 1 !important;
+  visibility: inherit !important;
+}
+.mode-toggle {
+  position: fixed;
+  bottom: 12px;
+  left: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-size: 0.65rem;
+  color: rgba(248,240,228,0.5);
+  background: rgba(9,7,7,0.6);
+  border: 1px solid rgba(248,240,228,0.1);
+  border-radius: 999px;
+  padding: 4px 12px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.mode-toggle:hover {
+  border-color: rgba(55,214,196,0.5);
+  color: rgba(248,240,228,0.8);
+}
 </style>
 </head>
 <body>
@@ -649,13 +676,13 @@ table.mini th {
   <div class="slide-shell">
     <h2 class="section-title">Содержание</h2>
     <div class="cards c3">
-      <div class="card teal"><h3>1. Зачем делегировать</h3><p>Проблема единого контекста, аналогия с командой</p></div>
-      <div class="card amber"><h3>2. Как устроен субагент</h3><p>Жизненный цикл, наследование, параллельность</p></div>
-      <div class="card rose"><h3>3. Субагенты в инструментах</h3><p>Claude Code, Roo Code, Kilo Code, OpenCode</p></div>
-      <div class="card green"><h3>4. Декомпозиция и оркестрация</h3><p>Паттерны: fan-out, pipeline, iterative</p></div>
-      <div class="card amber"><h3>5. Hooks</h3><p>Автоматизация через хуки жизненного цикла</p></div>
-      <div class="card rose"><h3>6. Подводные камни</h3><p>Типичные ошибки и как их избежать</p></div>
-      <div class="card teal"><h3>7. Итоги и практика</h3><p>Чеклист, домашнее задание</p></div>
+      <div class="card teal fragment"><h3>1. Зачем делегировать</h3><p>Проблема единого контекста, аналогия с командой</p></div>
+      <div class="card amber fragment"><h3>2. Как устроен субагент</h3><p>Жизненный цикл, наследование, параллельность</p></div>
+      <div class="card rose fragment"><h3>3. Субагенты в инструментах</h3><p>Claude Code, Roo Code, Kilo Code, OpenCode</p></div>
+      <div class="card green fragment"><h3>4. Декомпозиция и оркестрация</h3><p>Паттерны: fan-out, pipeline, iterative</p></div>
+      <div class="card amber fragment"><h3>5. Hooks</h3><p>Автоматизация через хуки жизненного цикла</p></div>
+      <div class="card rose fragment"><h3>6. Подводные камни</h3><p>Типичные ошибки и как их избежать</p></div>
+      <div class="card teal fragment"><h3>7. Итоги и практика</h3><p>Чеклист, домашнее задание</p></div>
     </div>
 </div>
 </section>
@@ -683,7 +710,7 @@ table.mini th {
           <li>Когда контекст переполнен, агент теряет фокус: путает файлы, повторяет действия</li>
         </ul>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Симптомы переполнения</h3>
         <ul>
           <li>Агент забывает начальные инструкции</li>
@@ -711,22 +738,22 @@ table.mini th {
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr class="fragment">
             <td><strong>Контекст</strong></td>
             <td>Один на всё</td>
             <td>У каждого свой, чистый</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Параллельность</strong></td>
             <td>Последовательно</td>
             <td>Одновременно</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Фокус</strong></td>
             <td>Размывается</td>
             <td>Сохраняется</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Отказоустойчивость</strong></td>
             <td>Сбой = всё заново</td>
             <td>Сбой одного не ломает остальных</td>
@@ -734,7 +761,7 @@ table.mini th {
         </tbody>
       </table>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Один разработчик может написать фичу, тесты и документацию — но последовательно, удерживая всё в голове. Команда из трёх специалистов работает параллельно: каждый сфокусирован на своей части.</p>
     </blockquote>
 </div>
@@ -745,7 +772,7 @@ table.mini th {
   <div class="slide-shell">
     <h2 class="section-title">Два способа решения</h2>
     <div class="grid-2">
-      <div class="card teal">
+      <div class="card teal fragment">
         <h3>Ручная декомпозиция</h3>
         <p>Человек сам разбивает задачу на подзадачи и запускает агента на каждую.</p>
         <ul>
@@ -754,7 +781,7 @@ table.mini th {
           <li>Лучше для критичных задач</li>
         </ul>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Автоматическая делегация</h3>
         <p>Агент сам решает, когда задача слишком велика, и порождает субагентов.</p>
         <ul>
@@ -793,32 +820,32 @@ table.mini th {
   <div class="slide-shell">
     <h2 class="section-title">Жизненный цикл субагента</h2>
     <div class="process-5">
-      <div class="step">
+      <div class="step fragment">
         <h4>1. Задача</h4>
         <p>Родитель формулирует задание</p>
       </div>
-      <div class="arrow">→</div>
-      <div class="step">
+      <div class="arrow fragment">→</div>
+      <div class="step fragment">
         <h4>2. Spawn</h4>
         <p>Чистый контекст + tools + rules</p>
       </div>
-      <div class="arrow">→</div>
-      <div class="step">
+      <div class="arrow fragment">→</div>
+      <div class="step fragment">
         <h4>3. Work</h4>
         <p>Автономная работа: чтение, вызовы tools, решения</p>
       </div>
-      <div class="arrow">→</div>
-      <div class="step">
+      <div class="arrow fragment">→</div>
+      <div class="step fragment">
         <h4>4. Return</h4>
         <p>Только результат, не весь контекст</p>
       </div>
-      <div class="arrow">→</div>
-      <div class="step">
+      <div class="arrow fragment">→</div>
+      <div class="step fragment">
         <h4>5. Продолжение</h4>
         <p>Родитель работает дальше</p>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Родитель <strong>не следит</strong> за процессом работы субагента. Он отправляет задачу и ждёт результат. Это асинхронная модель — как задача в трекере, а не парное программирование.</p>
     </blockquote>
 </div>
@@ -838,27 +865,27 @@ table.mini th {
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr class="fragment">
             <td><strong>Rules</strong></td>
             <td><em>Обычно да</em></td>
             <td>Субагент работает в том же проекте</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Permissions</strong></td>
             <td><em>Обычно да</em></td>
             <td>Наследует уровень доступа родителя</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Skills</strong></td>
             <td>Зависит от инструмента</td>
             <td>В Claude Code — частично</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Контекст беседы</strong></td>
             <td style="color: var(--red);">Нет</td>
             <td>Получает только задачу</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Результаты других субагентов</strong></td>
             <td style="color: var(--red);">Нет</td>
             <td>Каждый изолирован</td>
@@ -866,7 +893,7 @@ table.mini th {
         </tbody>
       </table>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Самая частая ошибка — забыть, что субагент <strong>не видит</strong> контекст чата. Всё важное нужно передать в описании задачи явно.</p>
     </blockquote>
 </div>
@@ -885,11 +912,11 @@ table.mini th {
          ▼ (все три завершились)
 Родитель: синтезирует результаты, планирует реализацию</code></pre>
     <div class="cards c2">
-      <div class="card green">
+      <div class="card green fragment">
         <h3>Преимущество</h3>
         <p>Несколько субагентов работают одновременно — каждый со своим чистым контекстом. Время = самый долгий субагент, а не сумма всех.</p>
       </div>
-      <div class="card red">
+      <div class="card red fragment">
         <h3>Правило</h3>
         <p><strong>Параллельные субагенты не должны редактировать одни и те же файлы.</strong> Иначе возникнут конфликты. Разделяйте работу по модулям или используйте git worktree.</p>
       </div>
@@ -912,14 +939,14 @@ table.mini th {
           <li>Промежуточные рассуждения</li>
         </ul>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Что это значит на практике</h3>
         <p><strong>Качество формулировки результата критично.</strong></p>
         <p>Если субагент написал "Готово, файлы обновлены" — родитель не узнает, что именно сделано.</p>
         <p style="margin-top: 0.4em;"><em>Хорошая практика</em> — в описании задачи явно указывать формат ожидаемого результата.</p>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Субагент — это чёрный ящик. Вход: задача. Выход: результат. Всё остальное теряется.</p>
     </blockquote>
 </div>
@@ -949,27 +976,27 @@ table.mini th {
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr class="fragment">
             <td><strong>Explore</strong></td>
             <td>Grep, Glob, Read</td>
             <td>Исследование кодовой базы</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Plan</strong></td>
             <td>Read, Grep, Glob, LSP</td>
             <td>Планирование без изменений</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>General-purpose</strong></td>
             <td>Все инструменты</td>
             <td>Полноценная реализация</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>code-review</strong></td>
             <td>Чтение + комментирование</td>
             <td>Ревью кода</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Кастомный</strong></td>
             <td>Из AGENTS.md / .claude/agents/</td>
             <td>Специализированные задачи</td>
@@ -977,7 +1004,7 @@ table.mini th {
         </tbody>
       </table>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Agent tool — полноценный инструмент, доступный модели наравне с Read, Edit, Bash. Субагент получает чистый контекст и возвращает только результат.</p>
     </blockquote>
 </div>
@@ -1005,7 +1032,7 @@ You are a test engineer. Given a source file, write comprehensive tests.
 Tools: Read, Grep, Glob, Edit, Bash
 Constraints: Use existing test framework. Run tests before returning.
 Output format: summary of tests added and pass/fail status.</code></pre>
-    <p class="note">Каждый блок определяет: роль, доступные инструменты, ограничения и формат выходных данных.</p>
+    <p class="note fragment">Каждый блок определяет: роль, доступные инструменты, ограничения и формат выходных данных.</p>
 </div>
 </section>
 
@@ -1014,7 +1041,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   <div class="slide-shell">
     <h2 class="section-title">Claude Code — параллелизм и изоляция</h2>
     <div class="cards c3">
-      <div class="card teal">
+      <div class="card teal fragment">
         <h3>Параллельный запуск</h3>
         <p>Несколько Agent tool одновременно в одном сообщении.</p>
         <ul>
@@ -1022,7 +1049,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           <li>Изолированные контексты</li>
         </ul>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Worktree-изоляция</h3>
         <p><strong>isolation: "worktree"</strong> — отдельная git worktree для каждого субагента.</p>
         <ul>
@@ -1030,7 +1057,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           <li>Результат — через git merge</li>
         </ul>
       </div>
-      <div class="card green">
+      <div class="card green fragment">
         <h3>Фоновый режим</h3>
         <p><strong>run_in_background: true</strong> — субагент в фоне, родитель не ждёт.</p>
         <ul>
@@ -1039,7 +1066,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         </ul>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Worktree + параллелизм + фон — главные преимущества субагентности Claude Code.</p>
     </blockquote>
 </div>
@@ -1075,7 +1102,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         ← всё работает
 
     Orchestrator → итог пользователю</code></pre>
-        <p class="note">Boomerang Tasks работают <strong>последовательно</strong> — Orchestrator ждёт завершения текущей подзадачи.</p>
+        <p class="note fragment">Boomerang Tasks работают <strong>последовательно</strong> — Orchestrator ждёт завершения текущей подзадачи.</p>
       </div>
     </div>
 </div>
@@ -1096,11 +1123,11 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   { "slug": "security-audit", "groups": ["read"], ... }
 ]}</code></pre>
     <div class="grid-2" style="margin-top: 0.4em;">
-      <div class="card teal">
+      <div class="card teal fragment">
         <h3>Поле groups</h3>
         <p>Доступные инструменты: <em>read</em>, <em>edit</em>, <em>command</em>, <em>browser</em>, <em>mcp</em>.</p>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Kilo Code — Task Manager UI</h3>
         <p>Визуальная панель: дерево подзадач, статусы, результаты.</p>
       </div>
@@ -1128,11 +1155,11 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   }
 }</code></pre>
     <div class="grid-2" style="margin-top: 0.5em;">
-      <div class="card rose">
+      <div class="card rose fragment">
         <h3>Ключевое отличие</h3>
         <p>Агенты в OpenCode — <strong>предустановленные профили</strong>, а не динамически порождаемые субагенты. Переключение — смена конфигурации внутри одного сеанса.</p>
       </div>
-      <div class="card green">
+      <div class="card green fragment">
         <h3>Markdown-формат</h3>
         <p>Альтернатива: отдельные файлы <em>.opencode/agents/reviewer.md</em>. Заголовок — имя, содержимое — системный промпт. Удобно для длинных инструкций.</p>
       </div>
@@ -1155,37 +1182,37 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr class="fragment">
             <td><strong>Модель</strong></td>
             <td>Явный spawn через Agent tool</td>
             <td>Режимы + Orchestrator / Boomerang</td>
             <td>Агенты в конфигурации</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Конфигурация</strong></td>
             <td><em>AGENTS.md / .claude/agents/</em> + subagent_type</td>
             <td><em>.roomodes</em> (JSON)</td>
             <td><em>opencode.json</em> / .opencode/agents/</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Параллельность</strong></td>
             <td style="color: var(--green);">Да (несколько Agent-вызовов)</td>
             <td style="color: var(--red);">Последовательная</td>
             <td>Зависит от реализации</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Изоляция</strong></td>
             <td style="color: var(--green);">Worktree (git-копия)</td>
             <td>Отдельный контекст (общая FS)</td>
             <td>Отдельный контекст (общая FS)</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Кастомные типы</strong></td>
             <td>AGENTS.md</td>
             <td>.roomodes</td>
             <td>Агенты в конфиге</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Фоновый запуск</strong></td>
             <td style="color: var(--green);">run_in_background</td>
             <td style="color: var(--red);">Нет</td>
@@ -1194,7 +1221,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         </tbody>
       </table>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Самая продвинутая модель — у Claude Code: worktree-изоляция, параллелизм и фоновый режим. Roo/Kilo Code берут удобством Orchestrator-паттерна. OpenCode — минимальный подход с предустановленными профилями.</p>
     </blockquote>
 </div>
@@ -1217,15 +1244,15 @@ Output format: summary of tests added and pass/fail status.</code></pre>
       <div>
         <h3 style="color: var(--amber);">Разбивать руками</h3>
         <div class="cards">
-          <div class="card amber">
+          <div class="card amber fragment">
             <h3>Зависимости между частями</h3>
             <p>Миграция БД → код → тесты — порядок критичен.</p>
           </div>
-          <div class="card amber">
+          <div class="card amber fragment">
             <h3>Риск конфликтов</h3>
             <p>Два субагента редактируют один файл — безопаснее разделить.</p>
           </div>
-          <div class="card rose">
+          <div class="card rose fragment">
             <h3>Критичные задачи</h3>
             <p>Ядро, миграция данных, API — предсказуемость важнее.</p>
           </div>
@@ -1234,15 +1261,15 @@ Output format: summary of tests added and pass/fail status.</code></pre>
       <div>
         <h3 style="color: var(--green);">Доверять агенту</h3>
         <div class="cards">
-          <div class="card green">
+          <div class="card green fragment">
             <h3>Задача чётко описана</h3>
             <p>Понятная изолированная задача с ясным результатом.</p>
           </div>
-          <div class="card green">
+          <div class="card green fragment">
             <h3>Агент «знает» проект</h3>
             <p>Настроены AGENTS.md, rules и контекст проекта.</p>
           </div>
-          <div class="card green">
+          <div class="card green fragment">
             <h3>Подзадачи независимы</h3>
             <p>Доки, тесты, линтер — задачи не пересекаются.</p>
           </div>
@@ -1268,11 +1295,11 @@ Output format: summary of tests added and pass/fail status.</code></pre>
     Родитель собирает
         результаты</code></pre>
     <div class="grid-2" style="margin-top: 0.5em;">
-      <div class="card teal">
+      <div class="card teal fragment">
         <h3>Пример</h3>
         <p>Обновить 5 микросервисов одновременно — каждый субагент получает свой сервис, вносит изменения, возвращает результат.</p>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Поддержка</h3>
         <ul>
           <li><strong>Claude Code</strong> — нативные параллельные вызовы Agent tool</li>
@@ -1280,7 +1307,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         </ul>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Лучший паттерн по скорости — все субагенты работают параллельно. Но требует полной независимости подзадач.</p>
     </blockquote>
 </div>
@@ -1299,16 +1326,16 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 │  кода        │    │  тесты       │    │  и исправить │
 └──────────────┘    └──────────────┘    └──────────────┘</code></pre>
     <div class="grid-2" style="margin-top: 0.5em;">
-      <div class="card green">
+      <div class="card green fragment">
         <h3>Когда использовать</h3>
         <p>Каждый шаг зависит от предыдущего: код → тесты к этому коду → прогон тестов и исправление ошибок.</p>
       </div>
-      <div class="card teal">
+      <div class="card teal fragment">
         <h3>Поддержка</h3>
         <p><strong>Все инструменты</strong> — паттерн не требует параллелизма, достаточно последовательной делегации.</p>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Самый простой паттерн. Подходит для задач с чёткой последовательностью шагов, где каждый этап нуждается в результате предыдущего.</p>
     </blockquote>
 </div>
@@ -1328,11 +1355,11 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 (только  (только  (только
 чтение)  тесты)   docs)</code></pre>
         <div class="cards" style="margin-top: 0.5em;">
-          <div class="card teal">
+          <div class="card teal fragment">
             <h3>Суть</h3>
             <p>Субагенты с <strong>узкой специализацией</strong> и ограниченными инструментами. Ревьюер не может редактировать, тестер не трогает документацию.</p>
           </div>
-          <div class="card teal">
+          <div class="card teal fragment">
             <h3>Реализация</h3>
             <p>AGENTS.md (Claude Code), .roomodes (Roo/Kilo), конфиг агентов (OpenCode).</p>
           </div>
@@ -1350,11 +1377,11 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   OK     Не OK → повтор
          с правками</code></pre>
         <div class="cards" style="margin-top: 0.5em;">
-          <div class="card amber">
+          <div class="card amber fragment">
             <h3>Суть</h3>
             <p>Цикл: <strong>делегировать → проверить → принять или вернуть</strong> на исправление с уточнённым промптом.</p>
           </div>
-          <div class="card amber">
+          <div class="card amber fragment">
             <h3>Реализация</h3>
             <p>Claude Code — повторный Agent tool. Roo/Kilo — Orchestrator перенаправляет Boomerang Task.</p>
           </div>
@@ -1379,25 +1406,25 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr class="fragment">
             <td><strong>Fan-out / fan-in</strong></td>
             <td>Параллельные субагенты, родитель собирает</td>
             <td>Обновление 5 микросервисов</td>
             <td>Claude Code <span style="color: var(--green);">(параллельно)</span>, Roo/Kilo <span style="color: var(--red);">(последовательно)</span></td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Pipeline</strong></td>
             <td>Цепочка: результат одного → вход другого</td>
             <td>Код → тесты → прогон</td>
             <td><span style="color: var(--green);">Все инструменты</span></td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Specialist</strong></td>
             <td>Узкие специалисты по доменам</td>
             <td>Ревьюер + тестер + документатор</td>
             <td><span style="color: var(--green);">Все инструменты</span></td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Supervisor</strong></td>
             <td>Делегация → проверка → принятие/возврат</td>
             <td>Ревью кода субагента</td>
@@ -1406,7 +1433,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         </tbody>
       </table>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>На практике паттерны комбинируются: Pipeline из трёх шагов, где на первом — Fan-out для исследования, а на последнем — Supervisor для финальной проверки.</p>
     </blockquote>
 </div>
@@ -1430,11 +1457,11 @@ Output format: summary of tests added and pass/fail status.</code></pre>
     </blockquote>
     <p>Hook — реакция на событие жизненного цикла агента, выполняемая <strong>хостом</strong>, а не моделью. Модель не решает, запускать ли hook, — он срабатывает автоматически.</p>
     <div class="cards c3" style="margin-top: 0.5em;">
-      <div class="card teal"><h3>1. Автоформат и линтинг</h3><p>prettier / ESLint после Edit — чистый код, ошибки через stderr</p></div>
-      <div class="card amber"><h3>2. Автокоммит</h3><p>Hook на Stop: <em>git add -A && git commit</em></p></div>
-      <div class="card amber"><h3>3. Уведомления</h3><p>Slack webhook / push при ошибке</p></div>
-      <div class="card rose"><h3>4. Тесты и контекст</h3><p>PostToolUse → тесты; SessionStart → git status + issues</p></div>
-      <div class="card green"><h3>5. Блокировка</h3><p>PreToolUse: <em>rm -rf</em>, <em>push --force</em> → exit 2 = deny</p></div>
+      <div class="card teal fragment"><h3>1. Автоформат и линтинг</h3><p>prettier / ESLint после Edit — чистый код, ошибки через stderr</p></div>
+      <div class="card amber fragment"><h3>2. Автокоммит</h3><p>Hook на Stop: <em>git add -A && git commit</em></p></div>
+      <div class="card amber fragment"><h3>3. Уведомления</h3><p>Slack webhook / push при ошибке</p></div>
+      <div class="card rose fragment"><h3>4. Тесты и контекст</h3><p>PostToolUse → тесты; SessionStart → git status + issues</p></div>
+      <div class="card green fragment"><h3>5. Блокировка</h3><p>PreToolUse: <em>rm -rf</em>, <em>push --force</em> → exit 2 = deny</p></div>
     </div>
 </div>
 </section>
@@ -1460,19 +1487,19 @@ Output format: summary of tests added and pass/fail status.</code></pre>
       </div>
       <div>
         <div class="cards c2">
-          <div class="card teal">
+          <div class="card teal fragment">
             <h3>20+ событий</h3>
             <p>PreToolUse, PostToolUse, Stop, SessionStart и др.</p>
           </div>
-          <div class="card amber">
+          <div class="card amber fragment">
             <h3>4 типа</h3>
             <p><strong>command</strong>, <strong>prompt</strong>, <strong>agent</strong>, <strong>http</strong></p>
           </div>
-          <div class="card rose">
+          <div class="card rose fragment">
             <h3>Matcher</h3>
             <p>Regex по имени tool. Пустой = для всех.</p>
           </div>
-          <div class="card green">
+          <div class="card green fragment">
             <h3>Exit codes</h3>
             <p><strong>0</strong>=OK, <strong>1</strong>=не-блок., <strong>2</strong>=блок+stderr</p>
           </div>
@@ -1487,22 +1514,22 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   <div class="slide-shell">
     <h2 class="section-title">Claude Code — типы обработчиков</h2>
     <div class="cards c2">
-      <div class="card teal">
+      <div class="card teal fragment">
         <h3>command (shell)</h3>
         <p>Shell-команда хоста. Переменные: <em>$FILEPATH</em>, <em>$TOOL_NAME</em>.</p>
         <pre><code class="language-json">{ "type": "command", "command": "npx prettier --write \"$FILEPATH\"" }</code></pre>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>prompt (инъекция)</h3>
         <p>Однопроходная оценка моделью, результат в контекст.</p>
         <pre><code class="language-json">{ "type": "prompt", "prompt": "Check API naming conventions" }</code></pre>
       </div>
-      <div class="card rose">
+      <div class="card rose fragment">
         <h3>agent (субагент)</h3>
         <p>Субагент с инструментами. Уникально для Claude Code.</p>
         <pre><code class="language-json">{ "type": "agent", "prompt": "Review changes for security" }</code></pre>
       </div>
-      <div class="card green">
+      <div class="card green fragment">
         <h3>http (webhook)</h3>
         <p>POST-запрос на URL для внешних интеграций.</p>
         <pre><code class="language-json">{ "type": "http", "url": "https://hooks.example.com/notify" }</code></pre>
@@ -1533,15 +1560,15 @@ Output format: summary of tests added and pass/fail status.</code></pre>
       </div>
       <div>
         <div class="cards">
-          <div class="card teal">
+          <div class="card teal fragment">
             <h3>Основные события</h3>
             <p>tool.execute.before/after, session.created, session.idle, session.error, file.edited, permission.asked, shell.env</p>
           </div>
-          <div class="card amber">
+          <div class="card amber fragment">
             <h3>Полный доступ к SDK</h3>
             <p><em>$</em> (shell), <em>client</em> (API), <em>project</em> (метаданные). Можно импортировать npm-пакеты.</p>
           </div>
-          <div class="card rose">
+          <div class="card rose fragment">
             <h3>Подключение</h3>
             <p>Локально: <em>.opencode/plugins/</em>. Через npm: <em>"plugin": ["package-name"]</em> в opencode.json.</p>
           </div>
@@ -1560,7 +1587,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
     <h2 class="section-title">Roo Code / Kilo Code — эмуляция hooks</h2>
     <p><strong>Нативных hooks нет.</strong> Эмуляция: MCP-tool + правила + .roomodes.</p>
     <div class="grid-3">
-      <div class="card teal">
+      <div class="card teal fragment">
         <h3>Шаг 1: MCP-tool</h3>
         <pre><code class="language-typescript">async function execute({ scope }) {
   const { stdout } = await execAsync(
@@ -1570,7 +1597,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 }</code></pre>
         <p>MCP-инструмент <em>lint_check</em> с shell-командой.</p>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Шаг 2: Правило</h3>
         <pre><code class="language-markdown">## .roo/rules-code/lint.md
 Перед ЛЮБЫМ изменением ОБЯЗАН
@@ -1579,7 +1606,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 - `fail:` → ЗАПРЕЩЕНО</code></pre>
         <p>Правило заставляет модель вызывать tool.</p>
       </div>
-      <div class="card rose">
+      <div class="card rose fragment">
         <h3>Шаг 3: .roomodes</h3>
         <pre><code class="language-json">{
   "customModes": [{
@@ -1593,7 +1620,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         <p>Режим объединяет tool и правило.</p>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p><strong>Ограничение:</strong> это <strong>не гарантия</strong> — модель может пропустить проверку. Для критичных сценариев недостаточно.</p>
     </blockquote>
 </div>
@@ -1614,31 +1641,31 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr class="fragment">
             <td><strong>Механизм</strong></td>
             <td>Нативные hooks (settings.json)</td>
             <td>Плагины (JS/TS)</td>
             <td>Эмуляция (rules + MCP tools)</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Гарантия срабатывания</strong></td>
             <td style="color: var(--green);">Да</td>
             <td style="color: var(--green);">Да</td>
             <td style="color: var(--red);">Нет (зависит от модели)</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Язык обработчика</strong></td>
             <td>Shell / prompt / agent / http</td>
             <td>JS / TypeScript</td>
             <td>Shell (через MCP tool)</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Количество событий</strong></td>
             <td>20+</td>
             <td>7+</td>
             <td>Нет нативных</td>
           </tr>
-          <tr>
+          <tr class="fragment">
             <td><strong>Сложность настройки</strong></td>
             <td style="color: var(--green);">Низкая (JSON)</td>
             <td style="color: var(--amber);">Средняя (TypeScript)</td>
@@ -1647,7 +1674,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         </tbody>
       </table>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Claude Code — самая зрелая реализация: JSON-конфиг, 20+ событий, четыре типа обработчиков, включая уникальные типы <em>agent</em> и <em>http</em>. OpenCode — больше гибкости через код. Roo/Kilo — только эмуляция.</p>
     </blockquote>
 </div>
@@ -1658,26 +1685,26 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   <div class="slide-shell">
     <h2 class="section-title">Стратегия выбора hooks</h2>
     <div class="cards c3">
-      <div class="card green">
+      <div class="card green fragment">
         <h3>Нужна гарантия</h3>
         <p>Блокировка опасных операций, обязательное форматирование, автокоммиты — только хост-уровень.</p>
         <p style="margin-top: 0.4em;"><strong>→ Claude Code hooks</strong> или <strong>OpenCode plugins</strong></p>
         <p class="note">Хост выполняет hook безусловно — модель не может его пропустить.</p>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Нужна гибкость</h3>
         <p>Условная логика, API-вызовы, проверка coverage, метрики в Grafana, сложные проверки.</p>
         <p style="margin-top: 0.4em;"><strong>→ OpenCode plugins</strong></p>
         <p class="note">Полноценный TypeScript с доступом к npm, SDK и shell.</p>
       </div>
-      <div class="card rose">
+      <div class="card rose fragment">
         <h3>Roo / Kilo Code</h3>
         <p>Эмуляция работает для «мягких» сценариев: напоминание о линтере, рекомендация запустить тесты.</p>
         <p style="margin-top: 0.4em;"><strong>→ Комбинируйте с CI/CD</strong></p>
         <p class="note">Эмулированный hook ловит ~90% случаев, CI/CD pipeline гарантирует остальные 10%.</p>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p><strong>Правило:</strong> для критичных сценариев (безопасность, деплой) — только нативные hooks. Для «мягких» рекомендаций — эмуляция допустима, но страхуйте CI/CD.</p>
     </blockquote>
 </div>
@@ -1697,7 +1724,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   <div class="slide-shell">
     <h2 class="section-title">Ловушки: контекст и дублирование</h2>
     <div class="cards c2">
-      <div class="card rose">
+      <div class="card rose fragment">
         <h3>Потеря контекста</h3>
         <p><strong>Проблема:</strong> субагент не знает, что делают другие. Тестировщик пишет тесты для старого кода, потому что не знает о рефакторинге.</p>
         <ul>
@@ -1706,7 +1733,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           <li>Для зависимых задач — Pipeline вместо Fan-out</li>
         </ul>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Дублирование работы</h3>
         <p><strong>Проблема:</strong> два субагента параллельно редактируют один файл — merge-конфликты, дубли в конфигах.</p>
         <ul>
@@ -1716,7 +1743,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         </ul>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p><strong>Общий принцип:</strong> субагент получает только текстовое описание задачи — детали теряются при пересказе. Чем точнее задание, тем меньше ошибок.</p>
     </blockquote>
 </div>
@@ -1727,7 +1754,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   <div class="slide-shell">
     <h2 class="section-title">Ловушки: зацикливание и оверхед</h2>
     <div class="cards c2">
-      <div class="card red">
+      <div class="card red fragment">
         <h3>Зацикливание</h3>
         <p><strong>Проблема:</strong> исправляет один тест — ломается другой. Бесконечный цикл «почти готово», пока не кончится бюджет токенов.</p>
         <ul>
@@ -1736,7 +1763,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           <li>Паттерн Supervisor — родитель прерывает зацикленного субагента</li>
         </ul>
       </div>
-      <div class="card green">
+      <div class="card green fragment">
         <h3>Избыточная декомпозиция</h3>
         <p><strong>Проблема:</strong> 5-минутная задача разбивается на 4 субагентов. Overhead на координацию превышает стоимость самой работы.</p>
         <ul>
@@ -1746,7 +1773,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         </ul>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p><strong>Правило:</strong> все четыре ловушки решаются одним подходом — чёткие границы, лимиты и правильный выбор паттерна оркестрации.</p>
     </blockquote>
 </div>
@@ -1799,7 +1826,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   <div class="slide-shell">
     <h2 class="section-title">Практическое задание</h2>
     <div class="cards c2">
-      <div class="card teal">
+      <div class="card teal fragment">
         <h3>Задание 1: Настроить субагентов</h3>
         <ul>
           <li><strong>Claude Code:</strong> создайте <code>AGENTS.md</code> с описанием специализированного агента (<code>code-reviewer</code>). Дайте задачу, требующую делегации</li>
@@ -1807,7 +1834,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           <li><strong>OpenCode:</strong> определите агента в <code>opencode.json</code> с ограниченным набором инструментов. Проверьте блокировку</li>
         </ul>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Задание 2: Настроить Hook</h3>
         <ul>
           <li><strong>Claude Code:</strong> hook в <code>.claude/settings.json</code> — форматирование после каждого Edit</li>
@@ -1816,7 +1843,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
         </ul>
       </div>
     </div>
-    <blockquote>
+    <blockquote class="fragment">
       <p>Полные примеры кода — в конспекте лекции. Выберите один инструмент (Claude Code / Roo / OpenCode) и выполните оба задания.</p>
     </blockquote>
 </div>
@@ -1827,27 +1854,27 @@ Output format: summary of tests added and pass/fail status.</code></pre>
   <div class="slide-shell">
     <h2 class="section-title">Лекция 5 · Безопасность агентов</h2>
     <div class="cards c3">
-      <div class="card rose">
+      <div class="card rose fragment">
         <h3>Модель угроз</h3>
         <p>Что может пойти не так, когда агент имеет доступ к файлам, shell и API</p>
       </div>
-      <div class="card red">
+      <div class="card red fragment">
         <h3>Prompt injection</h3>
         <p>Как атакующий может перехватить управление агентом через данные</p>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>MCP-уязвимости</h3>
         <p>Rug pull, tool poisoning, shadow tools — специфические атаки на MCP-серверы</p>
       </div>
-      <div class="card teal">
+      <div class="card teal fragment">
         <h3>Утечки секретов</h3>
         <p>Агент видит <code>.env</code>, токены в истории — как ограничить exposure</p>
       </div>
-      <div class="card green">
+      <div class="card green fragment">
         <h3>Защита</h3>
         <p>Принцип наименьших привилегий, allow-lists, sandboxing, approval flows</p>
       </div>
-      <div class="card amber">
+      <div class="card amber fragment">
         <h3>Реагирование</h3>
         <p>Что делать, когда инцидент уже произошёл — логи, откат, remediation</p>
       </div>
@@ -1904,6 +1931,26 @@ Reveal.initialize({
   backgroundTransition: "fade",
   transitionSpeed: "fast",
   plugins: [RevealHighlight, RevealNotes]
+}).then(function() {
+  var noFrag = !new URLSearchParams(location.search).has('fragments');
+  var btn = document.createElement('button');
+  btn.className = 'mode-toggle';
+  document.body.appendChild(btn);
+  function setMode(off) {
+    noFrag = off;
+    Reveal.configure({ fragments: !off });
+    document.body.classList.toggle('no-fragments', off);
+    btn.textContent = off ? 'A: анимации выкл' : 'A: анимации вкл';
+    var url = new URL(location);
+    if (!off) url.searchParams.set('fragments', '');
+    else url.searchParams.delete('fragments');
+    history.replaceState(null, '', url);
+  }
+  setMode(noFrag);
+  document.addEventListener('keydown', function(e) {
+    if ((e.key==='a'||e.key==='A'||e.key==='ф'||e.key==='Ф') && !e.ctrlKey && !e.metaKey && !e.altKey) setMode(!noFrag);
+  });
+  btn.addEventListener('click', function() { setMode(!noFrag); });
 });
 </script>
 </body>
