@@ -36,6 +36,12 @@
   --accent-bg: #fef0e7;
   --teal: #1a9e8f;
   --teal-bg: #e6f7f5;
+
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
 }
 
 * { box-sizing: border-box; margin: 0; }
@@ -96,7 +102,7 @@ body {
   font-size: 13px;
   font-weight: 600;
   padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   border: 1px solid transparent;
   background: transparent;
   transition: all 0.15s;
@@ -168,7 +174,7 @@ body {
 .toc a {
   text-decoration: none;
   color: var(--muted);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   padding: 5px 8px;
   font-family: "DM Sans", sans-serif;
   font-size: 13px;
@@ -231,7 +237,7 @@ body {
   text-decoration: none;
   color: var(--body);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: var(--radius-lg);
   padding: 22px 24px;
   background: var(--panel);
   position: relative;
@@ -245,7 +251,7 @@ body {
   left: 0; top: 0; bottom: 0;
   width: 4px;
   background: var(--accent);
-  border-radius: 14px 0 0 14px;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
 }
 
 .lecture-card:nth-child(2)::before { background: var(--teal); }
@@ -315,7 +321,7 @@ body {
   font-weight: 600;
   color: var(--accent);
   border: 1px solid rgba(196,75,24,0.2);
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   padding: 4px 12px;
   transition: background 0.15s;
 }
@@ -399,7 +405,7 @@ body {
   padding: 16px 20px;
   border-left: 3px solid var(--accent);
   background: var(--accent-bg);
-  border-radius: 0 12px 12px 0;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
   font-style: italic;
 }
 
@@ -450,14 +456,14 @@ body {
   font-size: 0.84em;
   background: #f0e7db;
   border: 1px solid var(--line);
-  border-radius: 5px;
+  border-radius: var(--radius-xs);
   padding: 0.12em 0.4em;
   color: var(--accent);
 }
 
 #content pre {
   overflow-x: auto;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   border: 1px solid #2a2420;
   background: #0d1117;
   margin: 20px 0;
@@ -480,7 +486,7 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: var(--line);
-  border-radius: 99px;
+  border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--dim); }
 
