@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Engineering Course</title>
-<meta property="og:title" content="AI Engineering Course">
+<title>Agentic Engineering</title>
+<meta property="og:title" content="Agentic Engineering">
 <meta property="og:description" content="От вайбкодинга до мультиагентных систем — 9 лекций с презентациями и конспектами по AI-инженерии.">
 <meta property="og:image" content="https://vladsazonov.com/assets/og-image.png">
 <meta property="og:url" content="https://vladsazonov.com/">
@@ -65,86 +65,101 @@ body::after {
 
 h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
 
-/* ---- Author ---- */
-.author {
-  display: grid;
-  grid-template-columns: 140px 1fr;
-  gap: 24px;
-  align-items: center;
+/* ---- Intro ---- */
+.intro {
+  text-align: center;
   margin-bottom: 32px;
-  padding: 24px;
+}
+
+.course-label {
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(56, 215, 197, 0.7);
+  margin: 0 0 8px;
+}
+
+.intro h1 {
+  font-size: clamp(30px, 5vw, 48px);
+  margin-bottom: 0;
+}
+
+/* ---- About block ---- */
+.about {
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: var(--radius-lg);
   background: linear-gradient(145deg, rgba(31,24,20,0.72), rgba(16,13,11,0.82));
   backdrop-filter: blur(16px) saturate(1.2);
   -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.about p {
+  color: rgba(248, 240, 228, 0.8);
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0 0 10px;
+}
+
+.about p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Author ---- */
+.author {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  margin: 0 auto 2.5rem;
 }
 
 .author-photo {
-  width: 140px;
-  height: 140px;
-  border-radius: var(--radius-md);
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
   object-fit: cover;
-  border: 1px solid rgba(255,255,255,0.12);
+  flex-shrink: 0;
 }
 
 .author-info h2 {
-  font-size: 22px;
-  margin-bottom: 4px;
+  font-size: 18px;
+  margin-bottom: 3px;
 }
 
 .author-info .role {
   color: var(--teal);
   font-weight: 600;
   font-size: 14px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .author-info .bio {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.55;
-  margin: 0 0 10px;
+  margin: 0;
 }
 
 .tg-link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  color: var(--teal);
   text-decoration: none;
-  color: var(--text);
   font-size: 13px;
   font-weight: 600;
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
-  border: 1px solid rgba(56,215,197,0.45);
-  background: rgba(56,215,197,0.08);
-  transition: border-color 0.2s, background 0.2s;
+  margin-top: 6px;
+  white-space: nowrap;
+  opacity: 0.85;
+  transition: opacity 0.2s;
 }
 
 .tg-link:hover {
-  border-color: rgba(56,215,197,0.8);
-  background: rgba(56,215,197,0.14);
-  box-shadow: 0 4px 20px rgba(56,215,197,0.15);
-}
-
-/* ---- Intro ---- */
-.intro {
-  text-align: center;
-  margin-bottom: 36px;
-}
-
-.intro h1 {
-  font-size: clamp(30px, 5vw, 48px);
-  margin-bottom: 12px;
-}
-
-.intro p {
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.6;
-  max-width: 680px;
-  margin: 0 auto;
+  opacity: 1;
 }
 
 /* ---- Section headings ---- */
@@ -166,31 +181,31 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
 }
 
 .card {
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(145deg, rgba(31,24,20,0.92), rgba(20,16,13,0.96));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 3px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0 16px 16px 0;
+  background: rgba(255, 255, 255, 0.02);
   padding: 16px;
   position: relative;
   overflow: hidden;
-  --card-accent: var(--teal);
-  box-shadow: 0 -3px 16px -4px color-mix(in srgb, var(--card-accent) 18%, transparent);
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
-}
-
-.card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent 5%, var(--card-accent), transparent 95%);
-  opacity: 0.85;
+  transition: all 0.2s;
 }
 
 .card:hover {
-  box-shadow: 0 -4px 24px -4px color-mix(in srgb, var(--card-accent) 28%, transparent);
-  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.card:has(.complexity.low) {
+  border-left-color: rgb(94, 194, 105);
+}
+
+.card:has(.complexity.mid) {
+  border-left-color: rgb(246, 165, 75);
+}
+
+.card:has(.complexity.high) {
+  border-left-color: rgb(232, 101, 122);
 }
 
 .card h3 {
@@ -206,21 +221,22 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
 }
 
 .card .complexity {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  margin-bottom: 6px;
   display: inline-block;
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 9px;
-  border-radius: var(--radius-full);
-  margin-bottom: 8px;
 }
 
 .clickable {
   cursor: pointer;
 }
 
-.complexity.low { background: rgba(94,194,105,0.18); color: var(--green); }
-.complexity.mid { background: rgba(246,165,75,0.18); color: var(--amber); }
-.complexity.high { background: rgba(232,101,122,0.18); color: var(--rose); }
+.complexity.low { color: var(--green); }
+.complexity.mid { color: var(--amber); }
+.complexity.high { color: var(--rose); }
 
 .row {
   display: flex;
@@ -228,44 +244,35 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
   flex-wrap: wrap;
 }
 
-.btn {
-  text-decoration: none;
-  color: #f9f2e8;
-  font-weight: 600;
-  font-size: 13px;
+.btn, .btn.secondary {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(248, 240, 228, 0.85);
   padding: 7px 12px;
-  border-radius: var(--radius-full);
-  border: 1px solid rgba(56,215,197,0.55);
-  background: rgba(56,215,197,0.08);
-  transition: border-color 0.2s, background 0.2s;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s;
 }
 
-.btn:hover {
-  border-color: rgba(56,215,197,0.85);
-  background: rgba(56,215,197,0.16);
-  box-shadow: 0 4px 16px rgba(56,215,197,0.12);
-}
-
-.btn.secondary {
-  border-color: rgba(246,165,75,0.5);
-  background: rgba(246,165,75,0.08);
-}
-
-.btn.secondary:hover {
-  border-color: rgba(246,165,75,0.85);
-  background: rgba(246,165,75,0.16);
-  box-shadow: 0 4px 16px rgba(246,165,75,0.12);
+.btn:hover, .btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgb(248, 240, 228);
 }
 
 /* ---- Planned cards ---- */
 .card.planned {
-  --card-accent: var(--line);
-  opacity: 0.7;
+  opacity: 0.45;
 }
 
 .card.planned:hover {
-  transform: none;
-  box-shadow: 0 -3px 16px -4px color-mix(in srgb, var(--card-accent) 18%, transparent);
+  opacity: 0.6;
+}
+
+.card.planned:has(.complexity) {
+  border-left-color: rgba(255, 255, 255, 0.15);
 }
 
 .card.planned h3 {
@@ -283,18 +290,31 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
   margin-bottom: 8px;
 }
 
-/* ---- Footer ---- */
-.footer {
-  margin-top: 20px;
-  text-align: center;
-  color: #9d886f;
+/* ---- Legend ---- */
+.legend {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 2rem 0 1rem;
   font-size: 13px;
+  color: rgba(248, 240, 228, 0.5);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-line {
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+  display: inline-block;
 }
 
 @media (max-width: 900px) {
   .grid { grid-template-columns: 1fr; }
-  .author { grid-template-columns: 100px 1fr; gap: 16px; padding: 16px; }
-  .author-photo { width: 100px; height: 100px; }
 }
 </style>
 </head>
@@ -302,10 +322,18 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
   <main class="shell">
 
     <section class="intro">
-      <h1>AI Engineering Course</h1>
-      <p>Вайбкодинг плотно входит в нашу жизнь, и надеюсь этот набор конспектов и презентаций поможет вам лучше разобраться в материале.</p>
+      <p class="course-label">курс</p>
+      <h1>Agentic Engineering</h1>
     </section>
 
+    <div class="section-label">Предисловие от автора</div>
+    <section class="about">
+      <p>Вайбкодинг плотно входит в нашу жизнь. Инструменты меняются каждый месяц, подходы — каждый квартал. Разобраться в этом в одиночку можно, но долго и дорого.</p>
+      <p>Я собрал конспекты и презентации по темам, через которые прошёл сам — от первых экспериментов с агентами до мультиагентных систем. Без претензии на истину в последней инстанции, но с конкретикой, примерами и граблями.</p>
+      <p>Если хотите разобраться в теме — материалы дадут структурированную базу. Если нужно рассказать команде — презентации уже готовы, берите и адаптируйте под себя.</p>
+    </section>
+
+    <div class="section-label">Автор</div>
     <section class="author">
       <img class="author-photo" src="./assets/avatar.jpg" alt="Владислав Сазонов">
       <div class="author-info">
@@ -313,8 +341,8 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
         <div class="role">Head of Frontend в СиВ · ИИ Евангелист</div>
         <p class="bio">Исследую как AI-агенты меняют процесс разработки — от вайбкодинга до мультиагентных систем. Делюсь практикой, инструментами и ошибками.</p>
         <a class="tg-link" href="https://t.me/SazonovMaybeTalks" target="_blank" rel="noopener noreferrer" onclick="ym(107242055,'reachGoal','tg_channel_click')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.53 8.15l-1.78 8.38c-.13.6-.48.74-.98.46l-2.7-1.99-1.3 1.26c-.15.15-.27.27-.55.27l.19-2.74 5-4.52c.22-.19-.05-.3-.34-.12l-6.18 3.89-2.66-.83c-.58-.18-.59-.58.12-.86l10.4-4.01c.48-.18.9.12.74.86z"/></svg>
-          SazonovMaybeTalks
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.53 8.15l-1.78 8.38c-.13.6-.48.74-.98.46l-2.7-1.99-1.3 1.26c-.15.15-.27.27-.55.27l.19-2.74 5-4.52c.22-.19-.05-.3-.34-.12l-6.18 3.89-2.66-.83c-.58-.18-.59-.58.12-.86l10.4-4.01c.48-.18.9.12.74.86z"/></svg>
+          Телеграм канал
         </a>
       </div>
     </section>
@@ -331,7 +359,7 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
         </div>
       </article>
 
-      <article class="card clickable" style="--card-accent: var(--amber)" data-href="./presentations/part2/">
+      <article class="card clickable" data-href="./presentations/part2/">
         <span class="complexity mid">Средняя сложность</span>
         <h3>Лекция 2 · Prompt Engineering, Skills & Rules</h3>
         <p>От чата к агентному подходу: system prompt, chain-of-thought, rules, skills, антипаттерны.</p>
@@ -341,7 +369,7 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
         </div>
       </article>
 
-      <article class="card clickable" style="--card-accent: var(--rose)" data-href="./presentations/part3/">
+      <article class="card clickable" data-href="./presentations/part3/">
         <span class="complexity high">Высокая сложность</span>
         <h3>Лекция 3 · Tools и MCP</h3>
         <p>Кастомные инструменты, tool calling, MCP-протокол, подключение внешних сервисов, критерии выбора.</p>
@@ -355,7 +383,7 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
 
     <div class="section-label">В работе</div>
     <section class="grid">
-      <article class="card clickable" style="--card-accent: var(--rose)" data-href="./presentations/part4/">
+      <article class="card clickable" data-href="./presentations/part4/">
         <span class="complexity high">Высокая сложность</span>
         <h3>Лекция 4 · Субагенты, оркестрация и Hooks</h3>
         <p>Делегирование субагентам, паттерны оркестрации, hooks и автоматизация в Claude Code, Roo Code, Kilo Code, OpenCode.</p>
@@ -399,7 +427,12 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
       </article>
     </section>
 
-    <p class="footer">9 лекций · от вайбкодинга до мультиагентных систем</p>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-line" style="background: rgb(94, 194, 105);"></span> Низкая</span>
+      <span class="legend-item"><span class="legend-line" style="background: rgb(246, 165, 75);"></span> Средняя</span>
+      <span class="legend-item"><span class="legend-line" style="background: rgb(232, 101, 122);"></span> Высокая</span>
+    </div>
+
   </main>
 <script>
 (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
