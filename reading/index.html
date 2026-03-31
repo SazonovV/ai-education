@@ -16,7 +16,7 @@
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/107242055" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <!-- /Yandex.Metrika counter -->
-<title>Конспекты лекций</title>
+<title>Материалы лекций</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -69,8 +69,24 @@ body {
   align-items: center;
   gap: 10px;
   min-height: 52px;
-  flex-wrap: wrap;
   padding: 8px 0;
+}
+
+.current-title {
+  flex: 1;
+  text-align: center;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  color: var(--dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.current-title span {
+  color: var(--ink);
+  font-weight: 600;
 }
 
 .btn {
@@ -169,6 +185,16 @@ body {
 .toc a:hover {
   color: var(--ink);
   background: var(--line-soft);
+}
+
+.toc a.active {
+  color: var(--accent);
+  background: var(--accent-bg);
+  font-weight: 600;
+}
+
+.toc a.active.depth-3 {
+  color: var(--accent);
 }
 
 /* ── Index View ── */
@@ -439,6 +465,17 @@ body {
   .layout { padding: 20px 14px 60px; }
 }
 
+/* ── Bottom Navigation ── */
+
+.bottom-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 0;
+  margin-top: 40px;
+  border-top: 2px solid var(--line-soft);
+}
+
 /* ── Print ── */
 
 @media print {
@@ -458,7 +495,7 @@ body {
   <div class="layout" id="layout">
     <main class="main">
       <div id="index-view" hidden>
-        <h1 class="index-title">Конспекты лекций</h1>
+        <h1 class="index-title">Материалы лекций</h1>
         <p class="index-sub">Выберите лекцию для чтения</p>
         <div class="lecture-list" id="lecture-list"></div>
       </div>
@@ -487,6 +524,8 @@ const contentEl   = document.getElementById("content");
 const sidebarEl   = document.getElementById("sidebar");
 const tocEl       = document.getElementById("toc");
 
+let tocObserver = null;
+
 marked.setOptions({ gfm: true, breaks: false });
 
 function getPartId() {
@@ -514,6 +553,33 @@ function buildToc() {
     a.className = h.tagName === "H3" ? "depth-3" : "depth-2";
     tocEl.appendChild(a);
   });
+  initScrollSpy();
+}
+
+function initScrollSpy() {
+  if (tocObserver) tocObserver.disconnect();
+
+  const headings = contentEl.querySelectorAll("h2, h3");
+  if (!headings.length) return;
+
+  tocObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const id = entry.target.id;
+        const tocLinks = tocEl.querySelectorAll("a");
+        tocLinks.forEach((a) => a.classList.remove("active"));
+        const active = tocEl.querySelector(`a[href="#${CSS.escape(id)}"]`);
+        if (active) {
+          active.classList.add("active");
+          active.scrollIntoView({ block: "nearest", behavior: "smooth" });
+        }
+      });
+    },
+    { rootMargin: "0px 0px -70% 0px" }
+  );
+
+  headings.forEach((h) => tocObserver.observe(h));
 }
 
 function buildNav(lectures, currentId) {
@@ -527,6 +593,22 @@ function buildNav(lectures, currentId) {
 
   if (currentId) {
     const currentIndex = lectures.findIndex(l => l.id === currentId);
+    const lecture = lectures[currentIndex];
+
+    if (currentIndex > 0) {
+      const prev = lectures[currentIndex - 1];
+      const prevBtn = document.createElement("a");
+      prevBtn.className = "btn";
+      prevBtn.href = `?part=${prev.id}`;
+      prevBtn.textContent = "← " + prev.title;
+      navEl.appendChild(prevBtn);
+    }
+
+    const title = document.createElement("div");
+    title.className = "current-title";
+    title.innerHTML = `Вы читаете: <span>${lecture.title}</span>`;
+    navEl.appendChild(title);
+
     if (currentIndex < lectures.length - 1) {
       const next = lectures[currentIndex + 1];
       const nextBtn = document.createElement("a");
@@ -538,11 +620,44 @@ function buildNav(lectures, currentId) {
   }
 }
 
+function buildBottomNav(lectures, currentId) {
+  const existing = document.querySelector(".bottom-nav");
+  if (existing) existing.remove();
+
+  const currentIndex = lectures.findIndex(l => l.id === currentId);
+  if (currentIndex === -1) return;
+
+  const nav = document.createElement("div");
+  nav.className = "bottom-nav";
+
+  if (currentIndex > 0) {
+    const prev = lectures[currentIndex - 1];
+    const prevBtn = document.createElement("a");
+    prevBtn.className = "btn";
+    prevBtn.href = `?part=${prev.id}`;
+    prevBtn.textContent = "← " + prev.title;
+    nav.appendChild(prevBtn);
+  }
+
+  if (currentIndex < lectures.length - 1) {
+    const next = lectures[currentIndex + 1];
+    const nextBtn = document.createElement("a");
+    nextBtn.className = "btn primary";
+    nextBtn.href = `?part=${next.id}`;
+    nextBtn.textContent = next.title + " →";
+    nav.appendChild(nextBtn);
+  }
+
+  if (nav.children.length > 0) {
+    contentEl.parentElement.appendChild(nav);
+  }
+}
+
 function renderIndex(lectures) {
   layoutEl.classList.add("index-mode");
   sidebarEl.hidden = true;
   indexView.hidden = false;
-  document.title = "Конспекты лекций";
+  document.title = "Материалы лекций";
 
   buildNav(lectures, null);
 
@@ -584,7 +699,7 @@ async function renderArticle(lectures, partId) {
     return;
   }
 
-  document.title = lecture.title + " · Конспект";
+  document.title = lecture.title + " · Материалы лекции";
   layoutEl.classList.remove("index-mode");
   sidebarEl.hidden = false;
   statusEl.textContent = "Загружаю…";
@@ -604,6 +719,7 @@ async function renderArticle(lectures, partId) {
     contentEl.hidden = false;
     statusEl.hidden = true;
     buildToc();
+    buildBottomNav(lectures, partId);
   } catch (err) {
     statusEl.textContent = "Не удалось загрузить конспект. Проверьте подключение.";
     console.error(err);

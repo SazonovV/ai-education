@@ -311,33 +311,33 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
 
     <div class="section-label">Готовые лекции</div>
     <section class="grid">
-      <article class="card">
+      <article class="card clickable" data-href="./presentations/part1/">
         <span class="complexity low">Низкая сложность</span>
         <h3>Лекция 1 · Введение в вайбкодинг</h3>
         <p>Что такое vibe coding, живое демо, границы подхода, Git как страховка, безопасность секретов.</p>
         <div class="row">
           <a class="btn" href="./presentations/part1/">Презентация</a>
-          <a class="btn secondary" href="./reading/?part=part1_vibecoding">Конспект</a>
+          <a class="btn secondary" href="./reading/?part=part1_vibecoding">Материалы лекции</a>
         </div>
       </article>
 
-      <article class="card" style="--card-accent: var(--amber)">
+      <article class="card clickable" style="--card-accent: var(--amber)" data-href="./presentations/part2/">
         <span class="complexity mid">Средняя сложность</span>
         <h3>Лекция 2 · Prompt Engineering, Skills & Rules</h3>
         <p>От чата к агентному подходу: system prompt, chain-of-thought, rules, skills, антипаттерны.</p>
         <div class="row">
           <a class="btn" href="./presentations/part2/">Презентация</a>
-          <a class="btn secondary" href="./reading/?part=part2_prompt_engineering">Конспект</a>
+          <a class="btn secondary" href="./reading/?part=part2_prompt_engineering">Материалы лекции</a>
         </div>
       </article>
 
-      <article class="card" style="--card-accent: var(--rose)">
+      <article class="card clickable" style="--card-accent: var(--rose)" data-href="./presentations/part3/">
         <span class="complexity high">Высокая сложность</span>
         <h3>Лекция 3 · Tools и MCP</h3>
         <p>Кастомные инструменты, tool calling, MCP-протокол, подключение внешних сервисов, критерии выбора.</p>
         <div class="row">
           <a class="btn" href="./presentations/part3/">Презентация</a>
-          <a class="btn secondary" href="./reading/?part=part3_tools_mcp">Конспект</a>
+          <a class="btn secondary" href="./reading/?part=part3_tools_mcp">Материалы лекции</a>
         </div>
       </article>
 
@@ -345,13 +345,13 @@ h1, h2, h3 { font-family: "Unbounded", "Manrope", sans-serif; margin: 0; }
 
     <div class="section-label">В работе</div>
     <section class="grid">
-      <article class="card" style="--card-accent: var(--rose)">
+      <article class="card clickable" style="--card-accent: var(--rose)" data-href="./presentations/part4/">
         <span class="complexity high">Высокая сложность</span>
         <h3>Лекция 4 · Субагенты, оркестрация и Hooks</h3>
         <p>Делегирование субагентам, паттерны оркестрации, hooks и автоматизация в Claude Code, Roo Code, Kilo Code, OpenCode.</p>
         <div class="row">
           <a class="btn" href="./presentations/part4/">Презентация</a>
-          <a class="btn secondary" href="./reading/?part=part4_subagents_hooks">Конспект</a>
+          <a class="btn secondary" href="./reading/?part=part4_subagents_hooks">Материалы лекции</a>
         </div>
       </article>
     </section>
@@ -398,6 +398,16 @@ for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){retur
 k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
 (window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
 ym(107242055,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
+</script>
+<script>
+document.querySelectorAll(".card.clickable").forEach(card => {
+  card.addEventListener("click", () => {
+    window.location.href = card.dataset.href;
+  });
+  card.querySelectorAll("a.btn").forEach(btn => {
+    btn.addEventListener("click", e => e.stopPropagation());
+  });
+});
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/107242055" style="position:absolute;left:-9999px" alt=""></div></noscript>
 </body>
