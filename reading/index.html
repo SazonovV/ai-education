@@ -270,6 +270,38 @@ body {
   line-height: 1.55;
 }
 
+.reading-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 13px;
+  color: var(--dim);
+  margin-top: 8px;
+}
+
+.reading-time svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.article-reading-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: "DM Sans", sans-serif;
+  font-size: 15px;
+  color: var(--dim);
+  margin-bottom: 1.2em;
+}
+
+.article-reading-time svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
 .lecture-meta {
   display: flex;
   gap: 8px;
@@ -528,6 +560,25 @@ let tocObserver = null;
 
 marked.setOptions({ gfm: true, breaks: false });
 
+const CLOCK_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+
+function calcReadingTime(markdown) {
+  const text = markdown
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/`[^`]*`/g, "")
+    .replace(/!?\[.*?\]\(.*?\)/g, "")
+    .replace(/[#*_~>\-|]/g, "")
+    .trim();
+  const words = text.split(/\s+/).filter(w => w.length > 0).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+function readingTimeLabel(minutes) {
+  if (minutes % 10 === 1 && minutes % 100 !== 11) return `${minutes} минута`;
+  if ([2,3,4].includes(minutes % 10) && ![12,13,14].includes(minutes % 100)) return `${minutes} минуты`;
+  return `${minutes} минут`;
+}
+
 function getPartId() {
   return new URLSearchParams(location.search).get("part");
 }
@@ -675,6 +726,19 @@ function renderIndex(lectures) {
     p.textContent = lec.description;
     card.appendChild(p);
 
+    const rt = document.createElement("div");
+    rt.className = "reading-time";
+    rt.innerHTML = CLOCK_SVG + `<span>…</span>`;
+    card.appendChild(rt);
+
+    fetch(CONTENT_BASE + lec.file, { cache: "no-store" })
+      .then(r => r.ok ? r.text() : "")
+      .then(md => {
+        if (md) rt.innerHTML = CLOCK_SVG + `<span>${readingTimeLabel(calcReadingTime(md))}</span>`;
+        else rt.remove();
+      })
+      .catch(() => rt.remove());
+
     if (lec.slides) {
       const meta = document.createElement("div");
       meta.className = "lecture-meta";
@@ -713,6 +777,15 @@ async function renderArticle(lectures, partId) {
 
     const markdown = await res.text();
     contentEl.innerHTML = marked.parse(markdown);
+
+    const firstH1 = contentEl.querySelector("h1");
+    if (firstH1) {
+      const rt = document.createElement("div");
+      rt.className = "article-reading-time";
+      rt.innerHTML = CLOCK_SVG + `<span>${readingTimeLabel(calcReadingTime(markdown))}</span>`;
+      firstH1.after(rt);
+    }
+
     contentEl.querySelectorAll("pre code").forEach(block => {
       hljs.highlightElement(block);
     });
