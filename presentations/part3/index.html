@@ -1192,29 +1192,42 @@ final = client.messages.create(
 
 <section>
   <div class="slide-shell">
-    <h2 class="section-title">Демо: создаём кастомный tool</h2>
+    <h2 class="section-title">Демонстрация: кастомный tool</h2>
+    <p class="subtitle">Tool <code>check_endpoint</code> — проверяет статус HTTP-эндпоинта</p>
     <div class="cards c2">
       <div class="card teal">
-        <h3>Задача</h3>
-        <p>Создать tool, который проверяет статус HTTP-эндпоинта и возвращает код ответа, время и заголовки.</p>
-        <ul>
-          <li>Имя: <code>check_endpoint</code></li>
-          <li>Параметры: <code>url</code>, <code>method</code></li>
-          <li>Результат: status, latency, headers</li>
-        </ul>
+        <h3>1. Tool Definition</h3>
+<pre><code class="language-json">{
+  "name": "check_endpoint",
+  "description": "Проверяет HTTP-эндпоинт",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "url":    { "type": "string" },
+      "method": { "type": "string",
+                  "default": "GET" }
+    },
+    "required": ["url"]
+  }
+}</code></pre>
       </div>
       <div class="card amber">
-        <h3>План демо</h3>
-        <ul>
-          <li>Определяем tool definition (JSON Schema)</li>
-          <li>Пишем обработчик на Python</li>
-          <li>Подключаем к Claude API</li>
-          <li>Тестируем: «Проверь, работает ли api.example.com»</li>
-          <li>Показываем весь цикл: user → LLM → tool → result → ответ</li>
-        </ul>
+        <h3>2. Обработчик</h3>
+<pre><code class="language-python">import httpx, time
+
+def check_endpoint(url, method="GET"):
+    start = time.time()
+    r = httpx.request(method, url)
+    return {
+        "status": r.status_code,
+        "latency_ms": round(
+            (time.time() - start) * 1000
+        ),
+        "headers": dict(r.headers)
+    }</code></pre>
       </div>
     </div>
-    <blockquote><p><strong>Живое демо</strong> — создаём инструмент с нуля за 5 минут</p></blockquote>
+    <blockquote><p>Полный цикл: user → LLM выбирает tool → вызов → результат → финальный ответ</p></blockquote>
 </div>
 </section>
 
@@ -1425,22 +1438,10 @@ npx @modelcontextprotocol/inspector \
     "demo": {
       "command": "python",
       "args": ["server.py"]
-    },
-    "github": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-github"
-      ],
-      "env": {
-        "GITHUB_TOKEN": "ghp_..."
-      }
     }
   }
 }</code></pre>
-      </div>
-      <div>
-        <h3>VS Code / Cursor <span class="note">(.vscode/mcp.json)</span></h3>
+        <h3 class="fragment">Cursor / OpenCode <span class="note">(.vscode/mcp.json · .opencode.json)</span></h3>
 <pre class="fragment"><code class="language-json">{
   "servers": {
     "demo": {
@@ -1450,6 +1451,8 @@ npx @modelcontextprotocol/inspector \
     }
   }
 }</code></pre>
+      </div>
+      <div>
         <div class="card teal fragment" style="margin-top:10px">
           <h3>После подключения</h3>
           <ul>
@@ -1486,29 +1489,35 @@ npx @modelcontextprotocol/inspector \
 
 <section>
   <div class="slide-shell">
-    <h2 class="section-title">Демо: подключаем MCP-сервер</h2>
+    <h2 class="section-title">Демонстрация: MCP-сервер Playwright</h2>
     <div class="cards c2">
       <div class="card teal">
-        <h3>Сценарий</h3>
-        <ul>
-          <li>Подключаем реальный MCP-сервер (Playwright)</li>
-          <li>Даём агенту задачу, требующую браузер</li>
-          <li>Наблюдаем, как агент решает использовать MCP-tools</li>
-          <li>Видим: открытие страницы, поиск элементов, скриншот</li>
-        </ul>
+        <h3>Подключение</h3>
+<pre><code class="language-json">// .mcp.json
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "@anthropic-ai/mcp-playwright"
+      ]
+    }
+  }
+}</code></pre>
+        <p class="note">После подключения агент получает tools: <code>navigate</code>, <code>click</code>, <code>screenshot</code>, …</p>
       </div>
       <div class="card amber">
-        <h3>Что показываем</h3>
-        <ul>
-          <li>Конфигурация в <code>.mcp.json</code></li>
-          <li>Список tools после подключения</li>
-          <li>Tool call от агента → действие в браузере</li>
-          <li>Результат возвращается в контекст</li>
-          <li>Агент продолжает работу с полученными данными</li>
-        </ul>
+        <h3>Как это работает</h3>
+        <ol>
+          <li>Агент получает задачу, требующую браузер</li>
+          <li>Выбирает <code>browser_navigate</code> → открывает страницу</li>
+          <li>Вызывает <code>browser_snapshot</code> → получает DOM</li>
+          <li>Использует <code>browser_click</code> → взаимодействует</li>
+          <li>Результат возвращается в контекст — агент продолжает</li>
+        </ol>
       </div>
     </div>
-    <blockquote><p><strong>Живое демо</strong> — агент управляет браузером через MCP</p></blockquote>
+    <blockquote><p>Агент сам решает, какие MCP-tools вызвать — мы лишь подключаем сервер</p></blockquote>
 </div>
 </section>
 
