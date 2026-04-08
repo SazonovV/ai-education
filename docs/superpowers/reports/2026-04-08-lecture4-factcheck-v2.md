@@ -162,7 +162,53 @@
 
 ### § 5.4 OpenCode — plugins
 
-<entries to be filled in Task 11>
+- **Claim:** "hooks реализованы через систему плагинов — JS/TS-модули вместо JSON-конфигов" (part4_subagents_hooks.md:496)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/plugins
+  - **Evidence:** Documentation confirms plugins are JavaScript or TypeScript modules placed in plugin directories or loaded via npm — not JSON configuration files.
+  - **Recommendation:** —
+
+- **Claim:** TypeScript plugin snippet at lines 501-515 — AutoFormatPlugin signature `async ({ $ }) =>`
+  - **Status:** INACCURATE
+  - **Source:** https://github.com/sst/opencode/blob/HEAD/packages/plugin/src/index.ts
+  - **Evidence:** The canonical `PluginInput` type from the official `@opencode-ai/plugin` package is `{ client, project, directory, worktree, serverUrl, $ }`. The full context is passed, not just `$`. Valid signatures are `async (ctx) =>` or `async ({ project, client, $, directory, worktree }) =>`. Additionally, `output.args?.filePath` does not exist on the `tool.execute.after` handler — the after-hook's output shape is `{ title, output, metadata }`. The `args` field lives on `input` (which carries `{ tool, sessionID, callID, args }`). The lecture's code uses `output.args?.filePath`, which would always be undefined.
+  - **Recommendation:** Correct signature to `async ({ $, project, client, directory, worktree }) =>`. Correct the after-hook body to read `const filePath = input.args?.filePath || ""` instead of `output.args?.filePath`.
+
+- **Claim:** Plugin uses `$` shell template literal (lines 507, 512)
+  - **Status:** VERIFIED
+  - **Source:** https://github.com/sst/opencode/blob/HEAD/packages/plugin/src/index.ts
+  - **Evidence:** `$` in `PluginInput` is typed as `BunShell` — Bun's tagged template literal shell API. Usage `await $\`command\`` is correct.
+  - **Recommendation:** —
+
+- **Claim:** Event names `tool.execute.after` and `session.idle` in TS snippet (part4_subagents_hooks.md:503, 511)
+  - **Status:** VERIFIED
+  - **Source:** https://github.com/sst/opencode/blob/HEAD/packages/plugin/src/index.ts
+  - **Evidence:** Both `"tool.execute.after"` and `"session.idle"` are defined as typed keys in the official `Hooks` interface. `session.idle` appears as a bus event passed through the generic `event` hook.
+  - **Recommendation:** —
+
+- **Claim:** "Основные события — `tool.execute.before`, `tool.execute.after`, `session.created`, `session.idle`, `session.error`, `file.edited`, `permission.asked`, `shell.env` и другие" (part4_subagents_hooks.md:522)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** https://opencode.ai/docs/plugins ; https://github.com/sst/opencode/blob/HEAD/packages/plugin/src/index.ts
+  - **Evidence:** All 8 named events exist. `tool.execute.before`, `tool.execute.after`, `shell.env`, and `permission.ask` (note: the API uses `permission.ask`, not `permission.asked`) are direct Hooks keys. `session.created`, `session.idle`, `session.error`, and `file.edited` are bus events received via the generic `event` hook. The "и другие" qualifier is accurate: the actual total is 25 bus event types plus 18 named hook slots in the Hooks interface, far exceeding the 8 listed.
+  - **Recommendation:** Change `permission.asked` to `permission.ask` to match the actual Hooks type key. Optionally update the framing to note that the real count is 40+ distinct event/hook slots.
+
+- **Claim:** "Полный доступ к SDK — `$` (shell), `client` (API), `project` (метаданные проекта)" (part4_subagents_hooks.md:523)
+  - **Status:** VERIFIED
+  - **Source:** https://github.com/sst/opencode/blob/HEAD/packages/plugin/src/index.ts
+  - **Evidence:** The `PluginInput` type explicitly includes `$: BunShell` (shell), `client: ReturnType<typeof createOpencodeClient>` (SDK API client), and `project: Project` (project metadata). Two additional fields also exist: `directory: string` and `worktree: string`.
+  - **Recommendation:** —
+
+- **Claim:** "npm-пакеты — можно импортировать любые зависимости, вызывать HTTP API, писать в БД" (part4_subagents_hooks.md:524)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/plugins
+  - **Evidence:** Documentation confirms that local plugins can declare npm dependencies via `.opencode/package.json`, which are installed automatically via Bun at startup. npm-sourced plugins (declared in `opencode.json`) are also installed automatically.
+  - **Recommendation:** —
+
+- **Claim:** "Подключение — локально (`.opencode/plugins/`) или через npm (`\"plugin\": [\"package-name\"]` в `opencode.json`)" (part4_subagents_hooks.md:525)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/plugins ; https://github.com/sst/opencode/blob/HEAD/packages/opencode/src/config/config.ts
+  - **Evidence:** The npm loading mechanism via `"plugin": ["package-name"]` in `opencode.json` is confirmed. Source code scans `{plugin,plugins}/*.{ts,js}` within each `.opencode/` config directory — both `.opencode/plugin/` and `.opencode/plugins/` (plural) work. The lecture's `.opencode/plugins/` is correct.
+  - **Recommendation:** —
 
 ### § 5.5 Roo Code / Kilo Code — emulation
 
