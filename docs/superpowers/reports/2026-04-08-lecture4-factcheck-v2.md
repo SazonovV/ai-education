@@ -27,7 +27,15 @@ This report (the parent) only contains verified claims for **Claude Code** and *
   - **Evidence:** The underlying tool is confirmed as "Agent tool" (renamed from "Task tool" in v2.1.63 — old `Task(...)` references still work as aliases). However, the primary invocation model is *automatic delegation* by Claude based on subagent descriptions, not explicit spawn; explicit invocation is an opt-in via @-mention or `--agent` flag, not the default mode.
   - **Recommendation:** "Автоматическая делегация через Agent tool (явный вызов через @-mention)"
 
-<entries to be filled in Task 2>
+- **Claim:** "Режимы + Orchestrator / Boomerang" for Roo Code / Kilo Code (part4_subagents_hooks.md:299)
+  - **Status:** OUT OF SCOPE
+  - **Notes:** Roo Code is being removed from the lecture. Kilo Code claim is deferred to `2026-04-08-lecture4-factcheck-v2-kilo-deferred.md`.
+
+- **Claim:** "Агенты в конфигурации" for OpenCode (part4_subagents_hooks.md:299)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/agents
+  - **Evidence:** OpenCode agents are pre-defined configuration profiles, not dynamically spawned. They live either in `opencode.json` (under the `agents` key) or as markdown files in `.opencode/agents/` (project) / `~/.config/opencode/agents/` (global). Each agent has a `mode` field (`primary` / `subagent` / `all`) and is selected by the user or invoked via `@`-mention — there is no dynamic spawn primitive.
+  - **Recommendation:** —
 
 ### Criterion: Конфигурация
 
