@@ -9,6 +9,12 @@
 
 ### Criterion: Модель субагентности
 
+- **Claim:** "Явный spawn через Agent tool" (part4_subagents_hooks.md:299)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** https://code.claude.com/docs/en/sub-agents
+  - **Evidence:** The underlying tool is confirmed as "Agent tool" (renamed from "Task tool" in v2.1.63 — old `Task(...)` references still work as aliases). However, the primary invocation model is *automatic delegation* by Claude based on subagent descriptions, not explicit spawn; explicit invocation is an opt-in via @-mention or `--agent` flag, not the default mode.
+  - **Recommendation:** "Автоматическая делегация через Agent tool (явный вызов через @-mention)"
+
 <entries to be filled in Task 2>
 
 ### Criterion: Конфигурация
