@@ -35,7 +35,23 @@
 
 ### Criterion: Фоновый запуск
 
-<entries to be filled in Task 7>
+- **Claim:** "`run_in_background: true`" (part4_subagents_hooks.md:304)
+  - **Status:** INACCURATE
+  - **Source:** https://code.claude.com/docs/en/sub-agents
+  - **Evidence:** The current frontmatter field name is `background: true`, not `run_in_background: true`. The docs list `background` as an optional field: "Set to `true` to always run this subagent as a background task. Default: `false`." The `--agents` JSON flag documentation also uses `background`. No mention of `run_in_background` anywhere in current docs.
+  - **Recommendation:** "`background: true`"
+
+- **Claim:** "Нет" for Roo Code / Kilo Code (part4_subagents_hooks.md:304)
+  - **Status:** VERIFIED
+  - **Source:** https://docs.roocode.com/features/boomerang-tasks
+  - **Evidence:** Boomerang Tasks are explicitly sequential: "The parent task pauses, and the new subtask begins in a different, specialized mode. When the subtask's goal is achieved, Roo signals completion. The parent task resumes." No background, async, or concurrent task execution is documented. GitHub releases also contain no mention of a background execution feature.
+  - **Recommendation:** —
+
+- **Claim:** "Нет" for OpenCode (part4_subagents_hooks.md:304)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/agents
+  - **Evidence:** OpenCode agent documentation describes only synchronous, interactive, session-based workflows. No background execution, async mode, or fire-and-forget agent feature is mentioned. The General subagent can run multiple units of work in parallel within a session, but there is no background/detached execution model comparable to Claude Code's `background: true`.
+  - **Recommendation:** —
 
 ### Post-table paragraph
 
