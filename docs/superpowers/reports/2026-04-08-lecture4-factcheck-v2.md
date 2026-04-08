@@ -77,11 +77,32 @@
 
 ### § 5.1 Brief reminder
 
-<entries to be filled in Task 9>
+- **Claim:** "Hook — реакция на событие жизненного цикла агента, выполняемая **хостом** (средой исполнения), а не моделью." (part4_subagents_hooks.md:428)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Claude Code docs state: "Hooks are user-defined shell commands, HTTP endpoints, or LLM prompts that execute automatically at specific points in Claude Code's lifecycle… Hooks execute on the host machine (where Claude Code runs), not in the model." The host-vs-model framing is exact.
+  - **Recommendation:** —
+
+- **Claim:** "Модель не решает, запускать ли hook, — он срабатывает автоматически при наступлении события." (part4_subagents_hooks.md:428)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Docs confirm hooks "execute automatically at specific points"; the model has no control over whether a hook fires. This is the documented distinguishing property vs. rules and system-prompt instructions, which the model can disregard.
+  - **Recommendation:** —
 
 ### § 5.2 Advanced scenarios (7 scenarios)
 
-<entries to be filled in Task 9>
+- **Claim block:** "Семь сценариев hooks" (part4_subagents_hooks.md:436-450)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks ; https://opencode.ai/docs/plugins
+  - **Evidence:** Per-scenario event mapping:
+    1. Автоформатирование после Edit (prettier, black, gofmt) → `PostToolUse` (matcher: `Edit|Write`) — VERIFIED.
+    2. Линтинг после записи файла (ESLint, ruff, golangci-lint), результат через stderr → `PostToolUse` — VERIFIED. Note: lecture says "результат возвращается через stderr"; correct pattern is exit 0 with JSON `{"output": "..."}` for warnings, or exit 2 with stderr to force a fix. The stderr-only framing is slightly imprecise.
+    3. Автокоммит после завершения задачи (`git add -A && git commit`) → `Stop` — VERIFIED.
+    4. Уведомление при ошибке (Slack webhook, системный звук) — the lecture does not name an event. Claude Code's `Notification` event fires for internal UI notifications (permission_prompt, idle_prompt, auth_success, elicitation_dialog), NOT on agent errors. For "notify on error" the appropriate events are `PostToolUseFailure` or `StopFailure`.
+    5. Запуск тестов после изменения кода → `PostToolUse` (matcher `Edit|Write`) — VERIFIED.
+    6. Инъекция контекста при старте сессии (git status, open issues, последние коммиты) → `SessionStart` — VERIFIED. Docs note: "Useful for loading development context like existing issues or recent changes to your codebase." Also implementable in OpenCode via `session.created` event.
+    7. Блокировка опасных операций (`PreToolUse`, exit code 2) — VERIFIED. Docs: "Exit 2 … `PreToolUse` blocks the tool call" and stderr is fed back to Claude as an error message.
+  - **Recommendation:** For scenario 4, clarify that the appropriate event is `PostToolUseFailure` or `StopFailure`, not `Notification`. For scenario 2, clarify that lint output is best returned as JSON stdout (exit 0) for non-blocking feedback or stderr with exit 2 for blocking feedback — not stderr alone.
 
 ### § 5.3 Claude Code — advanced configs
 
