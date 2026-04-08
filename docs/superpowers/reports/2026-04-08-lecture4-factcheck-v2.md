@@ -77,7 +77,21 @@ This report (the parent) only contains verified claims for **Claude Code** and *
 
 ### Criterion: Изоляция
 
-<entries to be filled in Task 5>
+- **Claim:** "Worktree (git-копия)" for Claude Code (part4_subagents_hooks.md:302)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/sub-agents
+  - **Evidence:** The `isolation` frontmatter field is documented: "Set to `worktree` to run the subagent in a temporary git worktree, giving it an isolated copy of the repository. The worktree is automatically cleaned up if the subagent makes no changes." This is a real, supported feature, not aspirational.
+  - **Recommendation:** —
+
+- **Claim:** "Отдельный контекст (общая FS)" for Roo Code / Kilo Code (part4_subagents_hooks.md:302)
+  - **Status:** OUT OF SCOPE
+  - **Notes:** Roo Code dropped; Kilo Code deferred.
+
+- **Claim:** "Отдельный контекст (общая FS)" for OpenCode (part4_subagents_hooks.md:302)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/agents
+  - **Evidence:** OpenCode docs do not describe any worktree-style isolation; agents share the project filesystem. Access is mediated through the per-agent `permission` field (`ask` / `allow` / `deny` per tool/path), not through a separate copy of the repository.
+  - **Recommendation:** —
 
 ### Criterion: Кастомные типы
 
