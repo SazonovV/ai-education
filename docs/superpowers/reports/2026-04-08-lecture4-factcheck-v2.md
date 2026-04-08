@@ -95,7 +95,21 @@ This report (the parent) only contains verified claims for **Claude Code** and *
 
 ### Criterion: Кастомные типы
 
-<entries to be filled in Task 6>
+- **Claim:** "`AGENTS.md`" for Claude Code (part4_subagents_hooks.md:303)
+  - **Status:** INACCURATE
+  - **Source:** https://code.claude.com/docs/en/sub-agents
+  - **Evidence:** Custom subagent types are defined as Markdown files inside `.claude/agents/` (project), `~/.claude/agents/` (user), or a plugin's `agents/` directory — not in `AGENTS.md`. The file name (without `.md`) becomes the subagent's `name`, which is what the Agent tool's `subagent_type` parameter references. Same root cause as the "Конфигурация" inaccuracy: the lecture conflates `AGENTS.md` (project memory file) with the `.claude/agents/` directory (subagent registry).
+  - **Recommendation:** "`.claude/agents/<name>.md`"
+
+- **Claim:** "`.roomodes`" for Roo Code / Kilo Code (part4_subagents_hooks.md:303)
+  - **Status:** OUT OF SCOPE
+  - **Notes:** Roo Code dropped; Kilo Code deferred.
+
+- **Claim:** "Агенты в конфиге" for OpenCode (part4_subagents_hooks.md:303)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/agents
+  - **Evidence:** Custom agent definitions are first-class — added to the `agents` block of `opencode.json` or as additional Markdown files in `.opencode/agents/`. There are no built-in subagent "types" per se; every agent is user-defined and labelled by `mode: primary | subagent | all`.
+  - **Recommendation:** —
 
 ### Criterion: Фоновый запуск
 
