@@ -106,7 +106,59 @@
 
 ### § 5.3 Claude Code — advanced configs
 
-<entries to be filled in Task 10>
+- **Claim:** "Конфигурация — JSON в `.claude/settings.json` (проектные) или `~/.claude/settings.json` (глобальные)." (part4_subagents_hooks.md:454)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/settings
+  - **Evidence:** Docs confirm: Project scope = `.claude/settings.json` (shareable, committed to git); User scope = `~/.claude/` directory (all projects, not shareable). A third scope `.claude/settings.local.json` (local, gitignored) also exists but is not listed in the lecture — that omission is acceptable.
+  - **Recommendation:** —
+
+- **Claim:** JSON snippet at lines 458-477 — Claude Code hooks settings.json structure
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Field validation results — top-level `hooks`: ✅ | `PostToolUse` and `Stop` as event keys: ✅ | array of matcher groups: ✅ | `matcher` field: ✅ | nested `hooks` array with `type: "command"` and `command`: ✅ | empty matcher string `""` matching all: ✅
+  - **Recommendation:** —
+
+- **Claim:** "**20+ событий**" (part4_subagents_hooks.md:483)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Current docs list 26 distinct hook events (SessionStart, UserPromptSubmit, PreToolUse, PermissionRequest, PermissionDenied, PostToolUse, PostToolUseFailure, Notification, SubagentStart, SubagentStop, TaskCreated, TaskCompleted, Stop, StopFailure, TeammateIdle, InstructionsLoaded, ConfigChange, CwdChanged, FileChanged, WorktreeCreate, WorktreeRemove, PreCompact, PostCompact, Elicitation, ElicitationResult, SessionEnd). "20+" is accurate.
+  - **Recommendation:** —
+
+- **Claim:** "PreToolUse, PostToolUse, Stop, SessionStart, UserPromptSubmit, PermissionRequest, Notification, PostCompact и другие" (part4_subagents_hooks.md:483)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** All 8 named events confirmed present in the current event list: PreToolUse ✅, PostToolUse ✅, Stop ✅, SessionStart ✅, UserPromptSubmit ✅, PermissionRequest ✅, Notification ✅, PostCompact ✅.
+  - **Recommendation:** —
+
+- **Claim:** "**4 типа обработчиков** — `command` (shell), `prompt` (однопроходная оценка моделью), `agent` (запуск субагента с инструментами), `http` (POST-запрос на URL)." (part4_subagents_hooks.md:484)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Docs confirm exactly 4 handler types: `command` (shell command), `http` (HTTP POST), `prompt` (single-turn model evaluation), `agent` (spawns subagent with tools). Descriptions in the lecture match the docs precisely.
+  - **Recommendation:** —
+
+- **Claim:** "**Matcher** — регулярное выражение для фильтрации по имени инструмента. `\"Edit|Write\"` — только для этих двух. Пустой matcher — для всех." (part4_subagents_hooks.md:485)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Docs confirm matcher is a regex string filtering when hooks fire; for tool events (PreToolUse, PostToolUse, etc.) it matches against `tool_name`. Example `"Edit|Write"` matches only those tools. Empty string `""` (or `"*"` or omitting matcher) matches all occurrences.
+  - **Recommendation:** —
+
+- **Claim:** "**Переменные окружения** — `$FILEPATH`, `$TOOL_NAME`, `$TOOL_INPUT` и другие. Доступны внутри shell-команды." (part4_subagents_hooks.md:486)
+  - **Status:** INACCURATE
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** `$FILEPATH`, `$TOOL_NAME`, and `$TOOL_INPUT` are NOT shell environment variables. Tool-specific data (tool name, input, file path) is delivered as JSON on stdin and must be read with e.g. `jq -r '.tool_name'`. The actual shell env vars are `$CLAUDE_PROJECT_DIR`, `$CLAUDE_PLUGIN_ROOT`, `$CLAUDE_PLUGIN_DATA`, `$CLAUDE_ENV_FILE`, `$CLAUDE_CODE_REMOTE`.
+  - **Recommendation:** "**Входной контекст** — данные хука передаются как JSON в stdin: `tool_name`, `tool_input`, `tool_response` и другие. Shell-переменные хоста: `$CLAUDE_PROJECT_DIR` и др."
+
+- **Claim:** Exit codes: `0` — OK, продолжить; `1` — ошибка (неблокирующая, подробности в verbose-режиме); `2` — заблокировать действие, stderr передаётся модели (part4_subagents_hooks.md:488-490)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Exit 0 = success (stdout parsed for JSON output) ✅. Exit 2 = blocking error (stderr fed to Claude as error message) ✅. Exit 1 = non-blocking error: transcript shows a one-line `<hook name> hook error` notice and execution continues, full stderr goes to debug log — not "verbose mode" per se, but functionally non-blocking ✅. The description "подробности в verbose-режиме" is an approximation; actual mechanism is debug log + one-line transcript notice. The baseline (2026-03-31) concern about exit 1 incorrectly feeding stderr to the model is NOT a problem in the current lecture — the lecture correctly states exit 1 is non-blocking.
+  - **Recommendation:** Optionally clarify "подробности в debug-логе и одной строкой в transcript" вместо "verbose-режиме".
+
+- **Claim:** "Тип `agent` — уникальная возможность Claude Code. Hook может запустить полноценного субагента с доступом к инструментам для глубокой проверки." (part4_subagents_hooks.md:492)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** The `agent` handler type spawns a subagent with tool access (Read, Grep, Glob, Bash) for multi-step verification. This is unique to Claude Code — OpenCode uses JS/TS plugin functions and Roo Code has no native hook system. The characterization of `agent` hooks as uniquely powerful is accurate.
+  - **Recommendation:** —
 
 ### § 5.4 OpenCode — plugins
 
