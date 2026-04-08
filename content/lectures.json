@@ -26,5 +26,12 @@
     "description": "Делегирование субагентам, паттерны оркестрации, hooks и автоматизация в Claude Code, Roo Code, Kilo Code, OpenCode",
     "file": "part4_subagents_hooks.md",
     "slides": "../presentations/part4/"
+  },
+  {
+    "id": "part5_workflow_observability",
+    "title": "Лекция 5 · Workflow и наблюдаемость агентов",
+    "description": "Дисциплина процесса (spec/plan/TDD/verification) и анализ работы агента (трейсы, ревью, CI как независимый верификатор)",
+    "file": "part5_workflow_observability.md",
+    "slides": "../presentations/part5/"
   }
 ]
