@@ -23,7 +23,23 @@
 
 ### Criterion: Параллельность
 
-<entries to be filled in Task 4>
+- **Claim:** "Да (несколько Agent-вызовов)" (part4_subagents_hooks.md:301)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/sub-agents
+  - **Evidence:** The docs explicitly document running multiple subagents in parallel: "For independent investigations, spawn multiple subagents to work simultaneously." Background subagents run concurrently while the user continues working. The tool was renamed from `Task` to `Agent` in v2.1.63 ("In version 2.1.63, the Task tool was renamed to Agent"), so the lecture's phrasing "Agent-вызовов" is now the correct name. Both foreground (blocking) and background (concurrent) invocations are supported.
+  - **Recommendation:** —
+
+- **Claim:** "Последовательная (Boomerang)" (part4_subagents_hooks.md:301)
+  - **Status:** VERIFIED
+  - **Source:** https://docs.roocode.com/features/boomerang-tasks
+  - **Evidence:** The Boomerang Tasks model is explicitly sequential: a parent task pauses, the subtask executes in a specialized mode, and upon completion the parent resumes with only the subtask's summary. The documentation describes a clear pause-and-resume mechanic with no mention of parallel subtask execution. Kilo Code inherits the same Boomerang Task architecture from Roo Code; the Task Manager UI adds visual stack navigation but does not add parallel execution.
+  - **Recommendation:** —
+
+- **Claim:** "Зависит от реализации" for OpenCode (part4_subagents_hooks.md:301)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** https://opencode.ai/docs/agents/
+  - **Evidence:** OpenCode agents are configuration profiles (different system prompt, model, tools, permissions) that activate one at a time within a session. The docs describe switching between agents via `@` mention or cycling through child sessions serially (`session_child_cycle`). There is no native built-in mechanism to spawn multiple agents concurrently. Third-party tooling (e.g., running multiple `opencode` processes in parallel git worktrees) can simulate parallelism externally, but that depends on external orchestration, not OpenCode's own agent system. The vague "Зависит от реализации" is technically defensible (parallelism is possible via external scripting), but misleadingly implies the feature is present in some implementations when it is actually absent natively.
+  - **Recommendation:** "Нет (агенты — профили конфигурации, параллельный запуск требует внешней оркестровки)"
 
 ### Criterion: Изоляция
 
