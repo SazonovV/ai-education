@@ -5,6 +5,18 @@
 **Baseline:** 2026-03-31-lecture4-factcheck.md
 **Status:** IN PROGRESS
 
+## Scope change — 2026-04-08
+
+User decision during execution:
+
+1. **Roo Code is being removed from the lecture entirely.** All Roo Code claims are marked `OUT OF SCOPE — to be removed from lecture` instead of being verified. The content edit phase will drop § 3.2's "Roo Code" framing, the "Roo Code / Kilo Code" column header, and any other Roo Code references.
+
+2. **Kilo Code stays in the lecture as a standalone tool.** The current "Roo Code / Kilo Code" combined column gets relabeled to "Kilo Code". The technical claims (Boomerang, `.roomodes`, Modes, Orchestrator) carry over since Kilo Code inherits them from its Roo Code ancestry — but they need to be re-verified against `kilo.ai/docs` (not `docs.roocode.com`).
+
+3. **Kilo Code verification is deferred.** During this fact-check, fetches against both `docs.roocode.com` and `kilo.ai/docs` consistently hung. Each Kilo Code claim is recorded in a separate file: `2026-04-08-lecture4-factcheck-v2-kilo-deferred.md`. That file is the source of truth for what still needs to be verified before the content edit phase can proceed on the Kilo Code column.
+
+This report (the parent) only contains verified claims for **Claude Code** and **OpenCode**.
+
 ## § 3.4 — Tools comparison table
 
 ### Criterion: Модель субагентности
