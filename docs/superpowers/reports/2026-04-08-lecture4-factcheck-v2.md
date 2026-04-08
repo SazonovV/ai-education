@@ -39,7 +39,21 @@ This report (the parent) only contains verified claims for **Claude Code** and *
 
 ### Criterion: Конфигурация
 
-<entries to be filled in Task 3>
+- **Claim:** "`AGENTS.md` + `subagent_type`" for Claude Code (part4_subagents_hooks.md:300)
+  - **Status:** INACCURATE
+  - **Source:** https://code.claude.com/docs/en/sub-agents
+  - **Evidence:** Subagents are not defined in `AGENTS.md`. They are individual Markdown files with YAML frontmatter, stored in `.claude/agents/` (project), `~/.claude/agents/` (user), or a plugin's `agents/` directory. The frontmatter fields include `name`, `description`, `tools`, `model`, `isolation`, `background`, `permissionMode`, `hooks`, etc. `AGENTS.md` is a separate concept — the project-level memory file (the successor to `CLAUDE.md`) — not a subagent registry. The Agent tool's `subagent_type` parameter does exist (it references the subagent definition's `name`), so half the claim is correct.
+  - **Recommendation:** "`.claude/agents/<name>.md` (Markdown с YAML frontmatter) + параметр `subagent_type` Agent-тула"
+
+- **Claim:** "`.roomodes` (JSON)" for Roo Code / Kilo Code (part4_subagents_hooks.md:300)
+  - **Status:** OUT OF SCOPE
+  - **Notes:** Roo Code dropped; Kilo Code deferred.
+
+- **Claim:** "`opencode.json` / `.opencode/agents/`" for OpenCode (part4_subagents_hooks.md:300)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/agents
+  - **Evidence:** Both methods are documented: agents can be configured in JSON (`opencode.json`) or as Markdown files in `.opencode/agents/` (project) / `~/.config/opencode/agents/` (global). The two formats are interchangeable.
+  - **Recommendation:** —
 
 ### Criterion: Параллельность
 
