@@ -1275,6 +1275,104 @@ table.mini th {
   </div>
 </section>
 
+
+<!-- Section 6 divider -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 6</span>
+    <h2 class="hero-title">Итоги и практика</h2>
+    <p class="hero-sub">Главные выводы лекции и практические задания.</p>
+  </div>
+</section>
+
+<!-- Slide 6.1 — Ключевые выводы -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Ключевые выводы</h2>
+    <div class="cards c3">
+      <div class="card fragment">
+        <h3>1. Процесс обязателен</h3>
+        <p>Без процесса агент производит правдоподобный мусор. Дисциплина превращает скорость в результат.</p>
+      </div>
+      <div class="card fragment">
+        <h3>2. Артефакты — чекпоинты доверия</h3>
+        <p>Spec → Plan → Implement → Review: каждый шаг производит читаемый файл, который можно одобрить или развернуть.</p>
+      </div>
+      <div class="card fragment">
+        <h3>3. TDD обязателен</h3>
+        <p>Тест — единственный верификатор, который не подкупается словами. Красная фаза должна быть в выводе.</p>
+      </div>
+      <div class="card fragment">
+        <h3>4. «Готово» без evidence — не готово</h3>
+        <p>Verification локально + CI глобально. Они не заменяют друг друга.</p>
+      </div>
+      <div class="card fragment">
+        <h3>5. Читать трейс = читать диф</h3>
+        <p>Tool calls, повторения, молчаливые срезы углов, token-spikes — всё это сигналы, которые надо уметь видеть.</p>
+      </div>
+      <div class="card fragment">
+        <h3>6. Ревью агентского кода ≠ обычное ревью</h3>
+        <p>Свои анти-паттерны: лишнее, хардкод, фальшивые тесты, туманные коммиты.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 6.2 — Практическое задание -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Практическое задание</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Задание 1 — Дисциплина</h3>
+        <p>Возьми небольшую фичу (1-2 файла). Прогони <strong>brainstorm → spec → plan → implement → review</strong>. Сохрани артефакты (<code>spec.md</code>, <code>plan.md</code>). Покажи минимум один полный TDD-цикл: <strong>red → code → green</strong>.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Задание 2 — Наблюдаемость</h3>
+        <p>Настрой трейс tool calls в своём инструменте. Найди два случая, где агент свернул не туда.</p>
+        <ul style="font-size:0.85em; margin-top:0.5em;">
+          <li><strong>Claude Code:</strong> <code>PostToolUse</code> hook → <code>~/.claude/agent-trace.jsonl</code> (время, инструмент, успех/ошибка). Бонус: индикатор ошибки в statusline.</li>
+          <li><strong>OpenCode:</strong> плагин на <code>tool.execute.before</code> / <code>tool.execute.after</code>.</li>
+          <li><strong>Kilo Code:</strong> custom MCP tool <code>log_action</code> + правило в <code>.kilocodemodes</code> (или в <code>.kilo/agents/logger.md</code>), обязывающее вызывать его перед <code>Edit</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Closing slide — Дальше → Лекция 6 -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Дальше</span>
+    <h1>Лекция 6</h1>
+    <p class="cta">Context Management — что съедает токены, summarization, compact-режимы. Как видеть, сколько контекста стоит каждое действие.</p>
+    <div class="meta-row" style="justify-content:center">
+      <a class="pill" href="../part1/">Слайды · Лекция 1</a>
+      <a class="pill" href="../part2/">Слайды · Лекция 2</a>
+      <a class="pill" href="../part3/">Слайды · Лекция 3</a>
+      <a class="pill" href="../../">Главная</a>
+    </div>
+</div>
+</section>
+
+<!-- Closing slide — Остаёмся на связи -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Остаёмся на связи</h2>
+    <div class="promo-layout">
+      <div class="promo-photo-box">
+        <img src="../../assets/avatar.jpg" alt="Фото автора канала" onerror="this.style.display='none'">
+      </div>
+      <div class="promo-qr-box">
+        <h3>Telegram канал</h3>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&data=https%3A%2F%2Ft.me%2FSazonovMaybeTalks" alt="QR код на Telegram канал SazonovMaybeTalks">
+        <a class="promo-link" href="https://t.me/SazonovMaybeTalks" target="_blank" rel="noopener noreferrer">t.me/SazonovMaybeTalks</a>
+        <p class="note">Сканируйте QR или переходите по ссылке, чтобы получить обновления по следующим материалам.</p>
+      </div>
+    </div>
+</div>
+</section>
+
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
