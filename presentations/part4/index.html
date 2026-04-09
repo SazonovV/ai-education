@@ -1860,7 +1860,7 @@ model: claude-sonnet-4-6
         <p><strong>Проблема:</strong> субагент не знает, что делают другие. Тестировщик пишет тесты для старого кода, потому что не знает о рефакторинге.</p>
         <ul>
           <li>Чёткие описания задач с полным контекстом</li>
-          <li>Общие артефакты: <code>AGENTS.md</code>, <code>TODO.md</code></li>
+          <li>Общие артефакты: <code>.claude/agents/</code>, <code>TODO.md</code></li>
           <li>Для зависимых задач — Pipeline вместо Fan-out</li>
         </ul>
       </div>
@@ -1934,7 +1934,7 @@ model: claude-sonnet-4-6
       </div>
       <div class="card rose fragment">
         <h3>3</h3>
-        <p><strong>Каждый инструмент — своя модель.</strong> Claude Code: Agent tool + worktree. Roo/Kilo: Orchestrator + Boomerang. OpenCode: агенты-профили.</p>
+        <p><strong>Каждый инструмент — своя модель.</strong> Claude Code: Agent tool + worktree-изоляция и параллелизм. Kilo Code: нативные агенты с делегацией. OpenCode: агенты-профили.</p>
       </div>
       <div class="card green fragment">
         <h3>4</h3>
@@ -1960,8 +1960,8 @@ model: claude-sonnet-4-6
       <div class="card teal fragment">
         <h3>Задание 1: Настроить субагентов</h3>
         <ul>
-          <li><strong>Claude Code:</strong> создайте <code>AGENTS.md</code> с описанием специализированного агента (<code>code-reviewer</code>). Дайте задачу, требующую делегации</li>
-          <li><strong>Roo/Kilo Code:</strong> создайте кастомный режим в <code>.roomodes</code>. Переключитесь в Orchestrator и делегируйте задачу</li>
+          <li><strong>Claude Code:</strong> создайте <code>.claude/agents/code-reviewer.md</code> с YAML frontmatter и описанием агента. Дайте задачу, требующую делегации</li>
+          <li><strong>Kilo Code:</strong> создайте кастомного агента в <code>.kilocodemodes</code>. Делегируйте задачу через агента <code>code</code></li>
           <li><strong>OpenCode:</strong> определите агента в <code>opencode.json</code> с ограниченным набором инструментов. Проверьте блокировку</li>
         </ul>
       </div>
@@ -1970,12 +1970,12 @@ model: claude-sonnet-4-6
         <ul>
           <li><strong>Claude Code:</strong> hook в <code>.claude/settings.json</code> — форматирование после каждого Edit</li>
           <li><strong>OpenCode:</strong> плагин <code>.opencode/plugins/logger.ts</code> — логирование всех вызовов инструментов</li>
-          <li><strong>Roo/Kilo Code:</strong> MCP-инструмент <code>pre_edit_check</code> + правило, обязывающее проверку перед редактированием</li>
+          <li><strong>Kilo Code:</strong> MCP-инструмент <code>pre_edit_check</code> + правило в <code>customInstructions</code>, обязывающее проверку перед редактированием</li>
         </ul>
       </div>
     </div>
     <blockquote class="fragment">
-      <p>Полные примеры кода — в конспекте лекции. Выберите один инструмент (Claude Code / Roo / OpenCode) и выполните оба задания.</p>
+      <p>Полные примеры кода — в конспекте лекции. Выберите один инструмент (Claude Code / Kilo Code / OpenCode) и выполните оба задания.</p>
     </blockquote>
 </div>
 </section>
