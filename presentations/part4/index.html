@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 <!-- Yandex.Metrika counter -->
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
@@ -727,7 +728,7 @@ table.mini th {
     <h2 class="section-title">Проблема единого контекста</h2>
     <div class="grid-2">
       <div>
-        <p><strong>Контекстное окно агента — ресурс конечный.</strong> У современных frontier-моделей (Claude Opus/Sonnet 4.6, Haiku 4.5, GLM-4.6, Qwen-Coder-Next) — 200K+ токенов, но эффективность падает задолго до лимита.</p>
+        <p><strong>Контекстное окно агента — ресурс конечный.</strong> У современных передовых моделей (Claude Opus/Sonnet 4.6, Haiku 4.5, GLM-4.6, Qwen-Coder-Next) — 200K+ токенов, но эффективность падает задолго до лимита.</p>
         <ul>
           <li>После <em>~80-100K токенов</em> модель начинает забывать ранние инструкции</li>
           <li>Сложная задача (исследование + реализация + тесты) генерирует огромный промежуточный контекст</li>
@@ -1022,7 +1023,7 @@ table.mini th {
             <td>Ревью кода</td>
           </tr>
           <tr class="fragment">
-            <td><strong>Кастомный</strong></td>
+            <td><strong>Пользовательский</strong></td>
             <td>Из .claude/agents/&lt;name&gt;.md</td>
             <td>Специализированные задачи</td>
           </tr>
@@ -1039,7 +1040,7 @@ table.mini th {
 <section>
   <div class="slide-shell">
     <h2 class="section-title">Claude Code — .claude/agents/&lt;name&gt;.md</h2>
-    <p><strong>Кастомные субагенты</strong> живут в <code>.claude/agents/&lt;name&gt;.md</code> — отдельный файл на каждого. Не путать с <code>AGENTS.md</code> (проектная память, не реестр агентов).</p>
+    <p><strong>Пользовательские субагенты</strong> живут в <code>.claude/agents/&lt;name&gt;.md</code> — отдельный файл на каждого. Не путать с <code>AGENTS.md</code> (проектная память, не реестр агентов).</p>
     <pre><code class="language-yaml"># .claude/agents/code-reviewer.md
 ---
 name: code-reviewer
@@ -1231,7 +1232,7 @@ model: claude-sonnet-4-6
             <td>Отдельный контекст (общая FS)</td>
           </tr>
           <tr class="fragment">
-            <td><strong>Кастомные типы</strong></td>
+            <td><strong>Пользовательские типы</strong></td>
             <td>.claude/agents/&lt;name&gt;.md</td>
             <td>.kilocodemodes / .kilo/agents/</td>
             <td>Агенты в opencode.json</td>
@@ -1284,7 +1285,7 @@ model: claude-sonnet-4-6
     <div class="cards c2" style="margin-top: 0.4em;">
       <div class="card green fragment">
         <h3>Зачем ограничивать</h3>
-        <p>Меньше attack surface для prompt injection. Предсказуемое поведение. Экономия контекста (описания tools занимают место).</p>
+        <p>Меньше поверхность атаки для prompt injection. Предсказуемое поведение. Экономия контекста (описания tools занимают место).</p>
       </div>
       <div class="card rose fragment">
         <h3>Чек-лист</h3>
@@ -1318,7 +1319,7 @@ model: claude-sonnet-4-6
         <div class="cards" style="gap:6px">
           <div class="card green fragment">
             <h3>Плюсы лёгких моделей</h3>
-            <p>В 3-5× быстрее. На порядок дешевле. Больше параллельных субагентов при rate limit.</p>
+            <p>В 3-5× быстрее. На порядок дешевле. Больше параллельных субагентов при ограничении частоты запросов.</p>
           </div>
           <div class="card rose fragment">
             <h3>Минусы</h3>
@@ -1328,7 +1329,7 @@ model: claude-sonnet-4-6
       </div>
     </div>
     <blockquote class="fragment">
-      <p><strong>Правило:</strong> Sonnet/Haiku как дефолт → Opus только где нужно мощное рассуждение.</p>
+      <p><strong>Правило:</strong> Sonnet/Haiku по умолчанию → Opus только где нужно мощное рассуждение.</p>
     </blockquote>
 </div>
 </section>
@@ -1883,7 +1884,7 @@ model: claude-sonnet-4-6
 <!-- Зацикливание + Избыточная декомпозиция -->
 <section>
   <div class="slide-shell">
-    <h2 class="section-title">Ловушки: зацикливание и оверхед</h2>
+    <h2 class="section-title">Ловушки: зацикливание и накладные расходы</h2>
     <div class="cards c2">
       <div class="card red fragment">
         <h3>Зацикливание</h3>
@@ -1942,11 +1943,11 @@ model: claude-sonnet-4-6
       </div>
       <div class="card rose fragment">
         <h3>5</h3>
-        <p><strong>Не всё нужно декомпозировать.</strong> Субагент — это overhead. Если задача укладывается в один контекст — делайте в основном агенте.</p>
+        <p><strong>Не всё нужно декомпозировать.</strong> Субагент — это накладные расходы. Если задача укладывается в один контекст — делайте в основном агенте.</p>
       </div>
       <div class="card amber fragment">
         <h3>6</h3>
-        <p><strong>Знайте ловушки.</strong> Потеря контекста, дублирование, зацикливание, оверхед — решаются чёткими границами и правильным паттерном.</p>
+        <p><strong>Знайте ловушки.</strong> Потеря контекста, дублирование, зацикливание, накладные расходы — решаются чёткими границами и правильным паттерном.</p>
       </div>
     </div>
 </div>
@@ -1961,7 +1962,7 @@ model: claude-sonnet-4-6
         <h3>Задание 1: Настроить субагентов</h3>
         <ul>
           <li><strong>Claude Code:</strong> создайте <code>.claude/agents/code-reviewer.md</code> с YAML frontmatter и описанием агента. Дайте задачу, требующую делегации</li>
-          <li><strong>Kilo Code:</strong> создайте кастомного агента в <code>.kilocodemodes</code>. Делегируйте задачу через агента <code>code</code></li>
+          <li><strong>Kilo Code:</strong> создайте пользовательского агента в <code>.kilocodemodes</code>. Делегируйте задачу через агента <code>code</code></li>
           <li><strong>OpenCode:</strong> определите агента в <code>opencode.json</code> с ограниченным набором инструментов. Проверьте блокировку</li>
         </ul>
       </div>
@@ -1999,15 +2000,15 @@ model: claude-sonnet-4-6
       </div>
       <div class="card teal fragment">
         <h3>Утечки секретов</h3>
-        <p>Агент видит <code>.env</code>, токены в истории — как ограничить exposure</p>
+        <p>Агент видит <code>.env</code>, токены в истории — как ограничить утечку данных</p>
       </div>
       <div class="card green fragment">
         <h3>Защита</h3>
-        <p>Принцип наименьших привилегий, allow-lists, sandboxing, approval flows</p>
+        <p>Принцип наименьших привилегий, списки разрешений, изолированная среда, процессы согласования</p>
       </div>
       <div class="card amber fragment">
         <h3>Реагирование</h3>
-        <p>Что делать, когда инцидент уже произошёл — логи, откат, remediation</p>
+        <p>Что делать, когда инцидент уже произошёл — логи, откат, устранение последствий</p>
       </div>
     </div>
 </div>
