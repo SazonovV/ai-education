@@ -196,66 +196,80 @@ model: claude-sonnet-4-6
 
 **Фоновый режим.** `run_in_background: true` — субагент работает в фоне, родитель не ждёт результата и продолжает выполнение. Удобно для долгих задач: прогон тестов, масштабный рефакторинг, генерация документации.
 
-### 3.2 Roo Code / Kilo Code
+### 3.2 Kilo Code
 
-Roo Code реализует субагентность через систему **режимов (Modes)**. Kilo Code — форк Roo Code с идентичной архитектурой режимов и дополнительным UI для управления задачами, поэтому рассматриваем их вместе.
+Kilo Code — CLI/VSCode агент с собственной системой встроенных агентов и нативной поддержкой субагентов. Исторически это форк Roo Code, но на 2026 год архитектура существенно разошлась: терминология «modes» заменена на «agents», Orchestrator как отдельный режим объявлен deprecated, конфигурационный файл сменился с `.roomodes` на `.kilocodemodes`.
 
-**Встроенные режимы:**
+**Встроенные агенты:**
 
-- **Code** — полный доступ к редактированию и выполнению команд
-- **Architect** — только чтение, фокус на проектировании и планировании
-- **Ask** — ответы на вопросы, без доступа к инструментам изменения
-- **Debug** — анализ ошибок, чтение логов, диагностика
-- **Orchestrator** — специальный режим для делегации задач другим режимам
+- **code** — полный доступ к редактированию и выполнению команд
+- **plan** — проектирование и планирование (бывший Architect)
+- **ask** — ответы на вопросы без инструментов изменения
+- **debug** — анализ ошибок и диагностика
 
-**Orchestrator + Boomerang Tasks.** Orchestrator — ключевой механизм субагентности в Roo Code. Он анализирует задачу, разбивает на подзадачи и делегирует их другим режимам через Boomerang Tasks. Каждый режим выполняет свою часть и возвращает результат обратно Orchestrator'у.
+Каждый из этих агентов поддерживает **нативный вызов субагентов** — не нужен отдельный Orchestrator. Агент с полным доступом к tools сам делегирует подзадачи специализированным субагентам, когда это нужно.
 
 ```
 Пользователь: "Добавить авторизацию в API"
          │
-    Orchestrator
-    ├── → Architect: спроектировать схему auth
+       code
+    ├── → subagent (plan): спроектировать схему auth
     │   ← архитектурный план
-    ├── → Code: реализовать middleware
+    ├── → subagent (code): реализовать middleware
     │   ← код готов
-    ├── → Code: написать тесты
+    ├── → subagent (code): написать тесты
     │   ← тесты написаны
-    └── → Debug: проверить интеграцию
+    └── → subagent (debug): проверить интеграцию
         ← всё работает
 
-    Orchestrator: собирает итог, отвечает пользователю
+    code: собирает итог, отвечает пользователю
 ```
 
-Boomerang Tasks работают **последовательно** — Orchestrator ждёт завершения текущей подзадачи, прежде чем отправить следующую. Это проще в реализации, но медленнее параллельного запуска.
+Делегация последовательная — Kilo Code ждёт завершения текущего субагента перед запуском следующего. Параллельный запуск не поддерживается нативно.
 
-**Кастомные режимы через `.roomodes`.** Файл `.roomodes` в корне проекта позволяет определять свои режимы:
+**Кастомные агенты — два формата:**
 
-```json
-{
-  "customModes": [
-    {
-      "slug": "doc-writer",
-      "name": "Documentation Writer",
-      "roleDefinition": "You are a technical writer. Generate clear, structured documentation for the codebase. Use JSDoc/TSDoc style for code comments. Write README sections in markdown.",
-      "groups": ["read", "command"],
-      "customInstructions": "Always include usage examples. Follow the existing documentation style in the project."
-    },
-    {
-      "slug": "security-audit",
-      "name": "Security Auditor",
-      "roleDefinition": "You are a security engineer. Analyze code for vulnerabilities, check dependencies for known CVEs, review auth and data handling.",
-      "groups": ["read"],
-      "customInstructions": "Classify findings by OWASP Top 10. Output a structured report."
-    }
-  ]
-}
+Файл `.kilocodemodes` в корне проекта (YAML предпочтителен, JSON совместим):
+
+```yaml
+customModes:
+  - slug: doc-writer
+    name: Documentation Writer
+    roleDefinition: |
+      You are a technical writer. Generate clear, structured documentation
+      for the codebase. Use JSDoc/TSDoc style for code comments.
+    groups:
+      - read
+      - edit
+      - grep
+      - glob
+    customInstructions: Always include usage examples.
+
+  - slug: security-audit
+    name: Security Auditor
+    roleDefinition: |
+      You are a security engineer. Analyze code for vulnerabilities.
+    groups:
+      - read
+      - grep
+      - glob
+    customInstructions: Classify findings by OWASP Top 10.
 ```
 
-Поле `groups` определяет, какие группы инструментов доступны режиму: `read` (чтение файлов), `edit` (редактирование), `command` (выполнение команд), `browser` (браузер), `mcp` (MCP-серверы).
+Альтернативный, более новый формат — отдельный Markdown-файл на агента в `.kilo/agents/<slug>.md`:
 
-**Переключение режимов:** Orchestrator переключает режимы автоматически при делегации. Пользователь тоже может переключиться вручную — например, из Code в Debug, если что-то пошло не так.
+```markdown
+---
+name: doc-writer
+groups: [read, edit, grep, glob]
+---
 
-**Особенность Kilo Code:** встроенный **Task Manager UI** — визуальная панель, показывающая дерево подзадач, их статус (в очереди / выполняется / завершено / ошибка) и результаты. Конфигурация `.roomodes` полностью совместима между Roo Code и Kilo Code.
+You are a technical writer. Generate clear, structured documentation...
+```
+
+Поле `groups` содержит имена tool-групп: `read`, `edit`, `bash`, `grep`, `glob`, `list`, `task`, `webfetch`, `websearch`, `codesearch`, `todowrite`, `todoread`. MCP-серверы подключаются отдельно — об этом подробнее в § 3.5.
+
+**Переключение агентов:** вручную из UI или автоматически при субделегации.
 
 ### 3.3 OpenCode
 
