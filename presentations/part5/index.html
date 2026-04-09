@@ -1155,6 +1155,126 @@ table.mini th {
   </div>
 </section>
 
+<!-- ==================== РАЗДЕЛ 4: ПОДДЕРЖКА В ИНСТРУМЕНТАХ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 4</span>
+    <h2 class="hero-title">Поддержка в инструментах</h2>
+    <p class="hero-sub">Одни и те же практики реализованы по-разному. Где-то — первый класс, где-то — workaround.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Сводная таблица</h2>
+    <div class="table-wrap">
+      <table class="mini" style="font-size: 0.52em;">
+        <tr><th>Практика</th><th>Claude Code</th><th>Kilo Code</th><th>OpenCode</th></tr>
+        <tr class="fragment"><td><strong>Plan mode</strong> (отделение плана от impl)</td><td>Нативный <code>EnterPlanMode</code> / <code>ExitPlanMode</code></td><td><code>plan</code> agent (built-in)</td><td>Через системный промпт агента</td></tr>
+        <tr class="fragment"><td><strong>Skills</strong> / методология как код</td><td><code>~/.claude/skills/</code>, <code>Skill</code> tool</td><td>Custom agents (<code>.kilocodemodes</code> / <code>.kilo/agents/</code>)</td><td>Agents в <code>opencode.json</code></td></tr>
+        <tr class="fragment"><td><strong>Чекпоинты</strong> / approval gates</td><td>Plan approval, <code>AskUserQuestion</code></td><td>Подтверждение шагов между агентами</td><td>Approval prompts через плагин</td></tr>
+        <tr class="fragment"><td><strong>Verification-before-completion</strong></td><td><code>Stop</code> / <code>PostToolUse</code> hooks</td><td>Эмуляция через правила агента + custom MCP tool</td><td>Плагины с событиями</td></tr>
+        <tr class="fragment"><td><strong>Statusline</strong> / live observability</td><td><code>/statusline</code>, кастомные скрипты</td><td>VS Code output panel</td><td>Plugin events</td></tr>
+        <tr class="fragment"><td><strong>Session history</strong> / трейсы</td><td><code>~/.claude/projects/</code> (jsonl)</td><td>VS Code logs</td><td>Программно через session API</td></tr>
+        <tr class="fragment"><td><strong>Логирование tool calls</strong></td><td>Hook → файл</td><td>Custom MCP tool-логгер</td><td>Plugin event handler</td></tr>
+        <tr class="fragment"><td><strong>Output styles</strong></td><td><code>output-styles</code></td><td>Нет нативного</td><td>Через плагины</td></tr>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Что выбрать под практику</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>«Хочу строгий процесс с гарантиями»</h3>
+        <p>→ <strong>Claude Code</strong></p>
+        <p>Нативные hooks + plan mode + skills — самый прямой путь к verification-before-completion.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>«Хочу гибкий tooling, готов писать TS»</h3>
+        <p>→ <strong>OpenCode</strong> плагины</p>
+        <p>Выше порог входа, зато всё можно дописать самим.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>«Хочу VS Code-интеграцию и визуальную панель агентов»</h3>
+        <p>→ <strong>Kilo Code</strong></p>
+        <p>Native subagents (code/plan/ask/debug) + VS Code UI. Для строгости нужны workaround'ы (правила агента + custom MCP tools).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 5: ПОДВОДНЫЕ КАМНИ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 5</span>
+    <h2 class="hero-title">Подводные камни</h2>
+    <p class="hero-sub">Дисциплина и наблюдаемость снимают много рисков, но не все. Шесть типичных ловушек.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Театр процесса + Фальшивый TDD</h2>
+    <div class="cards c2">
+      <div class="card rose fragment">
+        <h3>Театр процесса (cargo cult)</h3>
+        <p><strong>Проблема:</strong> Спека и план написаны «под уже задуманный код». Дисциплина превращается в ритуал, а не контракт.</p>
+        <p><strong>Симптом:</strong> Реализация отличается от плана; спека написана общими словами без проверяемых критериев.</p>
+        <p><strong>Решение:</strong> Критерии приёмки — проверяемые утверждения с цифрами. Спека без цифр — не спека.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Фальшивый TDD</h3>
+        <p><strong>Проблема:</strong> Агент пишет тест и реализацию одновременно; тест подгоняется под уже задуманный код.</p>
+        <p><strong>Симптом:</strong> Тесты всегда зелёные с первого запуска; тест проверяет «что функция вернула то, что вернула».</p>
+        <p><strong>Решение:</strong> Требовать красную фазу в явном виде — упавший тест в реальном выводе, затем код.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Ложное «готово» + Слепое доверие трейсу</h2>
+    <div class="cards c2">
+      <div class="card rose fragment">
+        <h3>Ложное «готово» без evidence</h3>
+        <p><strong>Проблема:</strong> Агент пишет «всё работает», не запустив проверки.</p>
+        <p><strong>Симптом:</strong> В ответе нет вывода тестов / линта / билда — только текстовые утверждения.</p>
+        <p><strong>Решение:</strong> Правило «нет вывода — нет готово». <code>Stop</code> / <code>PostToolUse</code> hooks локально; CI как финальный фильтр глобально.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Слепое доверие трейсу</h3>
+        <p><strong>Проблема:</strong> Трейс показывает, что агент «вызвал тесты», — но ты не проверил, какие именно и с каким результатом.</p>
+        <p><strong>Симптом:</strong> В логе видно <code>run_tests</code>, в сообщении — «tests passed». На CI — красно.</p>
+        <p><strong>Решение:</strong> Читать не только что вызвано, но и вывод tool'а. CI как независимый верификатор.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Паралич планирования + Забывание контекста</h2>
+    <div class="cards c2">
+      <div class="card amber fragment">
+        <h3>Паралич планирования</h3>
+        <p><strong>Проблема:</strong> Обратная крайность — на каждое чихание полная цепочка spec → plan → TDD → review. Накладные расходы больше пользы.</p>
+        <p><strong>Симптом:</strong> Для задачи «переименовать переменную» агент создаёт три документа и ждёт одобрения после каждого.</p>
+        <p><strong>Решение:</strong> Sizing-правило: spec/plan только для нетривиальных задач (&gt;1 файл, &gt;1 шаг). Тривиальное — делать сразу.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Молчаливое забывание контекста</h3>
+        <p><strong>Проблема:</strong> Новая сессия не знает, что было в предыдущей; агент переоткрывает уже решённые вопросы.</p>
+        <p><strong>Симптом:</strong> Агент во второй сессии переписывает уже одобренное. «А почему мы не используем X?» — потому что решили в прошлой сессии.</p>
+        <p><strong>Решение:</strong> Хэндофф-артефакты на диске: план и спека в репо, осмысленные коммиты, <code>AGENTS.md</code> / <code>CLAUDE.md</code> как инструкция для будущих сессий.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
