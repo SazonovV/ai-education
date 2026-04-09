@@ -1409,7 +1409,7 @@ model: claude-sonnet-4-6
         <h3>Поддержка</h3>
         <ul>
           <li><strong>Claude Code</strong> — нативные параллельные вызовы Agent tool</li>
-          <li><strong>Roo / Kilo Code</strong> — только последовательный Boomerang</li>
+          <li><strong>Kilo Code</strong> — только последовательная делегация</li>
         </ul>
       </div>
     </div>
@@ -1467,7 +1467,7 @@ model: claude-sonnet-4-6
           </div>
           <div class="card teal fragment">
             <h3>Реализация</h3>
-            <p>AGENTS.md (Claude Code), .roomodes (Roo/Kilo), конфиг агентов (OpenCode).</p>
+            <p>.claude/agents/ (Claude Code), .kilocodemodes (Kilo Code), конфиг агентов (OpenCode).</p>
           </div>
         </div>
       </div>
@@ -1489,7 +1489,7 @@ model: claude-sonnet-4-6
           </div>
           <div class="card amber fragment">
             <h3>Реализация</h3>
-            <p>Claude Code — повторный Agent tool. Roo/Kilo — Orchestrator перенаправляет Boomerang Task.</p>
+            <p>Claude Code — повторный Agent tool. Kilo Code — родительский агент перенаправляет субагента.</p>
           </div>
         </div>
       </div>
@@ -1516,7 +1516,7 @@ model: claude-sonnet-4-6
             <td><strong>Fan-out / fan-in</strong></td>
             <td>Параллельные субагенты, родитель собирает</td>
             <td>Обновление 5 микросервисов</td>
-            <td>Claude Code <span style="color: var(--green);">(параллельно)</span>, Roo/Kilo <span style="color: var(--red);">(последовательно)</span></td>
+            <td>Claude Code <span style="color: var(--green);">(параллельно)</span>, Kilo Code <span style="color: var(--red);">(последовательно)</span></td>
           </tr>
           <tr class="fragment">
             <td><strong>Pipeline</strong></td>
@@ -1534,7 +1534,7 @@ model: claude-sonnet-4-6
             <td><strong>Supervisor</strong></td>
             <td>Делегация → проверка → принятие/возврат</td>
             <td>Ревью кода субагента</td>
-            <td>Claude Code, Roo/Kilo <span style="color: var(--green);">(Orchestrator)</span></td>
+            <td>Claude Code, Kilo Code</td>
           </tr>
         </tbody>
       </table>
@@ -1622,7 +1622,7 @@ model: claude-sonnet-4-6
     <div class="cards c2">
       <div class="card teal fragment">
         <h3>command (shell)</h3>
-        <p>Shell-команда хоста. Переменные: <em>$FILEPATH</em>, <em>$TOOL_NAME</em>.</p>
+        <p>Shell-команда хоста. Данные хука — JSON на stdin. Хост-переменные: <em>$CLAUDE_PROJECT_DIR</em>.</p>
         <pre><code class="language-json">{ "type": "command", "command": "npx prettier --write \"$FILEPATH\"" }</code></pre>
       </div>
       <div class="card amber fragment">
@@ -1641,7 +1641,7 @@ model: claude-sonnet-4-6
         <pre><code class="language-json">{ "type": "http", "url": "https://hooks.example.com/notify" }</code></pre>
       </div>
     </div>
-    <p style="margin-top: 0.4em;"><strong>Exit codes:</strong> <strong>0</strong> = OK → продолжить · <strong>1</strong> = не-блокирующая ошибка, stderr в лог · <strong>2</strong> = блокировка, stderr → модели</p>
+    <p style="margin-top: 0.4em;"><strong>Exit codes:</strong> <strong>0</strong> = OK → продолжить · <strong>1</strong> = не-блокирующая ошибка, в debug-лог · <strong>2</strong> = блокировка, stderr → модели</p>
 </div>
 </section>
 
@@ -1652,11 +1652,11 @@ model: claude-sonnet-4-6
     <div class="grid-2">
       <div>
         <p>Hooks реализованы через <strong>JS/TS-плагины</strong> — полноценный код с доступом к SDK, а не JSON-конфиги.</p>
-        <pre><code class="language-typescript">export const AutoFormatPlugin = async ({ $ }) => {
+        <pre><code class="language-typescript">export const AutoFormatPlugin = async ({ $, project, client, directory, worktree }) => {
   return {
     "tool.execute.after": async (input, output) => {
       if (input.tool === "write" || input.tool === "edit") {
-        const filePath = output.args?.filePath || ""
+        const filePath = input.args?.filePath || ""
         if (filePath.match(/\.(ts|tsx|js|jsx)$/))
           await $`npx prettier --write ${filePath}`
       }
@@ -1668,7 +1668,7 @@ model: claude-sonnet-4-6
         <div class="cards">
           <div class="card teal fragment">
             <h3>Основные события</h3>
-            <p>tool.execute.before/after, session.created, session.idle, session.error, file.edited, permission.asked, shell.env</p>
+            <p>tool.execute.before/after, session.created, session.idle, session.error, file.edited, permission.ask, shell.env</p>
           </div>
           <div class="card amber fragment">
             <h3>Полный доступ к SDK</h3>
@@ -1687,11 +1687,39 @@ model: claude-sonnet-4-6
 </div>
 </section>
 
-<!-- Roo Code / Kilo Code — эмуляция -->
+<!-- oh-my-opencode -->
 <section>
   <div class="slide-shell">
-    <h2 class="section-title">Roo Code / Kilo Code — эмуляция hooks</h2>
-    <p><strong>Нативных hooks нет.</strong> Эмуляция: MCP-tool + правила + .roomodes.</p>
+    <h2 class="section-title">oh-my-opencode — готовый набор</h2>
+    <p>Сообщественный плагин-пак для OpenCode. Установка одной командой:</p>
+    <pre><code class="language-bash">bunx oh-my-opencode install</code></pre>
+    <div class="cards c2" style="margin-top: 0.5em;">
+      <div class="card teal fragment">
+        <h3>Агенты</h3>
+        <p><em>deep</em> (глубокий анализ), <em>quick</em> (быстрые задачи), <em>visual-engineering</em> (фронтенд), <em>ultrabrain</em> (мощная модель).</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>MCP-серверы</h3>
+        <p><em>websearch</em> (Exa AI), <em>context7</em> (документация), <em>grep_app</em> (публичный код).</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>27+ hooks</h3>
+        <p>context-window-monitor, session-recovery, session-notification, comment-checker и другие.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>ultrawork</h3>
+        <p>Ключевое слово <code>ulw</code> в промпте — параллельные агенты, фоновые задачи, непрерывное выполнение.</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top: 0.4em;">Репозиторий: <a href="https://github.com/opensoft/oh-my-opencode">github.com/opensoft/oh-my-opencode</a></p>
+</div>
+</section>
+
+<!-- Kilo Code — эмуляция -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Kilo Code — эмуляция hooks</h2>
+    <p><strong>Нативных hooks нет.</strong> Эмуляция: MCP-tool + правила в <code>.kilocodemodes</code>.</p>
     <div class="grid-3">
       <div class="card teal fragment">
         <h3>Шаг 1: MCP-tool</h3>
@@ -1705,25 +1733,22 @@ model: claude-sonnet-4-6
       </div>
       <div class="card amber fragment">
         <h3>Шаг 2: Правило</h3>
-        <pre><code class="language-markdown">## .roo/rules-code/lint.md
+        <pre><code class="language-markdown">## customInstructions (code)
 Перед ЛЮБЫМ изменением ОБЯЗАН
 вызвать `lint_check`.
 - `ok:` → можно изменять
 - `fail:` → ЗАПРЕЩЕНО</code></pre>
-        <p>Правило заставляет модель вызывать tool.</p>
+        <p>Правило в <code>customInstructions</code> или <code>.kilo/agents/code.md</code>.</p>
       </div>
       <div class="card rose fragment">
-        <h3>Шаг 3: .roomodes</h3>
-        <pre><code class="language-json">{
-  "customModes": [{
-    "slug": "safe-code",
-    "name": "Safe Code",
-    "groups": ["read","edit","mcp"],
-    "customInstructions":
-      "Always call lint_check"
-  }]
-}</code></pre>
-        <p>Режим объединяет tool и правило.</p>
+        <h3>Шаг 3: .kilocodemodes</h3>
+        <pre><code class="language-yaml">customModes:
+  - slug: safe-code
+    name: Safe Code
+    groups: [read, edit, bash]
+    customInstructions:
+      Always call lint_check</code></pre>
+        <p>Агент объединяет tool и правило.</p>
       </div>
     </div>
     <blockquote class="fragment">
@@ -1743,7 +1768,7 @@ model: claude-sonnet-4-6
             <th>Критерий</th>
             <th>Claude Code</th>
             <th>OpenCode</th>
-            <th>Roo / Kilo Code</th>
+            <th>Kilo Code</th>
           </tr>
         </thead>
         <tbody>
@@ -1781,7 +1806,7 @@ model: claude-sonnet-4-6
       </table>
     </div>
     <blockquote class="fragment">
-      <p>Claude Code — самая зрелая реализация: JSON-конфиг, 20+ событий, четыре типа обработчиков, включая уникальные типы <em>agent</em> и <em>http</em>. OpenCode — больше гибкости через код. Roo/Kilo — только эмуляция.</p>
+      <p>Claude Code — самая зрелая реализация: JSON-конфиг, 20+ событий, четыре типа обработчиков, включая уникальные типы <em>agent</em> и <em>http</em>. OpenCode — больше гибкости через код. Kilo Code — только эмуляция.</p>
     </blockquote>
 </div>
 </section>
@@ -1804,7 +1829,7 @@ model: claude-sonnet-4-6
         <p class="note">Полноценный TypeScript с доступом к npm, SDK и shell.</p>
       </div>
       <div class="card rose fragment">
-        <h3>Roo / Kilo Code</h3>
+        <h3>Kilo Code</h3>
         <p>Эмуляция работает для «мягких» сценариев: напоминание о линтере, рекомендация запустить тесты.</p>
         <p style="margin-top: 0.4em;"><strong>→ Комбинируйте с CI/CD</strong></p>
         <p class="note">Эмулированный hook ловит ~90% случаев, CI/CD pipeline гарантирует остальные 10%.</p>
