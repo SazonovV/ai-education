@@ -267,17 +267,17 @@ OpenCode определяет агентов декларативно — чер
 {
   "agents": {
     "reviewer": {
-      "model": "anthropic:claude-sonnet-4-20250514",
+      "model": "anthropic:claude-sonnet-4-6",
       "prompt": ".opencode/agents/reviewer.md",
       "permission": ["read", "glob", "grep"]
     },
     "implementer": {
-      "model": "anthropic:claude-sonnet-4-20250514",
+      "model": "anthropic:claude-sonnet-4-6",
       "prompt": ".opencode/agents/implementer.md",
       "permission": ["read", "glob", "grep", "edit", "bash"]
     },
     "planner": {
-      "model": "anthropic:claude-sonnet-4-20250514",
+      "model": "anthropic:claude-sonnet-4-6",
       "prompt": ".opencode/agents/planner.md",
       "permission": ["read", "glob", "grep"]
     }
