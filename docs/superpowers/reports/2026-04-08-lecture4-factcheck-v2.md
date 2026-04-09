@@ -3,7 +3,7 @@
 **Date:** 2026-04-08 (Kilo Code verification completed 2026-04-09)
 **Scope:** § 3.4 (tools comparison table) + § 5 (hooks)
 **Baseline:** 2026-03-31-lecture4-factcheck.md
-**Status:** IN PROGRESS
+**Status:** COMPLETE — 15 issues found (7 HIGH, 6 MEDIUM, 2 LOW), ready for content edit phase
 
 ## Scope change — 2026-04-08 / 2026-04-09
 
@@ -473,8 +473,114 @@ The table at part4_subagents_hooks.md:588-594 has three columns; Roo Code column
 
 ## Summary
 
-<to be filled in Task 15>
+### Counts (§ 3.4 + § 5 only)
+
+- **Total claims checked:** 52
+- **VERIFIED:** 31
+- **PARTIALLY VERIFIED:** 9
+- **INACCURATE:** 5
+- **OUTDATED:** 5
+- **OUT OF SCOPE (Roo Code — to be removed):** 2
+- **DEFERRED:** 0 (all previously deferred Kilo Code claims were verified on 2026-04-09)
+
+### Issues requiring attention
+
+#### § 3 — Subagents
+
+1. **[HIGH] § 3.2 — Kilo Code description is substantially OUTDATED.** The lecture frames Kilo as a cosmetic Roo Code fork with Modes, Orchestrator, Boomerang Tasks, `.roomodes`, and a Task Manager UI. Current Kilo docs (kilo.ai/docs, verified 2026-04-09) show:
+   - Modes renamed to Agents.
+   - Built-in set: `code`, `plan`, `ask`, `debug`, `orchestrator` (deprecated). "Architect" is renamed to "plan".
+   - Orchestrator deprecated — "Agents with full tool access (Code, Plan, Debug) now support subagents natively."
+   - No Boomerang Tasks feature page (`kilo.ai/docs/features/boomerang-tasks` → 404).
+   - No Task Manager UI documented. Only residual `/newtask` slash command in legacy VSCode extension.
+   - Config file: `.kilocodemodes` (YAML preferred, JSON back-compat) or `.kilo/agents/<name>.md`, NOT `.roomodes`.
+   - `groups` field uses Claude Code-style tool names (`bash`, `grep`, `glob`, `webfetch`, `task`, ...), not `command`/`mcp`.
+   - **Recommendation:** Full rewrite of § 3.2. Drop Roo Code framing entirely. Reframe Kilo as: "CLI/VSCode agent with built-in agents (code, plan, ask, debug) supporting native subagents. Custom agents via `.kilo/agents/*.md` or YAML `.kilocodemodes`."
+
+2. **[HIGH] § 3.4 row "Конфигурация" — Claude Code cell is INACCURATE.** "`AGENTS.md` + `subagent_type`" conflates the project memory file (`AGENTS.md`) with the subagent registry (`.claude/agents/*.md`).
+   - **Recommendation:** "`.claude/agents/<name>.md` (Markdown с YAML frontmatter) + параметр `subagent_type` Agent-тула"
+
+3. **[HIGH] § 3.4 row "Кастомные типы" — Claude Code cell is INACCURATE.** Same root cause: lists `AGENTS.md` instead of `.claude/agents/`.
+   - **Recommendation:** "`.claude/agents/<name>.md`"
+
+4. **[HIGH] § 3.4 row "Фоновый запуск" — Claude Code cell is INACCURATE.** Lecture says `run_in_background: true`; current frontmatter field is `background: true`.
+   - **Recommendation:** "`background: true`"
+
+5. **[HIGH] § 3.4 all Kilo Code cells — OUTDATED.** Column values like `.roomodes`, "Orchestrator / Boomerang", "Режимы" no longer match Kilo's current terminology and config.
+   - **Recommendation:** Rewrite Kilo Code column using current Kilo terminology (see row-by-row recommendations in § 3.4).
+
+6. **[MEDIUM] § 3.4 row "Модель субагентности" — Claude Code cell is PARTIALLY VERIFIED.** "Явный spawn через Agent tool" is narrow: Agent tool exists, but the primary invocation model is automatic delegation, with explicit invocation as opt-in.
+   - **Recommendation:** "Автоматическая делегация через Agent tool (явный вызов через @-mention)"
+
+7. **[MEDIUM] § 3.4 row "Параллельность" — OpenCode cell is PARTIALLY VERIFIED.** "Зависит от реализации" is misleading — OpenCode has no native parallelism; only external orchestration can simulate it.
+   - **Recommendation:** "Нет (агенты — профили конфигурации, параллельный запуск требует внешней оркестровки)"
+
+#### § 5 — Hooks
+
+8. **[HIGH] § 5.2 scenario 4 "Уведомление при ошибке" — event mapping is wrong.** The lecture text says "при ошибке (Slack, звук)" which would map to the `Notification` event, but `Notification` actually fires for internal UI events (permission prompts, idle, auth). For error-driven notifications the correct events are `PostToolUseFailure` or `StopFailure`.
+   - **Recommendation:** Clarify that for error notifications, the events are `PostToolUseFailure` or `StopFailure`, not `Notification`.
+
+9. **[HIGH] § 5.3 "Переменные окружения" — INACCURATE.** Lecture claims `$FILEPATH`, `$TOOL_NAME`, `$TOOL_INPUT` as shell env vars. These are NOT env vars — tool-specific data arrives as JSON on stdin (`tool_name`, `tool_input`, `tool_response`) and must be parsed with e.g. `jq`. Actual shell env vars are `$CLAUDE_PROJECT_DIR`, `$CLAUDE_PLUGIN_ROOT`, etc.
+   - **Recommendation:** "**Входной контекст** — данные хука передаются как JSON в stdin: `tool_name`, `tool_input`, `tool_response`. Shell-переменные хоста: `$CLAUDE_PROJECT_DIR` и др."
+
+10. **[HIGH] § 5.4 TypeScript plugin snippet — INACCURATE.** Two bugs:
+    - Destructures only `{ $ }` from `PluginInput`; the full context is `{ client, project, directory, worktree, serverUrl, $ }`.
+    - Uses `output.args?.filePath` in the after-hook, which is always undefined. `args` lives on `input`, not `output`. The after-hook output shape is `{ title, output, metadata }`.
+    - **Recommendation:** Change signature to `async ({ $, project, client, directory, worktree }) =>`. Change `output.args?.filePath` to `input.args?.filePath || ""`.
+
+11. **[MEDIUM] § 5.4 event name `permission.asked` — INACCURATE.** Actual API key is `permission.ask`, not `permission.asked`.
+    - **Recommendation:** Change `permission.asked` to `permission.ask`.
+
+12. **[MEDIUM] § 5.5 file path `.roo/rules-code/lint-before-write.md` — OUTDATED.** Kilo Code does not read `.roo/` paths. Modern locations: `customInstructions` inside `.kilocodemodes`, or body of `.kilo/agents/<name>.md`.
+    - **Recommendation:** Rewrite step 2 to put the rule text into `customInstructions` or into a Markdown agent body.
+
+13. **[MEDIUM] § 5.5 `.roomodes` snippet — OUTDATED.** File name, format, and `groups` values are all wrong for current Kilo Code.
+    - **Recommendation:** Rewrite as YAML `.kilocodemodes` with `groups: [read, [edit, {fileRegex: ...}], bash]`. Or switch to `.kilo/agents/safe-code.md` Markdown format.
+
+14. **[LOW] § 5.2 scenario 2 "Линтинг через stderr" — PARTIALLY VERIFIED.** Lint output is best returned as JSON stdout (exit 0) for non-blocking feedback or stderr with exit 2 for blocking. Stderr-alone is imprecise.
+    - **Recommendation:** Optional clarification of the exit-code-2 vs exit-0-JSON patterns.
+
+15. **[LOW] § 5.3 exit code 1 description — PARTIALLY VERIFIED.** "Подробности в verbose-режиме" is an approximation; the actual mechanism is debug log + one-line transcript notice.
+    - **Recommendation:** Optional clarification "подробности в debug-логе и одной строкой в transcript".
 
 ## Delta vs 2026-03-31 baseline
 
-<to be filled in Task 16>
+Only baseline issues that fall in § 3.4 or § 5 scope are tracked here. Issues in other sections remain unchanged.
+
+### Baseline issues → current status
+
+1. **[HIGH baseline] OpenCode agent config field names wrong (`systemPrompt` → `prompt`, `tools` → `permission`)** — § 3.3, out of this v2 scope (§ 3.3 is not § 3.4). Still open, to be fixed in a separate pass.
+
+2. **[HIGH baseline] Exit code 1 feeds stderr to Claude — INCORRECT in baseline.** CURRENT STATUS: **RESOLVED in lecture text.** The current § 5.3 content says exit 1 is non-blocking (see part4_subagents_hooks.md:488-490). This v2 fact-check confirms the lecture's current wording is correct; the framing "подробности в verbose-режиме" is slightly imprecise (actual mechanism is debug log + transcript one-liner) but substantively correct. Was INACCURATE in the 2026-03-31 conspect, now PARTIALLY VERIFIED.
+
+3. **[MEDIUM baseline] Claude Code hooks: 3 handler types, missing `http`.** CURRENT STATUS: **RESOLVED in lecture text.** § 5.3 now lists all 4 types: command, prompt, agent, http (part4_subagents_hooks.md:484). VERIFIED.
+
+4. **[MEDIUM baseline] OpenCode: 8 events total (actual 28+).** CURRENT STATUS: **PARTIALLY RESOLVED.** § 5.4 now says "Основные события — ... и другие" (line 522), with the "и другие" qualifier making the 8-events framing a selection rather than a total. Still, the actual number is 25 bus events + 18 hook slots = 40+, and `permission.asked` should be `permission.ask`. See issue #11 in Summary. PARTIALLY VERIFIED.
+
+5. **[LOW baseline] Claude Code: 12 events → now 21.** CURRENT STATUS: **RESOLVED in lecture text.** § 5.3 now says "20+ событий" (part4_subagents_hooks.md:483), and current docs list 26 events, so "20+" is safe. VERIFIED.
+
+6. **[LOW baseline] AGENTS.md framing — custom subagents live in `.claude/agents/`, not AGENTS.md.** CURRENT STATUS: **STILL OPEN and escalated to HIGH.** § 3.4 rows "Конфигурация" and "Кастомные типы" still say `AGENTS.md`, which is INACCURATE. See issues #2 and #3 in Summary. The baseline noted this as a "minor inaccuracy in framing" but for a comparison table the precision matters more — upgraded to HIGH priority.
+
+### New issues surfaced in v2 (not in baseline)
+
+1. **[HIGH v2] § 3.4 `run_in_background: true` → actual field is `background: true`.** Not flagged in baseline (baseline only checked the Agent tool parameter, not the § 3.4 table cell). See Summary issue #4.
+
+2. **[HIGH v2] Kilo Code has substantially diverged from Roo Code.** The baseline verified Kilo as a direct fork with Task Manager UI and `.roomodes` compatibility. As of 2026-04-09, Kilo has diverged: `.kilocodemodes` file, YAML preferred, new Agent terminology, Architect renamed to plan, Orchestrator deprecated, no documented Task Manager UI. See Summary issues #1 and #5.
+
+3. **[HIGH v2] § 5.3 `$FILEPATH` / `$TOOL_NAME` / `$TOOL_INPUT` are not shell env vars.** Tool data arrives as JSON on stdin. Baseline did not check hook environment variable accuracy. See Summary issue #9.
+
+4. **[HIGH v2] § 5.4 TypeScript plugin snippet — wrong destructuring and wrong `output.args` reference.** Baseline marked the TS snippet as "VALID syntax" but did not cross-check the actual `PluginInput` / `AfterHookOutput` types. See Summary issue #10.
+
+5. **[MEDIUM v2] § 5.2 scenario 4 event mapping — `Notification` does not fire on errors.** Baseline did not enumerate the 7 scenarios against specific events. See Summary issue #8.
+
+6. **[MEDIUM v2] § 5.4 `permission.asked` → `permission.ask`.** Baseline listed this event as "verified" but did not check the exact key spelling. See Summary issue #11.
+
+7. **[MEDIUM v2] § 5.5 `.roo/rules-code/` path and `.roomodes` snippet are outdated for Kilo Code.** Baseline verified these against Roo Code docs; with Roo Code being dropped and Kilo diverged, the paths no longer apply. See Summary issues #12 and #13.
+
+### Net delta
+
+- **3 baseline issues RESOLVED** (exit code 1, 4th handler type, 12→21 events)
+- **1 baseline issue PARTIALLY RESOLVED** (OpenCode events count — "и другие" added, but exact spelling and total still off)
+- **1 baseline issue STILL OPEN and escalated** (AGENTS.md framing in § 3.4)
+- **7 new HIGH/MEDIUM issues surfaced** (run_in_background, Kilo divergence, env vars, plugin destructuring, Notification event mapping, permission.ask, outdated Roo paths)
+- **2 baseline issues OUT OF v2 SCOPE** (OpenCode agent field names in § 3.3 — still need to be addressed separately; slides TOC card 3 — already fixed)
