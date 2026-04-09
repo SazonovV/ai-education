@@ -703,7 +703,7 @@ table.mini th {
     <div class="cards c3">
       <div class="card teal fragment"><h3>1. Зачем делегировать</h3><p>Проблема единого контекста, аналогия с командой</p></div>
       <div class="card amber fragment"><h3>2. Как устроен субагент</h3><p>Жизненный цикл, наследование, параллельность</p></div>
-      <div class="card rose fragment"><h3>3. Субагенты в инструментах</h3><p>Claude Code, Roo Code, Kilo Code, OpenCode</p></div>
+      <div class="card rose fragment"><h3>3. Субагенты в инструментах</h3><p>Claude Code, Kilo Code, OpenCode</p></div>
       <div class="card green fragment"><h3>4. Декомпозиция и оркестрация</h3><p>Паттерны: fan-out, pipeline, iterative</p></div>
       <div class="card amber fragment"><h3>5. Hooks</h3><p>Автоматизация через хуки жизненного цикла</p></div>
       <div class="card rose fragment"><h3>6. Подводные камни</h3><p>Типичные ошибки и как их избежать</p></div>
@@ -727,7 +727,7 @@ table.mini th {
     <h2 class="section-title">Проблема единого контекста</h2>
     <div class="grid-2">
       <div>
-        <p><strong>Контекстное окно агента — ресурс конечный.</strong> У Claude Sonnet — 200K токенов, но эффективность падает задолго до лимита.</p>
+        <p><strong>Контекстное окно агента — ресурс конечный.</strong> У современных frontier-моделей (Claude Opus/Sonnet 4.6, Haiku 4.5, GLM-4.6, Qwen-Coder-Next) — 200K+ токенов, но эффективность падает задолго до лимита.</p>
         <ul>
           <li>После <em>~80-100K токенов</em> модель начинает забывать ранние инструкции</li>
           <li>Сложная задача (исследование + реализация + тесты) генерирует огромный промежуточный контекст</li>
@@ -982,7 +982,7 @@ table.mini th {
   <div class="chapter-shell">
     <span class="kicker">Раздел 03</span>
     <h1>Субагенты в инструментах</h1>
-    <p class="cta">Как Claude Code, Roo Code, Kilo Code и OpenCode реализуют делегацию на практике.</p>
+    <p class="cta">Как Claude Code, Kilo Code и OpenCode реализуют делегацию на практике.</p>
 </div>
 </section>
 
@@ -990,7 +990,7 @@ table.mini th {
 <section>
   <div class="slide-shell">
     <h2 class="section-title">Claude Code — Agent tool</h2>
-    <p>Родительский агент вызывает <strong>Agent tool</strong> с параметрами: <em>prompt</em>, <em>subagent_type</em>, <em>isolation</em>, <em>run_in_background</em>.</p>
+    <p>Родительский агент вызывает <strong>Agent tool</strong> с параметрами: <em>prompt</em>, <em>subagent_type</em>, <em>isolation</em>, <em>background</em>.</p>
     <div class="table-wrap">
       <table class="mini">
         <thead>
@@ -1023,7 +1023,7 @@ table.mini th {
           </tr>
           <tr class="fragment">
             <td><strong>Кастомный</strong></td>
-            <td>Из AGENTS.md / .claude/agents/</td>
+            <td>Из .claude/agents/&lt;name&gt;.md</td>
             <td>Специализированные задачи</td>
           </tr>
         </tbody>
@@ -1035,29 +1035,26 @@ table.mini th {
 </div>
 </section>
 
-<!-- Claude Code — AGENTS.md -->
+<!-- Claude Code — .claude/agents/ -->
 <section>
   <div class="slide-shell">
-    <h2 class="section-title">Claude Code — AGENTS.md</h2>
-    <p>Файл <strong>AGENTS.md</strong> в корне репо или отдельные файлы в <strong>.claude/agents/*.md</strong> описывают кастомных агентов. Claude Code подхватывает их автоматически.</p>
-    <pre><code class="language-markdown"># AGENTS.md
+    <h2 class="section-title">Claude Code — .claude/agents/&lt;name&gt;.md</h2>
+    <p><strong>Кастомные субагенты</strong> живут в <code>.claude/agents/&lt;name&gt;.md</code> — отдельный файл на каждого. Не путать с <code>AGENTS.md</code> (проектная память, не реестр агентов).</p>
+    <pre><code class="language-yaml"># .claude/agents/code-reviewer.md
+---
+name: code-reviewer
+description: Security, performance, API contracts
+tools: [Read, Grep, Glob]
+model: claude-sonnet-4-6
+---
 
-## code-reviewer
-You are a senior code reviewer. Focus on:
-- Security vulnerabilities (injection, auth bypass, data exposure)
-- Performance anti-patterns (N+1 queries, missing indexes)
+Ты — senior code reviewer. Фокусируйся на:
+- security vulnerabilities
+- performance anti-patterns
 - API contract violations
 
-Tools: Read, Grep, Glob
-Constraints: Never modify files. Always cite file:line.
-Output format: list of findings with severity (critical/warning/info).
-
-## test-writer
-You are a test engineer. Given a source file, write comprehensive tests.
-Tools: Read, Grep, Glob, Edit, Bash
-Constraints: Use existing test framework. Run tests before returning.
-Output format: summary of tests added and pass/fail status.</code></pre>
-    <p class="note fragment">Каждый блок определяет: роль, доступные инструменты, ограничения и формат выходных данных.</p>
+Никогда не редактируй файлы.</code></pre>
+    <p class="note fragment">Ключевые поля YAML frontmatter: <em>name</em>, <em>description</em>, <em>tools</em>, <em>model</em>.</p>
 </div>
 </section>
 
@@ -1084,7 +1081,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
       </div>
       <div class="card green fragment">
         <h3>Фоновый режим</h3>
-        <p><strong>run_in_background: true</strong> — субагент в фоне, родитель не ждёт.</p>
+        <p><strong>background: true</strong> — субагент в фоне, родитель не ждёт.</p>
         <ul>
           <li>Прогон тестов</li>
           <li>Рефакторинг и генерация</li>
@@ -1097,64 +1094,66 @@ Output format: summary of tests added and pass/fail status.</code></pre>
 </div>
 </section>
 
-<!-- Roo Code / Kilo Code — режимы -->
+<!-- Kilo Code — встроенные агенты -->
 <section>
   <div class="slide-shell">
-    <h2 class="section-title">Roo Code / Kilo Code — режимы</h2>
+    <h2 class="section-title">Kilo Code — встроенные агенты</h2>
     <div class="grid-2">
       <div>
-        <h3>Встроенные режимы</h3>
+        <h3>Встроенные агенты</h3>
         <div class="cards c2" style="gap:6px">
-          <div class="card teal" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">Code</h3><p style="margin:0">Полный доступ</p></div>
-          <div class="card amber" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">Architect</h3><p style="margin:0">Только чтение</p></div>
-          <div class="card rose" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">Ask</h3><p style="margin:0">Вопросы-ответы</p></div>
-          <div class="card green" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">Debug</h3><p style="margin:0">Диагностика</p></div>
-          <div class="card amber" style="padding:6px 10px;grid-column:span 2"><h3 style="margin:0;font-size:0.8em">Orchestrator</h3><p style="margin:0">Делегация задач другим режимам</p></div>
+          <div class="card teal" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">code</h3><p style="margin:0">Полный доступ</p></div>
+          <div class="card amber" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">plan</h3><p style="margin:0">Проектирование</p></div>
+          <div class="card rose" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">ask</h3><p style="margin:0">Вопросы-ответы</p></div>
+          <div class="card green" style="padding:6px 10px"><h3 style="margin:0;font-size:0.8em">debug</h3><p style="margin:0">Диагностика</p></div>
         </div>
+        <p class="note fragment" style="margin-top:0.5em">Нативная субагентность — делегация без отдельного Orchestrator.</p>
       </div>
       <div>
-        <h3>Orchestrator + Boomerang Tasks</h3>
+        <h3>Субагентная делегация</h3>
         <pre><code class="language-text">Пользователь: "Добавить авторизацию"
          │
-    Orchestrator
-    ├── → Architect: спроектировать
+       code
+    ├── → subagent (plan): спроектировать
     │   ← архитектурный план
-    ├── → Code: реализовать
+    ├── → subagent (code): реализовать
     │   ← код готов
-    ├── → Code: написать тесты
+    ├── → subagent (code): тесты
     │   ← тесты написаны
-    └── → Debug: проверить
+    └── → subagent (debug): проверить
         ← всё работает
 
-    Orchestrator → итог пользователю</code></pre>
-        <p class="note fragment">Boomerang Tasks работают <strong>последовательно</strong> — Orchestrator ждёт завершения текущей подзадачи.</p>
+    code → итог пользователю</code></pre>
+        <p class="note fragment">Делегация <strong>последовательная</strong> — Kilo Code ждёт завершения текущего субагента.</p>
       </div>
     </div>
 </div>
 </section>
 
-<!-- Roo Code / Kilo Code — .roomodes -->
+<!-- Kilo Code — .kilocodemodes -->
 <section>
   <div class="slide-shell">
-    <h2 class="section-title">Roo Code / Kilo Code — .roomodes</h2>
-    <p>Файл <strong>.roomodes</strong> в корне проекта определяет кастомные режимы. Совместим между Roo Code и Kilo Code.</p>
-    <pre><code class="language-json">{ "customModes": [{
-    "slug": "doc-writer",
-    "name": "Documentation Writer",
-    "roleDefinition": "You are a technical writer...",
-    "groups": ["read", "command"],
-    "customInstructions": "Always include usage examples."
-  },
-  { "slug": "security-audit", "groups": ["read"], ... }
-]}</code></pre>
+    <h2 class="section-title">Kilo Code — .kilocodemodes</h2>
+    <p>Файл <strong>.kilocodemodes</strong> в корне проекта (YAML предпочтителен). Альтернатива: <strong>.kilo/agents/&lt;slug&gt;.md</strong>.</p>
+    <pre><code class="language-yaml">customModes:
+  - slug: doc-writer
+    name: Documentation Writer
+    roleDefinition: |
+      You are a technical writer...
+    groups: [read, edit, grep, glob]
+    customInstructions: Always include usage examples.
+
+  - slug: security-audit
+    groups: [read, grep, glob]
+    ...</code></pre>
     <div class="grid-2" style="margin-top: 0.4em;">
       <div class="card teal fragment">
         <h3>Поле groups</h3>
-        <p>Доступные инструменты: <em>read</em>, <em>edit</em>, <em>command</em>, <em>browser</em>, <em>mcp</em>.</p>
+        <p>Tool-группы: <em>read</em>, <em>edit</em>, <em>bash</em>, <em>grep</em>, <em>glob</em>, <em>list</em>, <em>task</em>, <em>webfetch</em>, <em>websearch</em> и др.</p>
       </div>
       <div class="card amber fragment">
-        <h3>Kilo Code — Task Manager UI</h3>
-        <p>Визуальная панель: дерево подзадач, статусы, результаты.</p>
+        <h3>Markdown-формат</h3>
+        <p><code>.kilo/agents/doc-writer.md</code> — YAML frontmatter + тело-промпт, аналогично Claude Code.</p>
       </div>
     </div>
 </div>
@@ -1168,12 +1167,12 @@ Output format: summary of tests added and pass/fail status.</code></pre>
     <pre><code class="language-json">{
   "agents": {
     "reviewer": {
-      "model": "anthropic:claude-sonnet-4-20250514",
+      "model": "anthropic:claude-sonnet-4-6",
       "prompt": ".opencode/agents/reviewer.md",
       "permission": ["read", "glob", "grep"]
     },
     "implementer": {
-      "model": "anthropic:claude-sonnet-4-20250514",
+      "model": "anthropic:claude-sonnet-4-6",
       "prompt": ".opencode/agents/implementer.md",
       "permission": ["read", "glob", "grep", "edit", "bash"]
     }
@@ -1202,28 +1201,28 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           <tr>
             <th>Критерий</th>
             <th>Claude Code</th>
-            <th>Roo / Kilo Code</th>
+            <th>Kilo Code</th>
             <th>OpenCode</th>
           </tr>
         </thead>
         <tbody>
           <tr class="fragment">
             <td><strong>Модель</strong></td>
-            <td>Явный spawn через Agent tool</td>
-            <td>Режимы + Orchestrator / Boomerang</td>
-            <td>Агенты в конфигурации</td>
+            <td>Делегация через Agent tool</td>
+            <td>Агенты с нативными субагентами</td>
+            <td>Агенты-профили в конфигурации</td>
           </tr>
           <tr class="fragment">
             <td><strong>Конфигурация</strong></td>
-            <td><em>AGENTS.md / .claude/agents/</em> + subagent_type</td>
-            <td><em>.roomodes</em> (JSON)</td>
+            <td><em>.claude/agents/&lt;name&gt;.md</em></td>
+            <td><em>.kilocodemodes</em> / <em>.kilo/agents/</em></td>
             <td><em>opencode.json</em> / .opencode/agents/</td>
           </tr>
           <tr class="fragment">
             <td><strong>Параллельность</strong></td>
             <td style="color: var(--green);">Да (несколько Agent-вызовов)</td>
             <td style="color: var(--red);">Последовательная</td>
-            <td>Зависит от реализации</td>
+            <td style="color: var(--red);">Нет (профили)</td>
           </tr>
           <tr class="fragment">
             <td><strong>Изоляция</strong></td>
@@ -1233,13 +1232,13 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           </tr>
           <tr class="fragment">
             <td><strong>Кастомные типы</strong></td>
-            <td>AGENTS.md</td>
-            <td>.roomodes</td>
-            <td>Агенты в конфиге</td>
+            <td>.claude/agents/&lt;name&gt;.md</td>
+            <td>.kilocodemodes / .kilo/agents/</td>
+            <td>Агенты в opencode.json</td>
           </tr>
           <tr class="fragment">
             <td><strong>Фоновый запуск</strong></td>
-            <td style="color: var(--green);">run_in_background</td>
+            <td style="color: var(--green);">background: true</td>
             <td style="color: var(--red);">Нет</td>
             <td style="color: var(--red);">Нет</td>
           </tr>
@@ -1247,7 +1246,89 @@ Output format: summary of tests added and pass/fail status.</code></pre>
       </table>
     </div>
     <blockquote class="fragment">
-      <p>Самая продвинутая модель — у Claude Code: worktree-изоляция, параллелизм и фоновый режим. Roo/Kilo Code берут удобством Orchestrator-паттерна. OpenCode — минимальный подход с предустановленными профилями.</p>
+      <p>Самая продвинутая модель — у Claude Code: worktree-изоляция, параллелизм и фоновый режим. Kilo Code компактнее: нативная субагентность без оркестратора. OpenCode — минимальный подход с профилями.</p>
+    </blockquote>
+</div>
+</section>
+
+<!-- § 3.5 Ограничение доступа: tools и MCP -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Ограничение доступа: tools и MCP</h2>
+    <p><strong>Принцип:</strong> каждому субагенту — только те tools и MCP-серверы, которые нужны для его задачи.</p>
+    <div class="cards c3" style="margin-top: 0.5em;">
+      <div class="card teal fragment">
+        <h3>Claude Code</h3>
+        <p>Поле <code>tools</code> в YAML frontmatter:</p>
+        <pre><code class="language-yaml">tools:
+  - Read
+  - Grep
+  - mcp__sentry__get_issue</code></pre>
+      </div>
+      <div class="card amber fragment">
+        <h3>Kilo Code</h3>
+        <p>Поле <code>groups</code> в <code>.kilocodemodes</code>:</p>
+        <pre><code class="language-yaml">groups:
+  - read
+  - grep
+  - glob</code></pre>
+      </div>
+      <div class="card rose fragment">
+        <h3>OpenCode</h3>
+        <p>Поле <code>permission</code> в <code>opencode.json</code>:</p>
+        <pre><code class="language-json">"permission": [
+  "read", "grep", "webfetch"
+]</code></pre>
+      </div>
+    </div>
+    <div class="cards c2" style="margin-top: 0.4em;">
+      <div class="card green fragment">
+        <h3>Зачем ограничивать</h3>
+        <p>Меньше attack surface для prompt injection. Предсказуемое поведение. Экономия контекста (описания tools занимают место).</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Чек-лист</h3>
+        <p>Ревьюеры → только чтение. Bash → только тестерам. Web → только исследователям. MCP → по задаче.</p>
+      </div>
+    </div>
+</div>
+</section>
+
+<!-- § 3.6 Выбор модели для субагента -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Выбор модели для субагента</h2>
+    <p>Субагент — хорошая точка экономии: изолированный контекст, узкая задача, понятный критерий успеха.</p>
+    <div class="grid-2">
+      <div>
+        <div class="table-wrap">
+          <table class="mini">
+            <thead><tr><th>Модель</th><th>Сильные стороны</th></tr></thead>
+            <tbody>
+              <tr><td>Opus 4.6</td><td>Архитектура, сложный рефакторинг</td></tr>
+              <tr><td>Sonnet 4.6</td><td>Баланс скорости и точности</td></tr>
+              <tr><td>Haiku 4.5</td><td>Быстрый поиск, лёгкие правки</td></tr>
+              <tr><td>GLM-4.6</td><td>Open-source, хороший кодинг</td></tr>
+              <tr><td>Qwen-Coder</td><td>Длинный контекст, код</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="cards" style="gap:6px">
+          <div class="card green fragment">
+            <h3>Плюсы лёгких моделей</h3>
+            <p>В 3-5× быстрее. На порядок дешевле. Больше параллельных субагентов при rate limit.</p>
+          </div>
+          <div class="card rose fragment">
+            <h3>Минусы</h3>
+            <p>Слабее многошаговое рассуждение. Чувствительнее к промпту. Хуже на нишевых технологиях.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <blockquote class="fragment">
+      <p><strong>Правило:</strong> Sonnet/Haiku как дефолт → Opus только где нужно мощное рассуждение.</p>
     </blockquote>
 </div>
 </section>
@@ -1292,7 +1373,7 @@ Output format: summary of tests added and pass/fail status.</code></pre>
           </div>
           <div class="card green fragment">
             <h3>Агент «знает» проект</h3>
-            <p>Настроены AGENTS.md, rules и контекст проекта.</p>
+            <p>Настроены .claude/agents/, rules и контекст проекта.</p>
           </div>
           <div class="card green fragment">
             <h3>Подзадачи независимы</h3>
