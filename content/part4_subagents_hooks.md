@@ -651,9 +651,9 @@ export const AutoFormatPlugin = async ({ $, project, client, directory, worktree
 
 **Сравнение с Claude Code:** больше гибкости (условная логика, асинхронные вызовы, API-интеграции), но выше порог входа — нужно писать код на TypeScript вместо JSON-конфига.
 
-### 5.5 Roo Code / Kilo Code — эмуляция
+### 5.5 Kilo Code — эмуляция
 
-Roo Code и Kilo Code **не имеют нативных hooks**. Единственный путь — эмуляция через комбинацию кастомного MCP-инструмента и строгих правил в инструкциях режима.
+Kilo Code **не имеет нативных hooks**. Единственный путь — эмуляция через комбинацию кастомного MCP-инструмента и строгих правил в инструкциях агента.
 
 **Полный workaround в три шага:**
 
@@ -679,7 +679,7 @@ async function execute({ scope }) {
 }
 ```
 
-**Шаг 2. Правило в `.roo/rules-code/lint-before-write.md`:**
+**Шаг 2. Правило для агента `code`** (внутри `customInstructions` в `.kilocodemodes` или в теле `.kilo/agents/code.md`):
 
 ```markdown
 ## Обязательная проверка перед изменениями
@@ -692,18 +692,19 @@ async function execute({ scope }) {
   Помоги пользователю исправить ошибки и запусти `lint_check` снова.
 ```
 
-**Шаг 3. Конфиг режима в `.roomodes`:**
+**Шаг 3. Кастомный агент `safe-code`** (`.kilocodemodes`, YAML):
 
-```json
-{
-  "customModes": [{
-    "slug": "safe-code",
-    "name": "Safe Code",
-    "roleDefinition": "Developer with mandatory lint checks before edits",
-    "groups": ["read", ["edit", { "fileRegex": "\\.(ts|tsx|js|jsx)$" }], "command", "mcp"],
-    "customInstructions": "Always call lint_check before any file modification."
-  }]
-}
+```yaml
+customModes:
+  - slug: safe-code
+    name: Safe Code
+    roleDefinition: Developer with mandatory lint checks before edits
+    groups:
+      - read
+      - - edit
+        - fileRegex: \.(ts|tsx|js|jsx)$
+      - bash
+    customInstructions: Always call lint_check before any file modification.
 ```
 
 **Ограничение:** это **не гарантия**. Модель *может* пропустить проверку — особенно при сложных задачах или длинном контексте. На практике, если правило повторяется в нескольких местах (rules + customInstructions + roleDefinition), модель следует ему стабильно. Но для критичных сценариев (безопасность, деплой) полагаться на эмуляцию недостаточно.
