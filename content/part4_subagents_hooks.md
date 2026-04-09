@@ -711,7 +711,7 @@ customModes:
 
 ### 5.6 Сводная таблица hooks
 
-| Критерий | Claude Code | OpenCode | Roo Code / Kilo Code |
+| Критерий | Claude Code | OpenCode | Kilo Code |
 |---|---|---|---|
 | Механизм | Нативные hooks (settings.json) | Плагины (JS/TS) | Эмуляция (rules + custom tools) |
 | Гарантия срабатывания | Да | Да | Нет (зависит от модели) |
