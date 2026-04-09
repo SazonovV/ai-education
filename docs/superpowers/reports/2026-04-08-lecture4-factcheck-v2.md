@@ -347,11 +347,129 @@ This divergence means almost every Kilo-specific claim in the lecture is **OUTDA
 
 ### § 5.6 Hooks comparison table
 
-<entries to be filled in Task 13>
+The table at part4_subagents_hooks.md:588-594 has three columns; Roo Code column is being dropped, Kilo Code column is verified separately below.
+
+#### Claude Code column
+
+- **Cell:** "Механизм — Нативные hooks (settings.json)" (row 590)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks ; https://code.claude.com/docs/en/settings
+  - **Evidence:** Claude Code hooks are declared in `settings.json` under a top-level `hooks` key. Per-event keys, matcher arrays, and handler definitions all live in JSON. Confirmed in § 5.3 verification.
+  - **Recommendation:** —
+
+- **Cell:** "Гарантия срабатывания — Да" (row 591)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Hooks "execute automatically at specific points in Claude Code's lifecycle" and "execute on the host machine … not in the model." The host guarantees execution; the model cannot skip them.
+  - **Recommendation:** —
+
+- **Cell:** "Язык обработчика — Shell / prompt / agent / http" (row 592)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Four handler types confirmed: `command` (shell), `prompt` (single-turn LLM), `agent` (subagent with tools), `http` (POST). Matches § 5.3 verification.
+  - **Recommendation:** —
+
+- **Cell:** "Количество событий — 20+" (row 593)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** Current docs list 26 distinct hook events. "20+" is accurate and conservative.
+  - **Recommendation:** Could be tightened to "26" but "20+" is safe against future additions/removals.
+
+- **Cell:** "Сложность настройки — Низкая (JSON конфиг)" (row 594)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks
+  - **Evidence:** The minimum viable hook is a single JSON object `{"hooks": {"PostToolUse": [{"matcher": "Edit|Write", "hooks": [{"type": "command", "command": "npm run format"}]}]}}`. No code compilation, no runtime setup — declarative only. Subjective framing but defensible.
+  - **Recommendation:** —
+
+#### OpenCode column
+
+- **Cell:** "Механизм — Плагины (JS/TS)" (row 590)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/plugins
+  - **Evidence:** Plugins are JS/TS modules loaded from `.opencode/plugin(s)/` directories or via npm. Confirmed in § 5.4 verification.
+  - **Recommendation:** —
+
+- **Cell:** "Гарантия срабатывания — Да" (row 591)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/plugins ; https://github.com/sst/opencode/blob/HEAD/packages/plugin/src/index.ts
+  - **Evidence:** Plugin hook points are invoked by the host runtime (Bun) as part of the event bus — they fire regardless of what the model wants. Same host-enforced guarantee as Claude Code hooks.
+  - **Recommendation:** —
+
+- **Cell:** "Язык обработчика — JS/TS" (row 592)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/plugins
+  - **Evidence:** Plugins are authored in JavaScript or TypeScript and executed by Bun. Confirmed in § 5.4 verification.
+  - **Recommendation:** —
+
+- **Cell:** "Количество событий — 20+" (row 593)
+  - **Status:** VERIFIED
+  - **Source:** https://github.com/sst/opencode/blob/HEAD/packages/plugin/src/index.ts
+  - **Evidence:** From the § 5.4 verification: the actual count is "25 bus event types plus 18 named hook slots" (total 40+). "20+" is accurate, though conservative.
+  - **Recommendation:** Could be bumped to "40+" if the lecture wants to emphasize OpenCode's breadth.
+
+- **Cell:** "Сложность настройки — Средняя (код на TS)" (row 594)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/plugins
+  - **Evidence:** Writing a plugin requires a TS/JS file, knowing the `PluginInput` signature, and understanding the Bun shell API. Higher barrier than JSON but still accessible. Subjective framing but defensible.
+  - **Recommendation:** —
+
+#### Kilo Code column
+
+- **Cell:** "Механизм — Эмуляция (rules + custom tools)" (row 590)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** https://kilo.ai/docs (no hooks page)
+  - **Evidence:** Kilo Code has no documented native hooks mechanism. Emulation via MCP tool + rules/customInstructions is still the only path — confirmed in § 5.5 verification. However, the specific file paths (`.roo/rules-code/`) are outdated; the modern Kilo path is `.kilocodemodes` customInstructions or `.kilo/agents/<name>.md` body.
+  - **Recommendation:** Keep the "Эмуляция (rules + custom tools)" label but note in § 5.5 prose that the rules live in Kilo-specific locations, not `.roo/`.
+
+- **Cell:** "Гарантия срабатывания — Нет (зависит от модели)" (row 591)
+  - **Status:** VERIFIED
+  - **Source:** General reasoning — no host-level hook enforcement exists in Kilo Code, so anything driven by customInstructions/rules is model-compliance-dependent.
+  - **Evidence:** Without a native hook system, the only way to enforce a pre/post-action check is to tell the model to do it. Model compliance is probabilistic.
+  - **Recommendation:** —
+
+- **Cell:** "Язык обработчика — Shell (через MCP tool)" (row 592)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** https://kilo.ai/docs/automate (MCP integration is documented)
+  - **Evidence:** Kilo Code supports MCP, so a custom MCP tool can shell out via `child_process` or similar. The "Shell (через MCP tool)" framing is accurate but slightly narrow — MCP tools can be written in any language with an MCP SDK (TS, Python, Go), not just shell. The lecture's framing is a shortcut for "external program via MCP", which is fair for a comparison table.
+  - **Recommendation:** —
+
+- **Cell:** "Количество событий — Нет нативных" (row 593)
+  - **Status:** VERIFIED
+  - **Source:** https://kilo.ai/docs (no hooks page)
+  - **Evidence:** No native event triggers are documented for Kilo Code. The cell text is accurate.
+  - **Recommendation:** —
+
+- **Cell:** "Сложность настройки — Высокая (workaround)" (row 594)
+  - **Status:** VERIFIED
+  - **Source:** § 5.5 verification
+  - **Evidence:** Three-step setup (MCP tool + rules/customInstructions + custom agent config) is objectively more work than dropping a JSON block into `settings.json`. Subjective but defensible.
+  - **Recommendation:** —
 
 ### § 5.7 Selection strategy
 
-<entries to be filled in Task 14>
+- **Claim:** "Выбор механизма hooks зависит от двух факторов: нужна ли **гарантия** срабатывания и насколько сложна **логика** обработчика." (part4_subagents_hooks.md:598)
+  - **Status:** VERIFIED
+  - **Source:** Composite — § 5.3, § 5.4, § 5.5 verifications
+  - **Evidence:** Both axes map cleanly onto the three tools: Claude Code and OpenCode have host-enforced guarantees, Kilo Code does not. Claude Code hooks max out at single shell/prompt/http/agent invocations; OpenCode plugins can do arbitrary JS/TS logic; Kilo emulation depends on model compliance. Framing is accurate.
+  - **Recommendation:** —
+
+- **Claim:** "**Нужна гарантия → Claude Code hooks или OpenCode plugins.** Хост выполняет hook безусловно — модель не может его пропустить. Для блокировки опасных операций, обязательного форматирования, автокоммитов — только этот путь." (part4_subagents_hooks.md:600)
+  - **Status:** VERIFIED
+  - **Source:** https://code.claude.com/docs/en/hooks ; https://opencode.ai/docs/plugins
+  - **Evidence:** Both Claude Code hooks and OpenCode plugins are host-executed, meaning the model cannot skip them. `PreToolUse` (Claude Code) and `tool.execute.before` (OpenCode) can both block tool invocations via exit codes / thrown errors. The recommendation is correct.
+  - **Recommendation:** —
+
+- **Claim:** "**Нужна гибкость (условная логика, API-вызовы, сложные проверки) → OpenCode plugins.** Полноценный TypeScript с доступом к npm, SDK и shell. Можно написать hook, который проверяет coverage, отправляет метрики в Grafana и блокирует коммит при падении ниже порога." (part4_subagents_hooks.md:602)
+  - **Status:** VERIFIED
+  - **Source:** https://opencode.ai/docs/plugins ; § 5.4 verification
+  - **Evidence:** Plugins are full TS/JS modules with access to `$` (Bun shell), `client` (SDK), `project`, and any npm dependency. The Grafana example is illustrative but realistic — nothing prevents a plugin from calling fetch(), reading coverage reports, and throwing to block execution. The recommendation holds. Note: Claude Code's `agent` handler type also supports arbitrary logic via a subagent, but that's more indirect than writing plain TS.
+  - **Recommendation:** —
+
+- **Claim:** "**Roo Code / Kilo Code → эмуляция с оговорками.** Работает для «мягких» сценариев (напоминание о линтере, рекомендация запустить тесты). Для критичных — комбинируйте с CI/CD: пусть эмулированный hook ловит 90% случаев, а CI/CD pipeline гарантирует остальные 10%." (part4_subagents_hooks.md:604)
+  - **Status:** VERIFIED (framing accurate for Kilo Code after Roo Code is dropped)
+  - **Source:** § 5.5 verification
+  - **Evidence:** The practical advice is sound: non-guaranteed hooks are fine for soft reminders, and critical enforcement should fall back to CI/CD. This holds regardless of whether the label is "Roo / Kilo" or just "Kilo".
+  - **Recommendation:** Rewrite the label "Roo Code / Kilo Code" → "Kilo Code". The rest of the bullet can stay verbatim. Suggested: "**Kilo Code → эмуляция с оговорками.** Работает для «мягких» сценариев (напоминание о линтере, рекомендация запустить тесты). Для критичных — комбинируйте с CI/CD: пусть эмулированный hook ловит 90% случаев, а CI/CD pipeline гарантирует остальные 10%."
 
 ## Summary
 
