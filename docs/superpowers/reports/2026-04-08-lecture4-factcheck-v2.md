@@ -1,21 +1,34 @@
 # Lecture 4 Fact-Check v2 — § 3.4 & § 5
 
-**Date:** 2026-04-08
+**Date:** 2026-04-08 (Kilo Code verification completed 2026-04-09)
 **Scope:** § 3.4 (tools comparison table) + § 5 (hooks)
 **Baseline:** 2026-03-31-lecture4-factcheck.md
 **Status:** IN PROGRESS
 
-## Scope change — 2026-04-08
+## Scope change — 2026-04-08 / 2026-04-09
 
-User decision during execution:
+User decisions during execution:
 
 1. **Roo Code is being removed from the lecture entirely.** All Roo Code claims are marked `OUT OF SCOPE — to be removed from lecture` instead of being verified. The content edit phase will drop § 3.2's "Roo Code" framing, the "Roo Code / Kilo Code" column header, and any other Roo Code references.
 
-2. **Kilo Code stays in the lecture as a standalone tool.** The current "Roo Code / Kilo Code" combined column gets relabeled to "Kilo Code". The technical claims (Boomerang, `.roomodes`, Modes, Orchestrator) carry over since Kilo Code inherits them from its Roo Code ancestry — but they need to be re-verified against `kilo.ai/docs` (not `docs.roocode.com`).
+2. **Kilo Code stays in the lecture as a standalone tool.** The current "Roo Code / Kilo Code" combined column is relabeled to "Kilo Code". Kilo Code is no longer a direct Roo Code fork — it has diverged significantly (see below). The existing lecture text, which treats Kilo as a Roo clone, is now substantially outdated and needs a full rewrite of § 3.2, § 3.4 Kilo column, § 5.5, § 5.6 Kilo column, and § 5.7 Kilo bullet.
 
-3. **Kilo Code verification is deferred.** During this fact-check, fetches against both `docs.roocode.com` and `kilo.ai/docs` consistently hung. Each Kilo Code claim is recorded in a separate file: `2026-04-08-lecture4-factcheck-v2-kilo-deferred.md`. That file is the source of truth for what still needs to be verified before the content edit phase can proceed on the Kilo Code column.
+3. **Kilo Code verification (2026-04-09).** On the first pass fetches against `docs.kilocode.ai` / `kilo.ai/docs` hung and the Kilo Code claims were deferred to `2026-04-08-lecture4-factcheck-v2-kilo-deferred.md`. On 2026-04-09 the user re-authorized Kilo Code verification, docs came back online, and all Kilo Code claims were verified against `kilo.ai/docs`. Findings are now integrated into the main report below. The deferred file is kept as a historical record and should not be treated as authoritative.
 
-This report (the parent) only contains verified claims for **Claude Code** and **OpenCode**.
+### Kilo Code divergence summary (2026-04-09)
+
+The lecture describes Kilo Code as a cosmetic fork of Roo Code with an added Task Manager UI. This is no longer accurate:
+
+- **Terminology:** "Modes" → "Agents". The Orchestrator mode still exists but is **deprecated** — "Agents with full tool access (Code, Plan, Debug) now support subagents natively."
+- **Built-in set:** old Roo modes `Code / Architect / Ask / Debug / Orchestrator` → Kilo agents `code / plan / ask / debug / orchestrator (deprecated)`. Note **"Architect" is renamed to "plan"**.
+- **Config file:** `.roomodes` (JSON) → **`.kilocodemodes`** (YAML preferred, JSON kept for back-compat) for project; `custom_modes.yaml` for global; `.kilo/agents/<name>.md` for the newer Markdown agent format.
+- **Groups field:** Roo's `["read", "edit", "command", "browser", "mcp"]` → Kilo uses Claude Code-style tool names `["read", "edit", "bash", "grep", "glob", "list", "task", "webfetch", "websearch", ...]`. The old `command`/`mcp` values are no longer documented.
+- **Task Manager UI:** not documented anywhere on kilo.ai/docs. Only residual reference is the `/newtask` slash command in the legacy VSCode extension. The lecture's claim of "визуальная панель с деревом подзадач" is not supported by current docs.
+- **Boomerang Tasks:** `https://kilo.ai/docs/features/boomerang-tasks` returns 404. No Boomerang Tasks feature page exists in current docs. The delegation flow survives only as the deprecated Orchestrator agent.
+- **Hooks:** no hooks documentation exists at `kilo.ai/docs`. The "Automate" section covers code reviews, MCP, shell integration, agent manager — no native hook / event-trigger system.
+- **Parallelism:** not documented. The docs describe sequential agent switching and delegation; no concurrent execution mechanism is mentioned.
+
+This divergence means almost every Kilo-specific claim in the lecture is **OUTDATED**, not merely Roo-labelled. See per-criterion entries below for details.
 
 ## § 3.4 — Tools comparison table
 
@@ -27,9 +40,11 @@ This report (the parent) only contains verified claims for **Claude Code** and *
   - **Evidence:** The underlying tool is confirmed as "Agent tool" (renamed from "Task tool" in v2.1.63 — old `Task(...)` references still work as aliases). However, the primary invocation model is *automatic delegation* by Claude based on subagent descriptions, not explicit spawn; explicit invocation is an opt-in via @-mention or `--agent` flag, not the default mode.
   - **Recommendation:** "Автоматическая делегация через Agent tool (явный вызов через @-mention)"
 
-- **Claim:** "Режимы + Orchestrator / Boomerang" for Roo Code / Kilo Code (part4_subagents_hooks.md:299)
-  - **Status:** OUT OF SCOPE
-  - **Notes:** Roo Code is being removed from the lecture. Kilo Code claim is deferred to `2026-04-08-lecture4-factcheck-v2-kilo-deferred.md`.
+- **Claim:** "Режимы + Orchestrator / Boomerang" for Kilo Code (part4_subagents_hooks.md:299)
+  - **Status:** OUTDATED
+  - **Source:** https://kilo.ai/docs/code-with-ai/using-modes
+  - **Evidence:** Current Kilo Code docs describe built-in agents `code`, `plan`, `ask`, `debug`, and `orchestrator` with orchestrator explicitly marked deprecated: "A strategic workflow orchestrator who coordinates complex tasks by delegating them to appropriate specialized agents … Agents with full tool access (Code, Plan, Debug) now support subagents natively." There is no separate "Boomerang Tasks" feature page (`kilo.ai/docs/features/boomerang-tasks` → 404). The Boomerang Tasks delegation flow survives only as the deprecated Orchestrator agent. Terminology has shifted from "Modes" to "Agents".
+  - **Recommendation:** "Агенты + нативные субагенты (Orchestrator deprecated)". Or more descriptive: "Агенты `code` / `plan` / `ask` / `debug` с нативной поддержкой субагентов (Orchestrator — deprecated)".
 
 - **Claim:** "Агенты в конфигурации" for OpenCode (part4_subagents_hooks.md:299)
   - **Status:** VERIFIED
@@ -45,9 +60,11 @@ This report (the parent) only contains verified claims for **Claude Code** and *
   - **Evidence:** Subagents are not defined in `AGENTS.md`. They are individual Markdown files with YAML frontmatter, stored in `.claude/agents/` (project), `~/.claude/agents/` (user), or a plugin's `agents/` directory. The frontmatter fields include `name`, `description`, `tools`, `model`, `isolation`, `background`, `permissionMode`, `hooks`, etc. `AGENTS.md` is a separate concept — the project-level memory file (the successor to `CLAUDE.md`) — not a subagent registry. The Agent tool's `subagent_type` parameter does exist (it references the subagent definition's `name`), so half the claim is correct.
   - **Recommendation:** "`.claude/agents/<name>.md` (Markdown с YAML frontmatter) + параметр `subagent_type` Agent-тула"
 
-- **Claim:** "`.roomodes` (JSON)" for Roo Code / Kilo Code (part4_subagents_hooks.md:300)
-  - **Status:** OUT OF SCOPE
-  - **Notes:** Roo Code dropped; Kilo Code deferred.
+- **Claim:** "`.roomodes` (JSON)" for Kilo Code (part4_subagents_hooks.md:300)
+  - **Status:** OUTDATED
+  - **Source:** https://kilo.ai/docs/customize/custom-modes ; https://kilo.ai/docs/features/custom-modes
+  - **Evidence:** Kilo Code no longer uses `.roomodes`. Current docs state: "Custom modes are stored in `.kilocodemodes` (project-level) or `custom_modes.yaml` (global). YAML is the preferred format, though JSON remains supported for backward compatibility." A newer Markdown-based format also exists: `.kilo/agents/<name>.md`. The `.roomodes` file name is a Roo Code artifact; in Kilo Code it is `.kilocodemodes`.
+  - **Recommendation:** "`.kilocodemodes` (YAML) или `.kilo/agents/*.md`"
 
 - **Claim:** "`opencode.json` / `.opencode/agents/`" for OpenCode (part4_subagents_hooks.md:300)
   - **Status:** VERIFIED
@@ -63,11 +80,11 @@ This report (the parent) only contains verified claims for **Claude Code** and *
   - **Evidence:** The docs explicitly document running multiple subagents in parallel: "For independent investigations, spawn multiple subagents to work simultaneously." Background subagents run concurrently while the user continues working. The tool was renamed from `Task` to `Agent` in v2.1.63 ("In version 2.1.63, the Task tool was renamed to Agent"), so the lecture's phrasing "Agent-вызовов" is now the correct name. Both foreground (blocking) and background (concurrent) invocations are supported.
   - **Recommendation:** —
 
-- **Claim:** "Последовательная (Boomerang)" (part4_subagents_hooks.md:301)
-  - **Status:** VERIFIED
-  - **Source:** https://docs.roocode.com/features/boomerang-tasks
-  - **Evidence:** The Boomerang Tasks model is explicitly sequential: a parent task pauses, the subtask executes in a specialized mode, and upon completion the parent resumes with only the subtask's summary. The documentation describes a clear pause-and-resume mechanic with no mention of parallel subtask execution. Kilo Code inherits the same Boomerang Task architecture from Roo Code; the Task Manager UI adds visual stack navigation but does not add parallel execution.
-  - **Recommendation:** —
+- **Claim:** "Последовательная (Boomerang)" for Kilo Code (part4_subagents_hooks.md:301)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** https://kilo.ai/docs/code-with-ai/using-modes
+  - **Evidence:** Current Kilo Code docs do not document parallel subagent execution — agent delegation is described only through the (deprecated) Orchestrator agent, which sequentially delegates to specialized agents. No concurrent execution primitive is mentioned. However, the Boomerang Tasks *name* is gone — `kilo.ai/docs/features/boomerang-tasks` returns 404. The mechanism is still sequential, but the "Boomerang" framing is obsolete.
+  - **Recommendation:** "Последовательная (через Orchestrator, deprecated)". Drop the "Boomerang" name.
 
 - **Claim:** "Зависит от реализации" for OpenCode (part4_subagents_hooks.md:301)
   - **Status:** PARTIALLY VERIFIED
@@ -83,9 +100,11 @@ This report (the parent) only contains verified claims for **Claude Code** and *
   - **Evidence:** The `isolation` frontmatter field is documented: "Set to `worktree` to run the subagent in a temporary git worktree, giving it an isolated copy of the repository. The worktree is automatically cleaned up if the subagent makes no changes." This is a real, supported feature, not aspirational.
   - **Recommendation:** —
 
-- **Claim:** "Отдельный контекст (общая FS)" for Roo Code / Kilo Code (part4_subagents_hooks.md:302)
-  - **Status:** OUT OF SCOPE
-  - **Notes:** Roo Code dropped; Kilo Code deferred.
+- **Claim:** "Отдельный контекст (общая FS)" for Kilo Code (part4_subagents_hooks.md:302)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** https://kilo.ai/docs/code-with-ai/using-modes
+  - **Evidence:** Kilo Code docs do not describe any worktree-style isolation — agents run against the project's shared filesystem. Per-agent permission is governed by the `groups` field (tool-category gating), not by a separate copy of the repository. The claim "Отдельный контекст (общая FS)" remains accurate in spirit, though the lecture's justification (Roo Code ancestry) no longer holds cleanly since Kilo has diverged.
+  - **Recommendation:** —
 
 - **Claim:** "Отдельный контекст (общая FS)" for OpenCode (part4_subagents_hooks.md:302)
   - **Status:** VERIFIED
@@ -101,9 +120,11 @@ This report (the parent) only contains verified claims for **Claude Code** and *
   - **Evidence:** Custom subagent types are defined as Markdown files inside `.claude/agents/` (project), `~/.claude/agents/` (user), or a plugin's `agents/` directory — not in `AGENTS.md`. The file name (without `.md`) becomes the subagent's `name`, which is what the Agent tool's `subagent_type` parameter references. Same root cause as the "Конфигурация" inaccuracy: the lecture conflates `AGENTS.md` (project memory file) with the `.claude/agents/` directory (subagent registry).
   - **Recommendation:** "`.claude/agents/<name>.md`"
 
-- **Claim:** "`.roomodes`" for Roo Code / Kilo Code (part4_subagents_hooks.md:303)
-  - **Status:** OUT OF SCOPE
-  - **Notes:** Roo Code dropped; Kilo Code deferred.
+- **Claim:** "`.roomodes`" for Kilo Code (part4_subagents_hooks.md:303)
+  - **Status:** OUTDATED
+  - **Source:** https://kilo.ai/docs/customize/custom-modes
+  - **Evidence:** Same root cause as the "Конфигурация" row — Kilo Code uses `.kilocodemodes` (YAML) for project, `custom_modes.yaml` for global, or `.kilo/agents/<name>.md` for the newer Markdown format. `.roomodes` is the Roo Code file name and is not authoritative for Kilo Code.
+  - **Recommendation:** "`.kilocodemodes` или `.kilo/agents/*.md`"
 
 - **Claim:** "Агенты в конфиге" for OpenCode (part4_subagents_hooks.md:303)
   - **Status:** VERIFIED
@@ -119,10 +140,10 @@ This report (the parent) only contains verified claims for **Claude Code** and *
   - **Evidence:** The current frontmatter field name is `background: true`, not `run_in_background: true`. The docs list `background` as an optional field: "Set to `true` to always run this subagent as a background task. Default: `false`." The `--agents` JSON flag documentation also uses `background`. No mention of `run_in_background` anywhere in current docs.
   - **Recommendation:** "`background: true`"
 
-- **Claim:** "Нет" for Roo Code / Kilo Code (part4_subagents_hooks.md:304)
+- **Claim:** "Нет" for Kilo Code (part4_subagents_hooks.md:304)
   - **Status:** VERIFIED
-  - **Source:** https://docs.roocode.com/features/boomerang-tasks
-  - **Evidence:** Boomerang Tasks are explicitly sequential: "The parent task pauses, and the new subtask begins in a different, specialized mode. When the subtask's goal is achieved, Roo signals completion. The parent task resumes." No background, async, or concurrent task execution is documented. GitHub releases also contain no mention of a background execution feature.
+  - **Source:** https://kilo.ai/docs/code-with-ai/using-modes ; https://kilo.ai/docs/automate
+  - **Evidence:** Kilo Code docs describe only synchronous, interactive agent switching and delegation. The Automate section covers code reviews, MCP, shell integration, and an Agent Manager, but no background/async/detached agent execution mode is documented anywhere. The claim "Нет" is accurate.
   - **Recommendation:** —
 
 - **Claim:** "Нет" for OpenCode (part4_subagents_hooks.md:304)
@@ -135,9 +156,9 @@ This report (the parent) only contains verified claims for **Claude Code** and *
 
 - **Claim:** "Самая продвинутая модель субагентности — у Claude Code: полная изоляция через worktree, параллелизм и фоновый режим. Roo Code / Kilo Code берут удобством Orchestrator-паттерна и визуализацией в Kilo. OpenCode — минимальный, но достаточный подход для проектов, где нужны предустановленные профили без динамического порождения агентов." (part4_subagents_hooks.md:306)
   - **Status:** PARTIALLY VERIFIED
-  - **Source:** Composite — https://code.claude.com/docs/en/sub-agents (CC), https://opencode.ai/docs/agents (OpenCode)
-  - **Evidence:** The technical claims hold up against the per-row verification above — CC has worktree isolation (`isolation: worktree`), parallelism (multiple Agent calls / agent teams), background mode (`background: true`); OpenCode uses pre-defined config-driven profiles. The framing words ("самая продвинутая", "минимальный, но достаточный") are subjective but defensible as opinion.
-  - **Recommendation:** Rewrite to drop the Roo / Kilo sentence (Roo Code is being removed; Kilo Code framing belongs in the rewritten § 3.2). Suggested replacement: "Claude Code предлагает наиболее зрелую модель субагентности: изоляцию через worktree, параллельный запуск и фоновый режим. OpenCode идёт по пути предустановленных профилей — минимально, но достаточно для проектов, где субагенты не порождаются динамически. Kilo Code занимает середину — Boomerang-оркестратор и визуализация задач, но без worktree-изоляции и параллелизма."
+  - **Source:** Composite — https://code.claude.com/docs/en/sub-agents (CC), https://opencode.ai/docs/agents (OpenCode), https://kilo.ai/docs/code-with-ai/using-modes (Kilo)
+  - **Evidence:** Claude Code part holds (`isolation: worktree`, multiple Agent calls, `background: true`). OpenCode part holds (configuration-profile agents). The Kilo Code framing is OUTDATED: Orchestrator is deprecated, there is no documented Task Manager UI, and the "визуализация" argument no longer has a source. Kilo's current positioning is "agents with native subagent support" but without worktree isolation, parallelism, or background mode.
+  - **Recommendation:** Rewrite to drop Roo Code and reframe Kilo Code as a CLI/VSCode agent with delegation via deprecated Orchestrator. Suggested replacement: "Claude Code предлагает наиболее зрелую модель субагентности: изоляцию через worktree, параллельный запуск и фоновый режим. OpenCode идёт по пути предустановленных профилей — минимально, но достаточно для проектов, где субагенты не порождаются динамически. Kilo Code — промежуточный вариант: агенты `code` / `plan` / `ask` / `debug` с нативной поддержкой субагентов, но без worktree-изоляции, параллелизма и фонового режима."
 
 ## § 5 — Hooks
 
