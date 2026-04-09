@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107242055', 'ym');
+
+    ym(107242055, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/107242055" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<title>Workflow и наблюдаемость · Лекция 5</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/theme/black.min.css" id="theme">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/monokai.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #090707;
+  --card: #151110;
+  --card-soft: #1d1715;
+  --text: #f6efe4;
+  --muted: #c4ae94;
+  --line: #4a3c32;
+  --teal: #37d6c4;
+  --amber: #f6a44a;
+  --rose: #f6757f;
+  --green: #53d36f;
+  --red: #ff6a6a;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+.reveal {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(55, 214, 196, 0.12), transparent 36%),
+    radial-gradient(circle at 88% 8%, rgba(246, 164, 74, 0.18), transparent 32%),
+    radial-gradient(circle at 74% 84%, rgba(246, 117, 127, 0.12), transparent 36%),
+    linear-gradient(145deg, #0a0808 0%, #110f0d 50%, #0a0807 100%);
+}
+
+/* grain overlay */
+.reveal::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px;
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  font-family: "Unbounded", "Manrope", sans-serif;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 0.34em;
+}
+
+.reveal h1 {
+  font-size: 2.3em;
+  color: #fff7ea;
+}
+
+.reveal h2 {
+  font-size: 1.32em;
+  color: var(--teal);
+}
+
+.reveal h3 {
+  font-size: 0.95em;
+  color: #ffe9c8;
+}
+
+.reveal p,
+.reveal li {
+  font-size: 0.62em;
+  color: var(--muted);
+  line-height: 1.52;
+}
+
+.reveal strong {
+  color: #fff8ee;
+}
+
+.reveal em {
+  color: var(--teal);
+  font-style: normal;
+}
+
+.reveal a {
+  color: var(--teal);
+}
+
+.reveal pre {
+  width: 100%;
+  box-shadow: none;
+  margin: 0.3em 0;
+}
+
+.reveal pre code {
+  max-height: 440px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #0f0c0b;
+  padding: 0.9em;
+  font-size: 0.58em;
+  line-height: 1.48;
+}
+
+.reveal blockquote {
+  width: 100%;
+  margin: 0.35em 0;
+  padding: 0.45em 0.7em;
+  border-left: 4px solid var(--amber);
+  border-radius: 0 10px 10px 0;
+  background: rgba(246, 164, 74, 0.08);
+  box-shadow: -4px 0 20px -6px rgba(246, 164, 74, 0.18);
+}
+
+.reveal blockquote p {
+  margin: 0;
+  color: #e7d8c6;
+}
+
+.slide-shell,
+.chapter-shell {
+  min-height: 620px;
+  border: 1px solid rgba(255, 241, 224, 0.14);
+  border-radius: 22px;
+  padding: 22px 26px;
+  background:
+    linear-gradient(160deg, rgba(32, 24, 20, 0.78), rgba(17, 13, 11, 0.82));
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 48px rgba(0, 0, 0, 0.38);
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-shell::before,
+.chapter-shell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--teal), var(--amber), transparent);
+  opacity: 0.7;
+}
+
+.chapter-shell {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.4);
+  font-size: 0.42em;
+  letter-spacing: 0.08em;
+  color: #d8f9f3;
+  text-transform: uppercase;
+}
+
+.kicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 0 6px rgba(55, 214, 196, 0.2), 0 0 18px 4px rgba(55, 214, 196, 0.25);
+}
+
+.hero-title {
+  font-size: 3.05em;
+  margin: 0 0 0.24em;
+}
+
+.hero-sub {
+  font-size: 1.1em;
+  color: var(--teal);
+  margin: 0 0 0.32em;
+}
+
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.48em;
+  color: #e6d4bd;
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  transition: border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.pill:hover {
+  color: #fff6e7;
+  border-color: rgba(55, 214, 196, 0.48);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(55, 214, 196, 0.12);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.cards {
+  display: grid;
+  gap: 10px;
+}
+
+.cards.c2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.cards.c3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  border-radius: 14px;
+  padding: 10px 12px;
+  position: relative;
+  overflow: hidden;
+  --card-accent: var(--teal);
+  box-shadow: 0 -3px 16px -4px color-mix(in srgb, var(--card-accent) 18%, transparent);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 5%, var(--card-accent), transparent 95%);
+  opacity: 0.85;
+}
+
+.card:hover {
+  box-shadow: 0 -4px 24px -4px color-mix(in srgb, var(--card-accent) 28%, transparent);
+  transform: translateY(-1px);
+}
+
+.card p,
+.card li {
+  font-size: 0.56em;
+}
+
+.card h3 {
+  margin: 0 0 0.34em;
+  font-size: 0.78em;
+}
+
+.card ul {
+  margin: 0.2em 0 0;
+  padding-left: 1.1em;
+}
+
+.card.teal { --card-accent: var(--teal); }
+.card.amber { --card-accent: var(--amber); }
+.card.rose { --card-accent: var(--rose); }
+.card.green { --card-accent: var(--green); }
+.card.red { --card-accent: var(--red); }
+
+.section-title {
+  margin-bottom: 0.74em;
+}
+
+.note {
+  font-size: 0.5em;
+  color: #9f8d77;
+}
+
+.process {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.process-5 {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.step {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  text-align: center;
+}
+
+.step h4 {
+  margin: 0;
+  font-size: 0.6em;
+  color: var(--teal);
+}
+
+.step p {
+  margin: 0.2em 0 0;
+  font-size: 0.48em;
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  color: #9e8b75;
+  font-size: 1.1em;
+}
+
+.table-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table.mini {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.49em;
+}
+
+table.mini th,
+table.mini td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+table.mini th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--teal);
+}
+
+.intro-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.photo {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 7px;
+  background: #0d0a09;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.fallback {
+  display: none;
+  text-align: center;
+  color: #b8a189;
+  font-size: 0.54em;
+}
+
+.vs-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.vs-label {
+  text-align: center;
+  font-size: 0.52em;
+  font-weight: 700;
+  padding: 4px 0 6px;
+  border-radius: 8px 8px 0 0;
+}
+
+.vs-label.bad {
+  color: var(--red);
+  background: rgba(255, 106, 106, 0.08);
+}
+
+.vs-label.good {
+  color: var(--green);
+  background: rgba(83, 211, 111, 0.08);
+}
+
+.cta {
+  font-size: 0.66em;
+  color: #e8d8c2;
+}
+
+.layer-diagram {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  text-align: center;
+}
+
+.layer {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 14px 16px;
+  position: relative;
+}
+
+.layer h4 {
+  margin: 0;
+  font-size: 0.68em;
+}
+
+.layer p {
+  margin: 0.15em 0 0;
+  font-size: 0.48em;
+}
+
+.layer.l-agent {
+  background: rgba(55, 214, 196, 0.08);
+  border-color: rgba(55, 214, 196, 0.35);
+  border-radius: 12px 12px 0 0;
+}
+
+.layer.l-agent h4 { color: var(--teal); }
+
+.layer.l-tools {
+  background: rgba(246, 164, 74, 0.08);
+  border-color: rgba(246, 164, 74, 0.35);
+}
+
+.layer.l-tools h4 { color: var(--amber); }
+
+.layer.l-mcp {
+  background: rgba(246, 117, 127, 0.08);
+  border-color: rgba(246, 117, 127, 0.35);
+}
+
+.layer.l-mcp h4 { color: var(--rose); }
+
+.layer.l-world {
+  background: rgba(83, 211, 111, 0.08);
+  border-color: rgba(83, 211, 111, 0.35);
+  border-radius: 0 0 12px 12px;
+}
+
+.layer.l-world h4 { color: var(--green); }
+
+.layer-arrow {
+  text-align: center;
+  color: #9e8b75;
+  font-size: 0.7em;
+  padding: 2px 0;
+}
+
+.promo-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.promo-photo-box,
+.promo-qr-box {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  padding: 12px;
+}
+
+.promo-photo-box {
+  display: grid;
+  align-items: stretch;
+}
+
+.promo-photo-box img {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.promo-qr-box {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.promo-qr-box h3 {
+  margin: 0;
+}
+
+.promo-qr-box img {
+  width: min(320px, 100%);
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #fff;
+  padding: 8px;
+}
+
+.promo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.55);
+  color: #f5eee4;
+  text-decoration: none;
+  font-size: 0.56em;
+}
+
+.promo-link:hover {
+  border-color: rgba(246, 164, 74, 0.7);
+}
+
+.back-home {
+  position: fixed;
+  top: 12px;
+  left: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  text-decoration: none;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(14, 11, 10, 0.65);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  color: rgba(248, 240, 228, 0.85);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.back-home:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgb(248, 240, 228);
+}
+
+.open-notes {
+  position: fixed;
+  top: 44px;
+  left: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  text-decoration: none;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(14, 11, 10, 0.65);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  color: rgba(248, 240, 228, 0.85);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.open-notes:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgb(248, 240, 228);
+}
+
+@media (max-width: 1100px) {
+  .grid-2,
+  .grid-3,
+  .cards.c2,
+  .cards.c3,
+  .vs-layout,
+  .promo-layout,
+  .intro-layout,
+  .process,
+  .process-5 {
+    grid-template-columns: 1fr;
+  }
+
+  .process .arrow,
+  .process-5 .arrow {
+    display: none;
+  }
+
+  .slide-shell,
+  .chapter-shell {
+    min-height: auto;
+  }
+}
+/* --- Fragment toggle mode --- */
+.no-fragments .fragment {
+  opacity: 1 !important;
+  visibility: inherit !important;
+}
+.mode-toggle {
+  position: fixed;
+  bottom: 12px;
+  left: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-size: 0.65rem;
+  color: rgba(248,240,228,0.5);
+  background: rgba(9,7,7,0.6);
+  border: 1px solid rgba(248,240,228,0.1);
+  border-radius: 999px;
+  padding: 4px 12px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.mode-toggle:hover {
+  border-color: rgba(55,214,196,0.5);
+  color: rgba(248,240,228,0.8);
+}
+</style>
+</head>
+<body>
+<a class="back-home" href="../../">← На главную</a>
+<a class="open-notes" href="../../reading/?part=part5_workflow_observability">📖 Материалы</a>
+<div class="reveal">
+<div class="slides">
+
+<!-- ==================== TITLE ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">AI Engineering Course</span>
+    <h1 class="hero-title">Workflow и наблюдаемость</h1>
+    <p class="hero-sub">Лекция 5</p>
+    <div class="meta-row">
+      <span class="pill">Фокус: дисциплина и анализ работы агента</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== СОДЕРЖАНИЕ ==================== -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Содержание</h2>
+    <div class="cards c3">
+      <div class="card teal fragment"><h3>1. Зачем процесс и наблюдение</h3><p>Ловушки доверия</p></div>
+      <div class="card amber fragment"><h3>2. Столп 1 · Дисциплина</h3><p>Spec, plan, TDD, verification, готовые наборы</p></div>
+      <div class="card rose fragment"><h3>3. Столп 2 · Наблюдаемость</h3><p>Loop, трейсы, ревью, CI</p></div>
+      <div class="card green fragment"><h3>4. Поддержка в инструментах</h3><p>Claude Code, Roo, Kilo, OpenCode</p></div>
+      <div class="card amber fragment"><h3>5. Подводные камни</h3><p>6 типичных ловушек</p></div>
+      <div class="card teal fragment"><h3>6. Итоги и практика</h3><p>Чеклист и задания</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 1: ЗАЧЕМ ПРОЦЕСС И НАБЛЮДЕНИЕ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 1</span>
+    <h2 class="hero-title">Зачем процесс и наблюдение</h2>
+    <p class="hero-sub">Инструментария из лекций 1-4 достаточно, чтобы агент <em>мог</em>. Недостаточно — чтобы делал <em>правильно</em>.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Знакомая история</h2>
+    <div class="card amber">
+      <h3>Дал задачу агенту...</h3>
+      <p>Он подумал, поправил несколько файлов, написал «всё готово, тесты проходят». Закоммитил. Через день — открыл код и увидел: тесты, оказывается, никто не запускал; один из файлов агент даже не открыл; в другом — лишний <code>try/except</code>, который маскирует баг.</p>
+      <p style="margin-top:0.8em"><strong>Это симптом отсутствующего процесса. Лечится структурой работы, а не промптом.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Две ловушки доверия</h2>
+    <div class="cards c2">
+      <div class="card rose fragment">
+        <h3>Ложная продуктивность</h3>
+        <p>Агент пишет много, но не то. Симптом: «ещё чуть-чуть, и готово». Корень: нет проверяемых критериев — агент сам додумывает scope и каждый раз додумывает иначе.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Ложное «готово»</h3>
+        <p>Уверенные слова без доказательств. Нет запуска тестов, нет вывода линта, нет сборки. Корень: LLM оптимизирована быть <strong>уверенной</strong>, а не <strong>верной</strong>. Заявление «готово» — естественный завершающий ход, а не результат проверки.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Карта лекции</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Столп 1 · Дисциплина</h3>
+        <p>Каждая задача проходит через читаемые артефакты: спека, план, тесты, итог. Чекпоинты, в которых можно остановиться, прочитать и одобрить — или развернуть.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Столп 2 · Наблюдаемость</h3>
+        <p>Видеть, что реально сделал агент: какие tools вызывал, в каком порядке, с каким результатом. Читать трейс и диф. CI как финальный фильтр.</p>
+      </div>
+    </div>
+    <p class="fragment" style="margin-top:1em;text-align:center"><strong>Дисциплина создаёт правила. Наблюдаемость проверяет, что правила выполнены.</strong></p>
+  </div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 2: СТОЛП 1 · ДИСЦИПЛИНА ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 2</span>
+    <h2 class="hero-title">Столп 1 · Дисциплина процесса</h2>
+    <p class="hero-sub">Каждая задача проходит через читаемые артефакты.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Цикл одной задачи</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr>
+            <th>Шаг</th>
+            <th>Артефакт</th>
+            <th>Что проверяем</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="fragment"><td><strong>Brainstorm</strong></td><td>набор уточнений и ответов</td><td>Понял ли агент намерение</td></tr>
+          <tr class="fragment"><td><strong>Spec</strong></td><td><code>specs/&lt;date&gt;-&lt;topic&gt;.md</code></td><td>Согласны ли с тем, что делаем</td></tr>
+          <tr class="fragment"><td><strong>Plan</strong></td><td><code>plans/&lt;date&gt;-&lt;topic&gt;.md</code></td><td>Согласны ли с тем, как делаем</td></tr>
+          <tr class="fragment"><td><strong>Implement</strong></td><td>код + тесты + коммиты</td><td>Соответствует ли плану</td></tr>
+          <tr class="fragment"><td><strong>Review</strong></td><td>отчёт / диф</td><td>Что сломалось, что пропущено</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fragment note" style="margin-top:0.8em">Артефакты <strong>должны существовать на диске</strong> — не «в чате», не «в голове агента». Файл, переживший перезапуск сессии — единственный надёжный носитель решения.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Spec-first: чтобы агент не «дорисовал»</h2>
+    <div class="grid-2">
+      <div>
+        <h3>Чеклист спеки</h3>
+        <ul>
+          <li class="fragment"><strong>Цель</strong> — одно предложение, что мы решаем</li>
+          <li class="fragment"><strong>Критерии приёмки</strong> — проверяемые утверждения, не общие слова</li>
+          <li class="fragment"><strong>Out-of-scope</strong> — что <em>не</em> делаем (явный список)</li>
+          <li class="fragment"><strong>Ограничения</strong> — производительность, совместимость, зависимости</li>
+        </ul>
+      </div>
+      <div class="fragment">
+        <div class="card red" style="margin-bottom:8px">
+          <h3>Анти-паттерн</h3>
+          <p>«добавь валидацию форм» → агент обвешает всё, что похоже на форму. Результат: 50 проверок, половина не нужна, половина не работает.</p>
+        </div>
+        <div class="card green">
+          <h3>Лучше</h3>
+          <p>«Валидация поля email и пароля на форме <code>/login</code>. Критерии: email — RFC 5322; пароль — минимум 8 символов и одна цифра. Не трогаем форму регистрации.»</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Plan-first: разбиение перед кодом</h2>
+    <p><strong>План = последовательность маленьких проверяемых шагов</strong></p>
+    <div class="card teal" style="margin-top:0.6em">
+      <h3>Пример: «добавить кэширование результатов API»</h3>
+      <ol style="margin:0.3em 0 0;padding-left:1.2em;font-size:0.56em;color:var(--muted);line-height:1.6">
+        <li class="fragment">Написать тест: повторный вызов с тем же аргументом не идёт в сеть</li>
+        <li class="fragment">Запустить тест → <strong>красный</strong></li>
+        <li class="fragment">Добавить in-memory словарь в модуль <code>api_client</code></li>
+        <li class="fragment">Обернуть <code>fetch_user(id)</code> в lookup по словарю</li>
+        <li class="fragment">Запустить тест → <strong>зелёный</strong></li>
+        <li class="fragment">Добавить тест на TTL: после <code>time.sleep(ttl+1)</code> повторный вызов снова идёт в сеть</li>
+        <li class="fragment">Реализовать TTL через timestamp в значении словаря</li>
+        <li class="fragment">Запустить оба теста → зелёные</li>
+        <li class="fragment">Коммит</li>
+      </ol>
+    </div>
+    <p class="fragment note" style="margin-top:0.6em">Девять шагов вместо одного «сделай кэширование». Каждый шаг занимает минуты и оставляет проверяемое состояние.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">TDD с агентом</h2>
+    <div class="cards c3">
+      <div class="card rose fragment">
+        <h3>Red</h3>
+        <p>Агент пишет тест. Тест <strong>падает</strong> в реальном выводе инструмента.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>Green</h3>
+        <p>Агент пишет минимальный код. Тест <strong>проходит</strong>. Вывод видно в трейсе.</p>
+      </div>
+      <div class="card teal fragment">
+        <h3>Refactor</h3>
+        <p>Чистим код. Тесты остаются зелёными.</p>
+      </div>
+    </div>
+    <blockquote class="fragment" style="margin-top:0.8em"><p><strong>Красная фаза должна быть в выводе.</strong> Тест «всегда зелёный с первого запуска» → подогнан под код, фальшивый TDD. Test-функции, которые проверяют «что код вернул то, что код вернул» — признак подгонки.</p></blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Verification before completion</h2>
+    <blockquote><p><strong>Нет вывода — нет готово.</strong> Прежде чем сказать «готово», агент должен показать доказательства: вывод тестов, линта, билда. Текстом, из реального вывода tool'а.</p></blockquote>
+    <p style="margin-top:0.8em"><strong>Машинная реализация правила:</strong></p>
+    <ul>
+      <li class="fragment"><strong>Claude Code:</strong> <code>Stop</code> / <code>PostToolUse</code> hooks — проверяет наличие свежего зелёного build-log'а; если нет — блокирует завершение</li>
+      <li class="fragment"><strong>OpenCode:</strong> плагин на событие <code>session.idle</code>, требует артефакт перед закрытием</li>
+      <li class="fragment"><strong>Roo / Kilo:</strong> custom MCP tool <code>verify_completion</code>, который агент обязан вызывать</li>
+    </ul>
+    <p class="fragment note" style="margin-top:0.6em">Дисциплина не должна держаться только на доброй воле модели — она поддерживается инфраструктурой инструмента.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Mini-case: до и после дисциплины</h2>
+    <div class="cards c2">
+      <div class="card rose fragment">
+        <h3>Без дисциплины</h3>
+        <p>Задача: «отрефактори обработчик загрузки файлов, чтобы не падал на больших». Одна итерация, агент переписал функцию, добавил streaming, сказал «готово».</p>
+        <p style="margin-top:0.5em">Через день: тестов на эту функцию не было. Streaming реализован неправильно. Большие файлы продолжают падать.</p>
+      </div>
+      <div class="card teal fragment">
+        <h3>С дисциплиной</h3>
+        <p><strong>Brainstorm →</strong> «Что значит "большие"? Файлы &gt; 100MB. OOM при 50MB.»</p>
+        <p><strong>Spec →</strong> Цель: не падать до 1GB. Критерии: 500MB за &lt; 60s без OOM.</p>
+        <p><strong>Plan →</strong> 6 шагов. Сначала failing test с моком на streaming.</p>
+        <p><strong>Implement →</strong> TDD-цикл по плану. Каждый шаг — коммит.</p>
+        <p><strong>Review →</strong> Проверка на реальном файле 500MB.</p>
+      </div>
+    </div>
+    <p class="fragment" style="margin-top:0.8em;text-align:center"><strong>Одинаковые токены. Разный результат.</strong></p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Готовые наборы скиллов</h2>
+    <div class="grid-2">
+      <div>
+        <h3><code>superpowers</code> — open-source плагин</h3>
+        <ul>
+          <li><code>brainstorming</code> → спека до кода</li>
+          <li><code>writing-plans</code> → bite-sized шаги</li>
+          <li><code>test-driven-development</code> → красная фаза в выводе</li>
+          <li><code>verification-before-completion</code> → нет вывода — нет готово</li>
+          <li><code>subagent-driven-development</code> → делегирование + ревью</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Поддерживаемые инструменты</h3>
+        <ul>
+          <li><strong>Claude Code</strong> — marketplace</li>
+          <li><strong>Cursor</strong> — marketplace</li>
+          <li><strong>OpenCode</strong> — строка в <code>opencode.json</code></li>
+          <li><strong>Codex / Gemini CLI</strong> — ручной install</li>
+          <li><strong>Roo / Kilo</strong> — нет пакета, собирай сам через <code>.roomodes</code></li>
+        </ul>
+        <p style="margin-top: 0.8em;"><em>AGENTS.md</em> — tool-agnostic базис для смешанных команд.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: "c/t",
+  width: 1360,
+  height: 768,
+  margin: 0.05,
+  transition: "slide",
+  backgroundTransition: "fade",
+  transitionSpeed: "fast",
+  plugins: [RevealHighlight, RevealNotes]
+}).then(function() {
+  var noFrag = !new URLSearchParams(location.search).has('fragments');
+  var btn = document.createElement('button');
+  btn.className = 'mode-toggle';
+  document.body.appendChild(btn);
+  function setMode(off) {
+    noFrag = off;
+    Reveal.configure({ fragments: !off });
+    document.body.classList.toggle('no-fragments', off);
+    btn.textContent = off ? 'A: анимации выкл' : 'A: анимации вкл';
+    var url = new URL(location);
+    if (!off) url.searchParams.set('fragments', '');
+    else url.searchParams.delete('fragments');
+    history.replaceState(null, '', url);
+  }
+  setMode(noFrag);
+  document.addEventListener('keydown', function(e) {
+    if ((e.key==='a'||e.key==='A'||e.key==='ф'||e.key==='Ф') && !e.ctrlKey && !e.metaKey && !e.altKey) setMode(!noFrag);
+  });
+  btn.addEventListener('click', function() { setMode(!noFrag); });
+});
+</script>
+</body>
+</html>
