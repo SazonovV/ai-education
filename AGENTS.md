@@ -36,6 +36,19 @@ The top bar shows only two buttons:
 3. Create `/presentations/partN/index.html`
 4. Add card to `/index.html`
 
+## Linguistic rules for Russian content
+
+All conspects and slides are in Russian. After writing or editing text, verify there are no direct calques from English. Common violations:
+
+- **Untranslated English nouns/phrases** in Russian sentences: `evidence`, `ongoing tool calls`, `bite-sized`, `per step`. Translate or adapt.
+- **Literal translation of idioms**: `срезы углов` (cut corners) → `упрощения`; `минимальный пол` (minimum floor) → `базовый минимум`; `первый класс` (first-class) → `полноценная поддержка`.
+- **Hybrid words with English roots + Russian suffixes** that sound unnatural: `хэндофф-артефакты` → `артефакты передачи контекста`; `правило sizing'а` → `правило оценки масштаба`.
+- **Slide titles entirely in English** without Russian adaptation: `Verification before completion` → `Проверка перед завершением`.
+
+Acceptable English in Russian text: established tech terms (`hooks`, `pipeline`, `CI/CD`, `TDD`, `spec`, `plan`, `scope`, `workaround`, tool names, code identifiers).
+
+**Rule of thumb:** if a native Russian speaker would pause and mentally translate the phrase, rewrite it.
+
 ## Tech stack
 
 - Pure HTML/CSS/JS, no build system
