@@ -133,7 +133,11 @@ This report (the parent) only contains verified claims for **Claude Code** and *
 
 ### Post-table paragraph
 
-<entry to be filled in Task 8>
+- **Claim:** "Самая продвинутая модель субагентности — у Claude Code: полная изоляция через worktree, параллелизм и фоновый режим. Roo Code / Kilo Code берут удобством Orchestrator-паттерна и визуализацией в Kilo. OpenCode — минимальный, но достаточный подход для проектов, где нужны предустановленные профили без динамического порождения агентов." (part4_subagents_hooks.md:306)
+  - **Status:** PARTIALLY VERIFIED
+  - **Source:** Composite — https://code.claude.com/docs/en/sub-agents (CC), https://opencode.ai/docs/agents (OpenCode)
+  - **Evidence:** The technical claims hold up against the per-row verification above — CC has worktree isolation (`isolation: worktree`), parallelism (multiple Agent calls / agent teams), background mode (`background: true`); OpenCode uses pre-defined config-driven profiles. The framing words ("самая продвинутая", "минимальный, но достаточный") are subjective but defensible as opinion.
+  - **Recommendation:** Rewrite to drop the Roo / Kilo sentence (Roo Code is being removed; Kilo Code framing belongs in the rewritten § 3.2). Suggested replacement: "Claude Code предлагает наиболее зрелую модель субагентности: изоляцию через worktree, параллельный запуск и фоновый режим. OpenCode идёт по пути предустановленных профилей — минимально, но достаточно для проектов, где субагенты не порождаются динамически. Kilo Code занимает середину — Boomerang-оркестратор и визуализация задач, но без worktree-изоляции и параллелизма."
 
 ## § 5 — Hooks
 
