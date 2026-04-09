@@ -297,9 +297,53 @@ This divergence means almost every Kilo-specific claim in the lecture is **OUTDA
   - **Evidence:** The npm loading mechanism via `"plugin": ["package-name"]` in `opencode.json` is confirmed. Source code scans `{plugin,plugins}/*.{ts,js}` within each `.opencode/` config directory — both `.opencode/plugin/` and `.opencode/plugins/` (plural) work. The lecture's `.opencode/plugins/` is correct.
   - **Recommendation:** —
 
-### § 5.5 Roo Code / Kilo Code — emulation
+### § 5.5 Kilo Code — emulation (formerly "Roo Code / Kilo Code")
 
-<entries to be filled in Task 12>
+- **Claim:** "Roo Code и Kilo Code **не имеют нативных hooks**. Единственный путь — эмуляция через комбинацию кастомного MCP-инструмента и строгих правил в инструкциях режима." (part4_subagents_hooks.md:531)
+  - **Status:** VERIFIED (for Kilo Code only, Roo Code is being dropped)
+  - **Source:** https://kilo.ai/docs ; https://kilo.ai/docs/automate
+  - **Evidence:** Kilo Code documentation does not contain a hooks page or any event-trigger mechanism. The Automate section covers code reviews, MCP, shell integration, and agent manager — but nothing comparable to Claude Code's lifecycle hooks or OpenCode's plugin hook points. The "no native hooks → emulate via custom MCP tool + rules" framing remains correct.
+  - **Recommendation:** Rewrite "Roo Code и Kilo Code" → "Kilo Code". Drop the "inherited from Roo" framing since Kilo has diverged.
+
+- **Claim:** "Шаг 1. MCP-инструмент `lint_check`" — TypeScript snippet using `node:child_process` exec to run `npm run lint` (part4_subagents_hooks.md:535-555)
+  - **Status:** VERIFIED
+  - **Source:** MCP specification — https://modelcontextprotocol.io/specification (tool handler shape is standardized across all MCP clients, including Kilo Code)
+  - **Evidence:** MCP is a standardized protocol — tool handlers of this shape (accept input object, return text/structured result) work with any MCP client. Kilo Code supports MCP per its Automate / Extending Kilo docs. The snippet is a valid MCP tool pattern regardless of the specific client.
+  - **Recommendation:** —
+
+- **Claim:** "Шаг 2. Правило в `.roo/rules-code/lint-before-write.md`" (part4_subagents_hooks.md:557)
+  - **Status:** OUTDATED
+  - **Source:** https://kilo.ai/docs/customize/custom-modes
+  - **Evidence:** Kilo Code has diverged from Roo's `.roo/` directory layout. The current canonical locations for agent-scoped rules are `.kilocodemodes` (for mode-level `customInstructions`) or `.kilo/agents/<name>.md` (for the newer Markdown agent format, where per-agent guidance is part of the Markdown body). A `.roo/rules-code/` path is a Roo Code artifact and will not be picked up by Kilo Code.
+  - **Recommendation:** Replace `.roo/rules-code/lint-before-write.md` with one of: (a) a `customInstructions` entry inside `.kilocodemodes` on the `safe-code` agent, or (b) the body of `.kilo/agents/safe-code.md` if using the Markdown format. Recommended (b) since it mirrors Claude Code's `.claude/agents/*.md` shape.
+
+- **Claim:** "Шаг 3. Конфиг режима в `.roomodes`" — JSON snippet with `customModes` array and `groups: ["read", ["edit", { "fileRegex": "..." }], "command", "mcp"]` (part4_subagents_hooks.md:570-582)
+  - **Status:** OUTDATED
+  - **Source:** https://kilo.ai/docs/customize/custom-modes
+  - **Evidence:** Three separate outdated pieces in this snippet:
+    1. File name `.roomodes` → in Kilo Code it is `.kilocodemodes` (or `.kilo/agents/<name>.md`).
+    2. Format JSON → YAML is now preferred (JSON kept for back-compat, so the snippet still parses, but it is no longer the idiomatic form).
+    3. `groups` values `["read", ["edit", { "fileRegex": "..." }], "command", "mcp"]` — the nested `["edit", { "fileRegex": ... }]` tuple form is still supported per current docs ("First element of tuple… Second element is the options object"). But `"command"` and `"mcp"` are **not** among the currently-documented group values. The documented set is `read`, `edit`, `bash`, `glob`, `grep`, `list`, `task`, `webfetch`, `websearch`, `codesearch`, `todowrite`, `todoread`, and similar Claude Code-style tool names. To get shell-command execution, use `bash` instead of `command`. There is no longer a separate `mcp` group — MCP tool access is governed elsewhere.
+  - **Recommendation:** Rewrite the snippet as YAML targeting `.kilocodemodes`:
+    ```yaml
+    customModes:
+      - slug: safe-code
+        name: Safe Code
+        roleDefinition: Developer with mandatory lint checks before edits
+        groups:
+          - read
+          - - edit
+            - fileRegex: \.(ts|tsx|js|jsx)$
+          - bash
+        customInstructions: Always call lint_check before any file modification.
+    ```
+    Or switch to the newer `.kilo/agents/safe-code.md` Markdown format entirely.
+
+- **Claim:** "Это **не гарантия**. Модель *может* пропустить проверку — особенно при сложных задачах или длинном контексте. На практике, если правило повторяется в нескольких местах (rules + customInstructions + roleDefinition), модель следует ему стабильно. Но для критичных сценариев (безопасность, деплой) полагаться на эмуляцию недостаточно." (part4_subagents_hooks.md:584)
+  - **Status:** VERIFIED
+  - **Source:** General reasoning from the "no native hooks → model-driven enforcement → non-guaranteed" chain; no Kilo-specific docs contradict this.
+  - **Evidence:** With no host-level enforcement mechanism, anything enforced via prompt/rule/customInstructions relies on the model's compliance, which is probabilistic. The lecture's caveat is correct.
+  - **Recommendation:** —
 
 ### § 5.6 Hooks comparison table
 
