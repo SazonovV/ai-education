@@ -933,6 +933,228 @@ table.mini th {
   </div>
 </section>
 
+<!-- ==================== РАЗДЕЛ 3: СТОЛП 2 · НАБЛЮДАЕМОСТЬ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 3</span>
+    <h2 class="hero-title">Столп 2 · Наблюдаемость</h2>
+    <p class="hero-sub">Видеть, что реально сделал агент. Читать трейс и диф. CI как финальный фильтр.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Что такое agent loop и зачем его читать</h2>
+    <div class="card teal" style="margin-bottom:0.7em">
+      <h3>Цикл агента</h3>
+      <div class="process">
+        <div class="step"><h4>think</h4></div>
+        <div class="arrow">→</div>
+        <div class="step"><h4>tool call</h4></div>
+        <div class="arrow">→</div>
+        <div class="step"><h4>observe</h4></div>
+        <div class="arrow">→</div>
+        <div class="step"><h4>think…</h4></div>
+      </div>
+      <p style="margin-top:0.5em">В нормальной работе loop спрятан за UI. Когда что-то идёт не так — нужно раскатать его как лог и прочитать глазами.</p>
+    </div>
+    <div class="cards c3">
+      <div class="card fragment">
+        <h3>Live</h3>
+        <p>Текущее сообщение агента, ongoing tool calls, их вывод. Для остановки в реальном времени.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Session history</h3>
+        <p>Последняя сессия целиком. Открываешь после завершения и проходишь по шагам.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Длинная история</h3>
+        <p>Предыдущие сессии, пересечения между ними, эволюция решений. Для аудита и повторяющихся проблем.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Что искать в трейсе (чеклист)</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Tool calls</h3>
+        <p>Правильные ли инструменты, в правильном ли порядке, с правильными ли аргументами? Часто: агент вызвал <code>Read</code> с offset, который пропустил нужный фрагмент.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Повторения и зацикливания</h3>
+        <p>Одно и то же действие дважды — почти всегда симптом. Либо зацикливание (A→B→A), либо потерянный контекст.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Молчаливые срезы углов</h3>
+        <p>Ожидал чтение всего файла — агент прочитал 50 строк. Ожидал все тесты — запущен один. Видны только в трейсе.</p>
+      </div>
+      <div class="card fragment">
+        <h3>Признаки путаницы</h3>
+        <p>Агент говорит про файл X, правит Y. Ссылается на несуществующую функцию. Имя класса меняется от шага к шагу.</p>
+      </div>
+      <div class="card green fragment" style="grid-column: 1 / -1">
+        <h3>Token-spikes</h3>
+        <p>Резкий рост потребления токенов в одной секции — агент зашёл в болото, контекст забит мусором.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Инструменты наблюдаемости</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Claude Code</h3>
+        <ul>
+          <li><code>/statusline</code> и кастомные скрипты — индикатор состояния</li>
+          <li><code>hooks</code> (<code>PreToolUse</code> / <code>PostToolUse</code>) → лог каждого вызова в jsonl</li>
+          <li>Session history в <code>~/.claude/projects/</code> — plain jsonl, читается грепом</li>
+          <li><code>output-styles</code> для кастомного отображения</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Kilo Code</h3>
+        <ul>
+          <li>История агентов (code/plan/ask/debug) — VS Code panel</li>
+          <li>Логи через VS Code output panel</li>
+          <li>Нативных hook-based трассировок нет</li>
+          <li>Обходной путь: MCP tool, пишущий аргументы и результаты в лог-файл</li>
+        </ul>
+      </div>
+      <div class="card rose fragment">
+        <h3>OpenCode</h3>
+        <ul>
+          <li>Плагины с событиями <code>tool.execute.before</code> / <code>tool.execute.after</code></li>
+          <li>Пишем свой логгер на TypeScript</li>
+          <li>Session state доступен программно через SDK</li>
+        </ul>
+      </div>
+      <div class="card green fragment">
+        <h3>Внешние платформы</h3>
+        <ul>
+          <li><strong>Langfuse</strong> / <strong>LangSmith</strong> — трейсы централизованно поверх API</li>
+          <li>Полноценный дашборд по проекту и команде</li>
+          <li>Командная аналитика: токены, типичные ошибки</li>
+        </ul>
+      </div>
+    </div>
+    <p class="fragment note" style="margin-top:0.6em">Минимальный пол наблюдаемости: <strong>завести лог-файл tool calls</strong>. Без него остальные практики слепые.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Критическое ревью диффа</h2>
+    <p style="margin-bottom:0.6em">Ревью кода агента ≠ обычное ревью. Свои риски.</p>
+    <div class="cards c2">
+      <div class="card rose fragment">
+        <h3>Лишнее</h3>
+        <p>Дорисовки «на будущее»: лишние аргументы, fallback'и для невозможных случаев, <code>try/except: pass</code> «на всякий случай».</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Хардкод</h3>
+        <p>Магические числа, строки вроде <code>"example.com"</code> или <code>"test-user"</code>, которые выглядят «для примера», но остались в коммите.</p>
+      </div>
+      <div class="card fragment">
+        <h3>Мёртвый код</h3>
+        <p>Неиспользуемые импорты, закомментированные блоки «на случай отката», переменные, которые присваиваются, но не читаются.</p>
+      </div>
+      <div class="card red fragment">
+        <h3>Ложное «готово»</h3>
+        <p>Тесты помечены <code>@skip</code> / <code>xfail</code>. <code>assert True</code> вместо проверки. «Тесты обновлены» без объяснения, почему поведение изменилось.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Туманные коммит-сообщения</h3>
+        <p>«fix stuff», «improvements», «update» — сигнал, что агент сам не понимает, что сделал.</p>
+      </div>
+      <div class="card teal fragment">
+        <h3>Регрессии</h3>
+        <p>Агент «починил» одно и сломал соседнее. Запусти полный тестран <strong>сам</strong> — не доверяй фразе «все тесты проходят».</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">CI/CD как независимый верификатор</h2>
+    <blockquote class="fragment"><p><strong>Не доверяй success-сообщениям агента — доверяй зелёному pipeline'у на отдельной машине.</strong> Локально агент может «забыть» запустить часть тестов, использовать кешированный билд. CI этого не умеет.</p></blockquote>
+    <div class="cards c2" style="margin-top:0.6em">
+      <div class="card teal fragment">
+        <h3>Что должно быть в pipeline</h3>
+        <ul>
+          <li><strong>Полный test run</strong> — не выборочный</li>
+          <li><strong>Lint и type-check</strong> — отдельной стадией</li>
+          <li><strong>Build / type-check без эмита</strong> — <code>tsc --noEmit</code>, <code>mypy</code>, <code>cargo check</code></li>
+          <li><strong>Diff-coverage</strong> — упал ли coverage на новых строках?</li>
+        </ul>
+      </div>
+      <div class="card amber fragment">
+        <h3>Принцип двух наблюдателей</h3>
+        <p>Агент и CI — независимы. Агент может убедить себя (и тебя), что всё работает. CI запускает реальные тесты в чистом окружении.</p>
+        <p style="margin-top:0.5em">Verification-before-completion — локально, для скорости. CI — глобально, для финальной гарантии. Они <strong>не заменяют</strong> друг друга.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">CI: защита от анти-паттернов</h2>
+    <div class="cards c3">
+      <div class="card red fragment">
+        <h3>Запретить <code>--no-verify</code></h3>
+        <p>Server-side hook или branch protection. Агент обходит упавшие хуки именно этим флагом — в момент, когда сдаётся.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Skipped тесты — отдельный шаг</h3>
+        <p>Pipeline падает, если в diff появились новые <code>skip</code> / <code>xfail</code> / <code>it.skip</code>. Без этого «зелёный CI» получают, выключая тест.</p>
+      </div>
+      <div class="card teal fragment">
+        <h3>Branch protection как контракт</h3>
+        <p>Merge только при зелёном CI — даже у тебя как автора. <strong>Если CI упал — это факт, а не «флаки». Сначала разбираемся, потом ругаем CI.</strong></p>
+      </div>
+    </div>
+    <blockquote class="fragment" style="margin-top:0.8em"><p><strong>Анти-паттерн:</strong> агент работает в worktree, локально зелёное, прямой push в <code>master</code>. Через час кто-то клонирует — ничего не работает: забытая зависимость, кэш, переменная окружения. CI поймал бы сразу.</p></blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Mini-case: чтение реального трейса</h2>
+    <pre><code class="language-text">[14:02:11] tool: Read("src/auth/jwt.py", limit=50)
+[14:02:11] tool result: &lt;первые 50 строк&gt;
+[14:02:14] message: "Я вижу функцию verify_token. Изменю её, чтобы..."
+[14:02:18] tool: Edit("src/auth/jwt.py", old="def verify_token...", new="def verify_token...")
+[14:02:18] tool result: edit failed — old_string not unique
+[14:02:21] tool: Edit("src/auth/jwt.py", old="def verify_token", new="def verify_token") (с другим контекстом)
+[14:02:21] tool result: ok
+[14:02:25] message: "Готово, функция исправлена"</code></pre>
+    <div class="cards c2" style="margin-top:0.5em">
+      <div class="card rose fragment">
+        <h3>Шаг 1: Read(limit=50)</h3>
+        <p>Файл из 200 строк. Агент мог не увидеть второго определения <code>verify_token</code> ниже.</p>
+      </div>
+      <div class="card red fragment">
+        <h3>Шаг 4: Edit failed — old_string not unique</h3>
+        <p>Точка невозврата. Сигнал: «в файле есть похожий блок, я его не учёл». Надо остановиться и перечитать файл целиком.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Шаг 5: подбор контекста</h3>
+        <p>Вместо перечитывания — агент подобрал новый контекст для обхода. Мог попасть не в ту функцию.</p>
+      </div>
+      <div class="card fragment">
+        <h3>Шаг 6: «Готово» без verification</h3>
+        <p>Где запуск тестов? Где доказательства? «Готово» — завершающий ход, а не результат проверки.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
