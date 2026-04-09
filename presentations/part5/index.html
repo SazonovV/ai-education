@@ -704,7 +704,7 @@ table.mini th {
       <div class="card teal fragment"><h3>1. Зачем процесс и наблюдение</h3><p>Ловушки доверия</p></div>
       <div class="card amber fragment"><h3>2. Столп 1 · Дисциплина</h3><p>Spec, plan, TDD, verification, готовые наборы</p></div>
       <div class="card rose fragment"><h3>3. Столп 2 · Наблюдаемость</h3><p>Loop, трейсы, ревью, CI</p></div>
-      <div class="card green fragment"><h3>4. Поддержка в инструментах</h3><p>Claude Code, Roo, Kilo, OpenCode</p></div>
+      <div class="card green fragment"><h3>4. Поддержка в инструментах</h3><p>Claude Code, Kilo, OpenCode</p></div>
       <div class="card amber fragment"><h3>5. Подводные камни</h3><p>6 типичных ловушек</p></div>
       <div class="card teal fragment"><h3>6. Итоги и практика</h3><p>Чеклист и задания</p></div>
     </div>
@@ -876,7 +876,7 @@ table.mini th {
     <ul>
       <li class="fragment"><strong>Claude Code:</strong> <code>Stop</code> / <code>PostToolUse</code> hooks — проверяет наличие свежего зелёного build-log'а; если нет — блокирует завершение</li>
       <li class="fragment"><strong>OpenCode:</strong> плагин на событие <code>session.idle</code>, требует артефакт перед закрытием</li>
-      <li class="fragment"><strong>Roo / Kilo:</strong> custom MCP tool <code>verify_completion</code>, который агент обязан вызывать</li>
+      <li class="fragment"><strong>Kilo Code:</strong> custom MCP tool <code>verify_completion</code>, который агент обязан вызывать</li>
     </ul>
     <p class="fragment note" style="margin-top:0.6em">Дисциплина не должна держаться только на доброй воле модели — она поддерживается инфраструктурой инструмента.</p>
   </div>
@@ -925,7 +925,7 @@ table.mini th {
           <li><strong>Cursor</strong> — marketplace</li>
           <li><strong>OpenCode</strong> — строка в <code>opencode.json</code></li>
           <li><strong>Codex / Gemini CLI</strong> — ручной install</li>
-          <li><strong>Roo / Kilo</strong> — нет пакета, собирай сам через <code>.roomodes</code></li>
+          <li><strong>Kilo Code</strong> — нет пакета, собирай сам через <code>.kilocodemodes</code> или <code>.kilo/agents/</code></li>
         </ul>
         <p style="margin-top: 0.8em;"><em>AGENTS.md</em> — tool-agnostic базис для смешанных команд.</p>
       </div>
