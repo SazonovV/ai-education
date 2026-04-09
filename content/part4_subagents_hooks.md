@@ -623,11 +623,11 @@ Hook — реакция на событие жизненного цикла аг
 **Продвинутый пример — форматирование + уведомление:**
 
 ```typescript
-export const AutoFormatPlugin = async ({ $ }) => {
+export const AutoFormatPlugin = async ({ $, project, client, directory, worktree }) => {
   return {
     "tool.execute.after": async (input, output) => {
       if (input.tool === "write" || input.tool === "edit") {
-        const filePath = output.args?.filePath || ""
+        const filePath = input.args?.filePath || ""
         if (filePath.match(/\.(ts|tsx|js|jsx)$/)) {
           await $`npx prettier --write ${filePath}`
         }
@@ -644,7 +644,7 @@ export const AutoFormatPlugin = async ({ $ }) => {
 
 **Возможности:**
 
-- **Основные события** — `tool.execute.before`, `tool.execute.after`, `session.created`, `session.idle`, `session.error`, `file.edited`, `permission.asked`, `shell.env` и другие
+- **Основные события** — `tool.execute.before`, `tool.execute.after`, `session.created`, `session.idle`, `session.error`, `file.edited`, `permission.ask`, `shell.env` и другие
 - **Полный доступ к SDK** — `$` (shell), `client` (API), `project` (метаданные проекта)
 - **npm-пакеты** — можно импортировать любые зависимости, вызывать HTTP API, писать в БД
 - **Подключение** — локально (`.opencode/plugins/`) или через npm (`"plugin": ["package-name"]` в `opencode.json`)
