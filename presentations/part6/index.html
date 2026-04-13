@@ -894,6 +894,295 @@ table.mini th {
   </div>
 </section>
 
+<!-- ==================== РАЗДЕЛ 3: КОНТЕКСТНОЕ ОКНО — АНАТОМИЯ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 3</span>
+    <h2 class="hero-title">Контекстное окно</h2>
+    <p class="hero-sub">Не буфер, а структура с зонами</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Зоны контекстного окна</h2>
+    <p style="margin-bottom:0.6em">Контекстное окно — максимальное количество токенов, которые модель видит <strong>одновременно</strong>. Всё, что за пределами, для модели не существует. Внутри — шесть чётких зон:</p>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr><th>Зона</th><th>Что в ней</th><th>Кто контролирует</th></tr>
+        </thead>
+        <tbody>
+          <tr class="fragment"><td>System prompt</td><td>Инструкции инструмента, rules, skills</td><td>Инструмент + вы (CLAUDE.md, AGENTS.md)</td></tr>
+          <tr class="fragment"><td>MCP-схемы</td><td>Описания подключённых MCP-серверов и их tools</td><td>Инструмент</td></tr>
+          <tr class="fragment"><td>История диалога</td><td>Сообщения пользователя + ответы модели</td><td>Накапливается автоматически</td></tr>
+          <tr class="fragment"><td>Tool calls + результаты</td><td>Вызовы инструментов и их выходные данные</td><td>Агент</td></tr>
+          <tr class="fragment"><td>Текущий запрос</td><td>Ваше последнее сообщение</td><td>Вы</td></tr>
+          <tr class="fragment"><td>Ответ модели</td><td>Генерируемый текст</td><td>Модель</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fragment note" style="margin-top:0.6em">Это не техническое ограничение, которое скоро «уберут». Это принципиальное устройство трансформерной архитектуры.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Фиксированные vs переменные расходы контекста</h2>
+    <div class="cards c3">
+      <div class="card rose fragment">
+        <h3>Фиксированные = «аренда офиса»</h3>
+        <p>System prompt, MCP-схемы — присутствуют в <strong>каждой</strong> сессии, независимо от задачи.</p>
+        <p style="margin-top:0.4em">Сократить: оптимизировать system prompt, подключать только нужные MCP-серверы.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Переменные = «операционные расходы»</h3>
+        <p>История диалога, результаты вызовов инструментов — <strong>растут</strong> с каждым шагом агента.</p>
+        <p style="margin-top:0.4em">Основное поле для управления контекстом.</p>
+      </div>
+      <div class="card teal fragment">
+        <h3>Ответ модели = «зарплата»</h3>
+        <p>Генерируемый текст — отдельная статья расходов.</p>
+        <p style="margin-top:0.4em">Влиять можно лишь косвенно: через чёткость задачи и инструкции по формату вывода.</p>
+      </div>
+    </div>
+    <blockquote class="fragment" style="margin-top:0.8em"><p>Каждая зона — статья бюджета. Одни зоны вы контролируете, другие — нет. Задача — минимизировать то, что не помогает текущей задаче.</p></blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Primacy/recency bias + размеры окон 2026</h2>
+    <div class="grid-2">
+      <div>
+        <div class="card amber">
+          <h3>Primacy/recency bias</h3>
+          <p>Модель уделяет больше внимания <strong>началу</strong> и <strong>концу</strong> контекста. Середина длинного окна усваивается хуже.</p>
+          <ul style="margin-top:0.4em">
+            <li class="fragment">Инструкция в system prompt весит больше, чем та же инструкция в середине истории</li>
+            <li class="fragment">Критическая информация — в начало (system prompt) или конец (свежее сообщение)</li>
+            <li class="fragment"><em>Где</em> лежит информация — не менее важно, чем <em>что</em> в ней написано</li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="table-wrap fragment">
+          <table class="mini">
+            <thead>
+              <tr><th>Модель</th><th>Контекстное окно</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Claude 3.x / 4.x</td><td>200 000 токенов</td></tr>
+              <tr><td>GPT-4.1</td><td>1 000 000 токенов</td></tr>
+              <tr><td>Gemini 1.5 / 2.x</td><td>1–2 000 000 токенов</td></tr>
+              <tr><td>GLM 5.1</td><td>уточняется</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="fragment note" style="margin-top:0.5em">Большое окно не устраняет bias: середина миллионного контекста усваивается не лучше, чем середина двухсоттысячного.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 4: ЧТО СЪЕДАЕТ КОНТЕКСТ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 4</span>
+    <h2 class="hero-title">Что съедает контекст</h2>
+    <p class="hero-sub">Главные пожиратели — не ваши промпты</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Иллюзия контроля</h2>
+    <div class="card rose" style="max-width:800px;margin:0 auto">
+      <h3 style="text-align:center">Ваш запрос: 50 токенов</h3>
+      <p style="text-align:center;margin-top:0.5em">В окне уже лежат:</p>
+      <ul style="margin-top:0.4em">
+        <li class="fragment">15 000 токенов — system prompt</li>
+        <li class="fragment">8 000 токенов — MCP-схемы</li>
+        <li class="fragment">40 000 токенов — накопленная история</li>
+      </ul>
+      <p class="fragment" style="text-align:center;margin-top:0.7em;font-size:1.2em"><strong style="color:var(--amber)">50 токенов = 0.08%</strong> от того, что видит модель</p>
+      <p class="fragment" style="text-align:center;margin-top:0.4em;color:var(--muted)">Большую часть «голоса» в разговоре имеют не ваши слова, а то, что заложено заранее или накопилось в процессе.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Четыре главных пожирателя контекста</h2>
+    <div class="cards c2">
+      <div class="card rose fragment">
+        <h3>1. Результаты вызовов инструментов</h3>
+        <p>Read файла — <strong>2-5K</strong> токенов за вызов. Ответ MCP-сервера — <strong>10-20K</strong>. За сессию десятки вызовов — все результаты оседают в истории.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>2. Накопленная история</h3>
+        <p>После 20-30 шагов — легко <strong>100K+</strong> токенов. 80% объёма — устаревшие результаты инструментов из ранних шагов, которые уже не нужны.</p>
+      </div>
+      <div class="card teal fragment">
+        <h3>3. Фиксированные накладные расходы</h3>
+        <p>10 MCP-серверов × 50 tools = <strong>тысячи токенов</strong> описаний. Присутствуют в каждом запросе. Не накапливаются — но всегда здесь.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>4. Избыточная вежливость модели</h3>
+        <p>Пересказ задачи, вводные фразы, повтор запроса «для ясности» — <strong>5-15%</strong> каждого ответа. Не несут полезной нагрузки, но оседают в истории.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Два разработчика: другой взгляд + кривая деградации</h2>
+    <div class="grid-2">
+      <div>
+        <div class="vs-layout" style="grid-template-columns:1fr 1fr">
+          <div>
+            <div class="vs-label bad">Разработчик 1</div>
+            <div class="card red" style="border-radius:0 0 10px 10px">
+              <p>12 MCP-серверов «на всякий случай»</p>
+              <p>Расплывчатый запрос</p>
+              <p>30 шагов → 80K устаревших результатов</p>
+              <p>Контекст переполнен, модель теряет фокус</p>
+              <p style="margin-top:0.3em"><strong>$3.00</strong> — посредственный результат</p>
+            </div>
+          </div>
+          <div>
+            <div class="vs-label good">Разработчик 2</div>
+            <div class="card green" style="border-radius:0 0 10px 10px">
+              <p>3 целевых MCP-сервера</p>
+              <p>Конкретный запрос</p>
+              <p>1 проход — компактная история</p>
+              <p>Модель держит фокус на задаче</p>
+              <p style="margin-top:0.3em"><strong>$0.30</strong> — чистое решение</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card amber fragment">
+          <h3>Кривая деградации</h3>
+          <p>Качество <strong>не</strong> падает плавно по мере заполнения контекста.</p>
+          <ul style="margin-top:0.4em">
+            <li>До <strong>60-70%</strong> заполнения — работа приемлемая</li>
+            <li>После этой отметки — <strong>резкий скачок</strong> ухудшения</li>
+            <li>Модель забывает инструкции, повторяет сделанное, путается</li>
+          </ul>
+          <p style="margin-top:0.5em;color:var(--rose)"><strong>Это скачок, а не наклон.</strong> К 70% — либо завершайте, либо сбрасывайте контекст.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 5: СТРАТЕГИИ УПРАВЛЕНИЯ ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 5</span>
+    <h2 class="hero-title">Стратегии управления</h2>
+    <p class="hero-sub">Сокращение входа · Управление историей · Структура работы</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">5.1 Сокращение входа — «не клади лишнее»</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>Целевые вызовы инструментов</h3>
+        <p><code>Read</code> с <code>offset</code> и <code>limit</code> — нужный фрагмент, а не весь файл. <code>Grep</code> с конкретным паттерном и фильтром по типу файла.</p>
+        <p style="margin-top:0.3em"><strong>500 vs 5 000 токенов</strong> за один вызов. Умножьте на десятки вызовов в сессии.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Гигиена MCP-серверов</h3>
+        <p>Каждый подключённый MCP-сервер — фиксированные расходы в <strong>каждом</strong> запросе.</p>
+        <p style="margin-top:0.3em">10 лишних серверов — тысячи «холостых» токенов. Подключайте только нужные для текущей сессии.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>System prompt как бюджетная строка</h3>
+        <p>500 строк правил — ~3-5K токенов постоянного расхода.</p>
+        <p style="margin-top:0.3em">Если инструкция не влияет на <em>каждую</em> сессию — выносите в skill или отдельный файл.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">5.2 Управление историей — «чисти за собой»</h2>
+    <div class="cards c3">
+      <div class="card green fragment">
+        <h3>Новая сессия как инструмент</h3>
+        <p>Смена сессии — не поражение. Задача сменилась, контекст накопился, фокус размылся — пора открыть чистое окно.</p>
+        <p style="margin-top:0.3em">Артефакты на диске: файлы, конспекты, записи о решениях — обеспечивают передачу контекста без мусора.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Compact: сигнал vs шум</h3>
+        <p><code>compact</code> сжимает накопленную историю в резюме.</p>
+        <p style="margin-top:0.3em">Если история — 80% устаревших результатов инструментов — потери невелики. Если плотная и каждый шаг нёс решение — потери ощутимы.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Что теряется при сжатии</h3>
+        <p>Суммаризатор сохраняет: «что сделано», «к чему пришли».</p>
+        <p style="margin-top:0.3em">Теряет: точные имена файлов, номера строк, результаты конкретных вызовов. Критические решения должны жить <strong>в файлах на диске</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">5.3 Структура работы — «думай до того, как начал»</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>Декомпозиция для контекста</h3>
+        <p>Разбиение задачи на подзадачи — это про <strong>чистое окно</strong> для каждого субагента.</p>
+        <p style="margin-top:0.3em">Субагент получает ровно тот контекст, который нужен для своей части, без истории всего процесса.</p>
+        <p style="margin-top:0.3em;color:var(--muted)">«Делегируем не потому что быстрее, а потому что один агент не удержит весь контекст»</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Порядок имеет значение</h3>
+        <p><strong>Сначала — контекст, потом — задача.</strong> Не наоборот.</p>
+        <p style="margin-top:0.3em">Если начинаете с задачи, а детали потом — модель уже построила первичное представление без части вводных.</p>
+        <p style="margin-top:0.3em">Primacy/recency bias на практике: важная информация — до формулировки требования.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>Одна задача на сессию</h3>
+        <p>К третьей просьбе в той же сессии контекст забит артефактами первых двух.</p>
+        <p style="margin-top:0.3em">Модель отвечает на третью задачу сквозь фильтр двух предыдущих.</p>
+        <p style="margin-top:0.3em;color:var(--muted)">Открытая сессия не сохраняет «фокус» — она накапливает помехи.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Сводная таблица стратегий</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr><th>Стратегия</th><th>На что влияет</th><th>Порядок экономии</th></tr>
+        </thead>
+        <tbody>
+          <tr class="fragment"><td>Read/Grep с ограничениями</td><td>Переменные расходы на tool calls</td><td>5-10x за один вызов</td></tr>
+          <tr class="fragment"><td>Подключать только нужные MCP-серверы</td><td>Фиксированные расходы (каждый запрос)</td><td>1-5 тысяч токенов per запрос</td></tr>
+          <tr class="fragment"><td>Краткий и точный system prompt / AGENTS.md</td><td>Фиксированные расходы (каждый запрос)</td><td>2-4 тысяч токенов per запрос</td></tr>
+          <tr class="fragment"><td>Новая сессия вместо накопления истории</td><td>Переменные расходы (история диалога)</td><td>Десятки тысяч токенов</td></tr>
+          <tr class="fragment"><td>Compact при шумной истории</td><td>Переменные расходы (история диалога)</td><td>30-70% объёма истории</td></tr>
+          <tr class="fragment"><td>Декомпозиция на субагентов</td><td>Полный объём контекста задачи</td><td>Чистое окно для каждой части</td></tr>
+          <tr class="fragment"><td>Порядок: контекст → задача</td><td>Качество понимания при фиксированном объёме</td><td>Качественный, не количественный эффект</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <blockquote class="fragment" style="margin-top:0.7em"><p><strong>Принцип:</strong> экономить на шуме, не на сигнале. Устаревшие результаты инструментов — шум. Подробное описание задачи и ограничений — сигнал.</p></blockquote>
+  </div>
+</section>
+
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
