@@ -972,10 +972,10 @@ table.mini th {
               <tr><th>Модель</th><th>Контекстное окно</th></tr>
             </thead>
             <tbody>
-              <tr><td>Claude 3.x / 4.x</td><td>200 000 токенов</td></tr>
+              <tr><td>Claude 3.x / 4.x</td><td>200 000 (Opus 4.6 / Sonnet 4.6 — до 1 000 000)</td></tr>
               <tr><td>GPT-4.1</td><td>1 000 000 токенов</td></tr>
               <tr><td>Gemini 1.5 / 2.x</td><td>1–2 000 000 токенов</td></tr>
-              <tr><td>GLM 5.1</td><td>уточняется</td></tr>
+              <tr><td>GLM 5.1</td><td>200 000 токенов</td></tr>
             </tbody>
           </table>
         </div>
@@ -1250,12 +1250,12 @@ table.mini th {
       </div>
       <div class="card amber fragment">
         <h3>Kilo Code</h3>
-        <p>Встроенная memory через интерфейс VS Code, per-workspace.</p>
-        <p style="margin-top:0.3em">Управляется из боковой панели без ручного редактирования файлов.</p>
+        <p>Memory bank через файлы в <code>.kilocode/rules/memory-bank/</code>, per-workspace.</p>
+        <p style="margin-top:0.3em">С 2026 года рекомендуется использовать AGENTS.md.</p>
       </div>
       <div class="card rose fragment">
         <h3>OpenCode</h3>
-        <p>Состояние сессии через API, сохраняемость через конфигурацию проекта.</p>
+        <p>Сессии сохраняются локально; межсессионная память — через сторонние расширения (opencode-mem и др.).</p>
       </div>
     </div>
   </div>
