@@ -33,5 +33,12 @@
     "description": "Дисциплина процесса (spec/plan/TDD/verification) и анализ работы агента (трейсы, ревью, CI как независимый верификатор)",
     "file": "part5_workflow_observability.md",
     "slides": "../presentations/part5/"
+  },
+  {
+    "id": "part6_context_engineering",
+    "title": "Лекция 6 · Context Engineering",
+    "description": "Токенизация, контекстное окно, что съедает контекст, стратегии управления, memory-системы",
+    "file": "part6_context_engineering.md",
+    "slides": "../presentations/part6/"
   }
 ]
