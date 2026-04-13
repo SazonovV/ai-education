@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=107242055', 'ym');
+
+    ym(107242055, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", referrer: document.referrer, url: location.href, accurateTrackBounce:true, trackLinks:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/107242055" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Yandex.Metrika counter -->
+<title>Context Engineering · Лекция 6</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/theme/black.min.css" id="theme">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/monokai.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Unbounded:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #090707;
+  --card: #151110;
+  --card-soft: #1d1715;
+  --text: #f6efe4;
+  --muted: #c4ae94;
+  --line: #4a3c32;
+  --teal: #37d6c4;
+  --amber: #f6a44a;
+  --rose: #f6757f;
+  --green: #53d36f;
+  --red: #ff6a6a;
+}
+
+html,
+body {
+  background: var(--bg);
+}
+
+.reveal {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 12% 16%, rgba(55, 214, 196, 0.12), transparent 36%),
+    radial-gradient(circle at 88% 8%, rgba(246, 164, 74, 0.18), transparent 32%),
+    radial-gradient(circle at 74% 84%, rgba(246, 117, 127, 0.12), transparent 36%),
+    linear-gradient(145deg, #0a0808 0%, #110f0d 50%, #0a0807 100%);
+}
+
+/* grain overlay */
+.reveal::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px;
+}
+
+.reveal .slides {
+  text-align: left;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  font-family: "Unbounded", "Manrope", sans-serif;
+  text-transform: none;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  margin: 0 0 0.34em;
+}
+
+.reveal h1 {
+  font-size: 2.3em;
+  color: #fff7ea;
+}
+
+.reveal h2 {
+  font-size: 1.32em;
+  color: var(--teal);
+}
+
+.reveal h3 {
+  font-size: 0.95em;
+  color: #ffe9c8;
+}
+
+.reveal p,
+.reveal li {
+  font-size: 0.62em;
+  color: var(--muted);
+  line-height: 1.52;
+}
+
+.reveal strong {
+  color: #fff8ee;
+}
+
+.reveal em {
+  color: var(--teal);
+  font-style: normal;
+}
+
+.reveal a {
+  color: var(--teal);
+}
+
+.reveal pre {
+  width: 100%;
+  box-shadow: none;
+  margin: 0.3em 0;
+}
+
+.reveal pre code {
+  max-height: 440px;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: #0f0c0b;
+  padding: 0.9em;
+  font-size: 0.58em;
+  line-height: 1.48;
+}
+
+.reveal blockquote {
+  width: 100%;
+  margin: 0.35em 0;
+  padding: 0.45em 0.7em;
+  border-left: 4px solid var(--amber);
+  border-radius: 0 10px 10px 0;
+  background: rgba(246, 164, 74, 0.08);
+  box-shadow: -4px 0 20px -6px rgba(246, 164, 74, 0.18);
+}
+
+.reveal blockquote p {
+  margin: 0;
+  color: #e7d8c6;
+}
+
+.slide-shell,
+.chapter-shell {
+  min-height: 620px;
+  border: 1px solid rgba(255, 241, 224, 0.14);
+  border-radius: 22px;
+  padding: 22px 26px;
+  background:
+    linear-gradient(160deg, rgba(32, 24, 20, 0.78), rgba(17, 13, 11, 0.82));
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 48px rgba(0, 0, 0, 0.38);
+  position: relative;
+  overflow: hidden;
+}
+
+.slide-shell::before,
+.chapter-shell::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--teal), var(--amber), transparent);
+  opacity: 0.7;
+}
+
+.chapter-shell {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 16px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.4);
+  font-size: 0.42em;
+  letter-spacing: 0.08em;
+  color: #d8f9f3;
+  text-transform: uppercase;
+}
+
+.kicker::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 0 6px rgba(55, 214, 196, 0.2), 0 0 18px 4px rgba(55, 214, 196, 0.25);
+}
+
+.hero-title {
+  font-size: 3.05em;
+  margin: 0 0 0.24em;
+}
+
+.hero-sub {
+  font-size: 1.1em;
+  color: var(--teal);
+  margin: 0 0 0.32em;
+}
+
+.meta-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  font-size: 0.48em;
+  color: #e6d4bd;
+  background: rgba(255, 255, 255, 0.03);
+  text-decoration: none;
+  transition: border-color 0.16s ease, color 0.16s ease, transform 0.16s ease;
+}
+
+.pill:hover {
+  color: #fff6e7;
+  border-color: rgba(55, 214, 196, 0.48);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(55, 214, 196, 0.12);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+.cards {
+  display: grid;
+  gap: 10px;
+}
+
+.cards.c2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.cards.c3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+.card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  border-radius: 14px;
+  padding: 10px 12px;
+  position: relative;
+  overflow: hidden;
+  --card-accent: var(--teal);
+  box-shadow: 0 -3px 16px -4px color-mix(in srgb, var(--card-accent) 18%, transparent);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 5%, var(--card-accent), transparent 95%);
+  opacity: 0.85;
+}
+
+.card:hover {
+  box-shadow: 0 -4px 24px -4px color-mix(in srgb, var(--card-accent) 28%, transparent);
+  transform: translateY(-1px);
+}
+
+.card p,
+.card li {
+  font-size: 0.56em;
+}
+
+.card h3 {
+  margin: 0 0 0.34em;
+  font-size: 0.78em;
+}
+
+.card ul {
+  margin: 0.2em 0 0;
+  padding-left: 1.1em;
+}
+
+.card.teal { --card-accent: var(--teal); }
+.card.amber { --card-accent: var(--amber); }
+.card.rose { --card-accent: var(--rose); }
+.card.green { --card-accent: var(--green); }
+.card.red { --card-accent: var(--red); }
+
+.section-title {
+  margin-bottom: 0.74em;
+}
+
+.note {
+  font-size: 0.5em;
+  color: #9f8d77;
+}
+
+.process {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.process-5 {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.step {
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 10px;
+  text-align: center;
+}
+
+.step h4 {
+  margin: 0;
+  font-size: 0.6em;
+  color: var(--teal);
+}
+
+.step p {
+  margin: 0.2em 0 0;
+  font-size: 0.48em;
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  color: #9e8b75;
+  font-size: 1.1em;
+}
+
+.table-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+table.mini {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.49em;
+}
+
+table.mini th,
+table.mini td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+table.mini th {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--teal);
+}
+
+.intro-layout {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 14px;
+  align-items: center;
+}
+
+.photo {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 7px;
+  background: #0d0a09;
+  min-height: 420px;
+  display: grid;
+  place-items: center;
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.fallback {
+  display: none;
+  text-align: center;
+  color: #b8a189;
+  font-size: 0.54em;
+}
+
+.vs-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.vs-label {
+  text-align: center;
+  font-size: 0.52em;
+  font-weight: 700;
+  padding: 4px 0 6px;
+  border-radius: 8px 8px 0 0;
+}
+
+.vs-label.bad {
+  color: var(--red);
+  background: rgba(255, 106, 106, 0.08);
+}
+
+.vs-label.good {
+  color: var(--green);
+  background: rgba(83, 211, 111, 0.08);
+}
+
+.cta {
+  font-size: 0.66em;
+  color: #e8d8c2;
+}
+
+.layer-diagram {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  text-align: center;
+}
+
+.layer {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 14px 16px;
+  position: relative;
+}
+
+.layer h4 {
+  margin: 0;
+  font-size: 0.68em;
+}
+
+.layer p {
+  margin: 0.15em 0 0;
+  font-size: 0.48em;
+}
+
+.layer.l-agent {
+  background: rgba(55, 214, 196, 0.08);
+  border-color: rgba(55, 214, 196, 0.35);
+  border-radius: 12px 12px 0 0;
+}
+
+.layer.l-agent h4 { color: var(--teal); }
+
+.layer.l-tools {
+  background: rgba(246, 164, 74, 0.08);
+  border-color: rgba(246, 164, 74, 0.35);
+}
+
+.layer.l-tools h4 { color: var(--amber); }
+
+.layer.l-mcp {
+  background: rgba(246, 117, 127, 0.08);
+  border-color: rgba(246, 117, 127, 0.35);
+}
+
+.layer.l-mcp h4 { color: var(--rose); }
+
+.layer.l-world {
+  background: rgba(83, 211, 111, 0.08);
+  border-color: rgba(83, 211, 111, 0.35);
+  border-radius: 0 0 12px 12px;
+}
+
+.layer.l-world h4 { color: var(--green); }
+
+.layer-arrow {
+  text-align: center;
+  color: #9e8b75;
+  font-size: 0.7em;
+  padding: 2px 0;
+}
+
+.promo-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.promo-photo-box,
+.promo-qr-box {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(145deg, rgba(36, 28, 23, 0.88), rgba(24, 18, 15, 0.95));
+  padding: 12px;
+}
+
+.promo-photo-box {
+  display: grid;
+  align-items: stretch;
+}
+
+.promo-photo-box img {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  max-height: 500px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.promo-qr-box {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.promo-qr-box h3 {
+  margin: 0;
+}
+
+.promo-qr-box img {
+  width: min(320px, 100%);
+  aspect-ratio: 1 / 1;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: #fff;
+  padding: 8px;
+}
+
+.promo-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(55, 214, 196, 0.55);
+  color: #f5eee4;
+  text-decoration: none;
+  font-size: 0.56em;
+}
+
+.promo-link:hover {
+  border-color: rgba(246, 164, 74, 0.7);
+}
+
+.back-home {
+  position: fixed;
+  top: 12px;
+  left: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  text-decoration: none;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(14, 11, 10, 0.65);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  color: rgba(248, 240, 228, 0.85);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.back-home:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgb(248, 240, 228);
+}
+
+.open-notes {
+  position: fixed;
+  top: 44px;
+  left: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  text-decoration: none;
+  padding: 7px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(14, 11, 10, 0.65);
+  backdrop-filter: blur(14px) saturate(1.3);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  color: rgba(248, 240, 228, 0.85);
+  font-size: 12px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.open-notes:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: rgb(248, 240, 228);
+}
+
+@media (max-width: 1100px) {
+  .grid-2,
+  .grid-3,
+  .cards.c2,
+  .cards.c3,
+  .vs-layout,
+  .promo-layout,
+  .intro-layout,
+  .process,
+  .process-5 {
+    grid-template-columns: 1fr;
+  }
+
+  .process .arrow,
+  .process-5 .arrow {
+    display: none;
+  }
+
+  .slide-shell,
+  .chapter-shell {
+    min-height: auto;
+  }
+}
+/* --- Fragment toggle mode --- */
+.no-fragments .fragment {
+  opacity: 1 !important;
+  visibility: inherit !important;
+}
+.mode-toggle {
+  position: fixed;
+  bottom: 12px;
+  left: 14px;
+  z-index: 90;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-size: 0.65rem;
+  color: rgba(248,240,228,0.5);
+  background: rgba(9,7,7,0.6);
+  border: 1px solid rgba(248,240,228,0.1);
+  border-radius: 999px;
+  padding: 4px 12px;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.mode-toggle:hover {
+  border-color: rgba(55,214,196,0.5);
+  color: rgba(248,240,228,0.8);
+}
+</style>
+</head>
+<body>
+<a class="back-home" href="../../">← На главную</a>
+<a class="open-notes" href="../../reading/?part=part6_context_engineering">📖 Материалы</a>
+<div class="reveal">
+<div class="slides">
+
+<!-- ==================== TITLE ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">AI Engineering Course</span>
+    <h1 class="hero-title">Context Engineering</h1>
+    <p class="hero-sub">Лекция 6</p>
+    <div class="meta-row">
+      <span class="pill">Фокус: контекстное окно, токены, стратегии, memory</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== СОДЕРЖАНИЕ ==================== -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Содержание</h2>
+    <div class="cards c3">
+      <div class="card teal fragment"><h3>1. Два разработчика</h3><p>$3 vs $0.30 — в чём разница</p></div>
+      <div class="card amber fragment"><h3>2. Токен — атом контекста</h3><p>BPE, валюта, расходы</p></div>
+      <div class="card rose fragment"><h3>3. Контекстное окно</h3><p>Зоны, позиции, bias</p></div>
+      <div class="card green fragment"><h3>4. Что съедает контекст</h3><p>Пожиратели и кривая деградации</p></div>
+      <div class="card amber fragment"><h3>5. Стратегии управления</h3><p>Вход, история, структура работы</p></div>
+      <div class="card teal fragment"><h3>6. Memory</h3><p>Контекст за пределами сессии</p></div>
+      <div class="card rose fragment"><h3>7. Подводные камни</h3><p>4 типичные ловушки</p></div>
+      <div class="card green fragment"><h3>8. Итоги и практика</h3><p>Выводы и задание</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 1: ДВА РАЗРАБОТЧИКА ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 1</span>
+    <h2 class="hero-title">Два разработчика, одна задача</h2>
+    <p class="hero-sub">Одна модель, один инструмент — результат отличается на порядок</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Один и тот же инструмент — разный результат</h2>
+    <div class="cards c2">
+      <div class="card rose fragment">
+        <h3>Разработчик 1</h3>
+        <p><strong>$3.00</strong> за задачу</p>
+        <p>4 итерации, каждая — уточнение, откат, повтор. Модель путается в контексте, забывает ранние инструкции, генерирует лишнее.</p>
+        <p style="margin-top:0.5em"><strong>Результат:</strong> посредственный. Работает, но с костылями. Половину пришлось переделывать руками.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>Разработчик 2</h3>
+        <p><strong>$0.30</strong> за задачу</p>
+        <p>1 итерация. Чёткая структура запроса, нужный контекст подан заранее, лишнее отсечено. Модель сразу попала в цель.</p>
+        <p style="margin-top:0.5em"><strong>Результат:</strong> чистый, готовый к коммиту. Без правок.</p>
+      </div>
+    </div>
+    <p class="fragment note" style="margin-top:0.8em;text-align:center"><strong>Разница не в модели и не в промпте. Разница — в управлении контекстом.</strong></p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Context Engineering: определение</h2>
+    <blockquote><p><strong>Context Engineering</strong> — дисциплина проектирования информации, которая попадает в контекстное окно модели: что подать, в каком объёме, в каком порядке — и что отсечь.</p></blockquote>
+    <div class="cards c2" style="margin-top:0.8em">
+      <div class="card amber fragment">
+        <h3>Prompt Engineering</h3>
+        <p>Фокус на формулировке запроса. «Как спросить». Один текст, одна попытка.</p>
+      </div>
+      <div class="card teal fragment">
+        <h3>Context Engineering</h3>
+        <p>Фокус на всём контекстном окне. «Что модель видит в момент генерации». Системный промпт, история, файлы, tool outputs, memory — всё вместе.</p>
+      </div>
+    </div>
+    <p class="fragment note" style="margin-top:0.8em">Prompt Engineering — подмножество Context Engineering. Хороший промпт необходим, но недостаточен: если контекст забит мусором, формулировка не спасёт.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Метафора: контекст = расчётный счёт</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>Расчётный счёт</h3>
+        <p>Контекстное окно модели — фиксированный бюджет. У Claude Sonnet — 200K токенов. Каждый токен, отправленный в окно, тратит из этого бюджета.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Валюта — токен</h3>
+        <p>Каждое слово, каждый символ кода, каждый вывод инструмента — это расход. Когда бюджет исчерпан, модель либо теряет ранний контекст, либо сессия останавливается.</p>
+      </div>
+    </div>
+    <blockquote class="fragment" style="margin-top:0.8em"><p><strong>Задача context engineer'а:</strong> максимизировать полезную информацию на единицу бюджета. Не «впихнуть побольше», а подать <em>нужное</em> в <em>нужном</em> объёме.</p></blockquote>
+  </div>
+</section>
+
+<!-- ==================== РАЗДЕЛ 2: ТОКЕН — АТОМ КОНТЕКСТА ==================== -->
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 2</span>
+    <h2 class="hero-title">Токен — атом контекста</h2>
+    <p class="hero-sub">Прежде чем управлять — нужно понимать единицу измерения</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Что такое токен</h2>
+    <div class="grid-2">
+      <div>
+        <p><strong>Токен</strong> — минимальная единица текста, которую видит модель. Не буква, не слово — нечто среднее. Токенизатор разбивает любой текст на последовательность токенов из фиксированного словаря.</p>
+        <ul style="margin-top:0.6em">
+          <li class="fragment"><strong>Английский:</strong> ~1 токен = 0.75 слова (4 символа)</li>
+          <li class="fragment"><strong>Русский:</strong> ~1 токен = 0.5 слова (дороже из-за кириллицы)</li>
+          <li class="fragment"><strong>Код:</strong> скобки, отступы, ключевые слова — каждый элемент отдельный токен</li>
+        </ul>
+      </div>
+      <div class="fragment">
+        <div class="card teal">
+          <h3>Пример токенизации</h3>
+          <p><code>"Привет, мир!"</code></p>
+          <p style="margin-top:0.3em">→ <code>["При", "вет", ",", " мир", "!"]</code> — 5 токенов</p>
+          <p style="margin-top:0.5em"><code>"Hello world"</code></p>
+          <p style="margin-top:0.3em">→ <code>["Hello", " world"]</code> — 2 токена</p>
+          <p style="margin-top:0.5em;color:var(--muted)">Русский текст в ~1.5-2 раза дороже английского по токенам.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">BPE: как строится словарь токенов</h2>
+    <div class="card amber" style="margin-bottom:0.7em">
+      <h3>Byte Pair Encoding (BPE)</h3>
+      <p>Алгоритм, которым обучается токенизатор. Начинает с отдельных байтов и итеративно склеивает самые частые пары.</p>
+    </div>
+    <div class="process">
+      <div class="step fragment"><h4>Шаг 1</h4><p>Начинаем с байтов: каждый символ — отдельный токен</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>Шаг 2</h4><p>Находим самую частую пару (например, <code>t</code>+<code>h</code>) и склеиваем в один токен</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>Шаг 3</h4><p>Повторяем до нужного размера словаря (~100K токенов)</p></div>
+      <div class="arrow">→</div>
+      <div class="step fragment"><h4>Результат</h4><p>Частые слова = 1 токен, редкие = несколько</p></div>
+    </div>
+    <p class="fragment note" style="margin-top:0.8em">BPE обучается на корпусе. Английский доминирует → английские слова компактнее. Кириллица, иероглифы, редкий код — дороже.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Что сколько стоит в токенах</h2>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr>
+            <th>Контент</th>
+            <th>Объём</th>
+            <th>Токены (примерно)</th>
+            <th>Доля окна 200K</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="fragment"><td>Системный промпт (средний)</td><td>~2 000 слов</td><td>~3 000</td><td>1.5%</td></tr>
+          <tr class="fragment"><td>AGENTS.md / CLAUDE.md</td><td>~1 500 слов</td><td>~2 500</td><td>1.2%</td></tr>
+          <tr class="fragment"><td>Файл исходного кода (300 строк)</td><td>~5 000 символов</td><td>~2 000</td><td>1%</td></tr>
+          <tr class="fragment"><td>Вывод <code>ls -la</code> (50 файлов)</td><td>~3 000 символов</td><td>~1 200</td><td>0.6%</td></tr>
+          <tr class="fragment"><td>Полный <code>package.json</code></td><td>~2 000 символов</td><td>~800</td><td>0.4%</td></tr>
+          <tr class="fragment"><td>Stack trace (ошибка)</td><td>~1 500 символов</td><td>~600</td><td>0.3%</td></tr>
+          <tr class="fragment"><td>10 раундов диалога</td><td>~8 000 слов</td><td>~12 000</td><td>6%</td></tr>
+          <tr class="fragment"><td><strong>Вся кодовая база (средний проект)</strong></td><td>~500 файлов</td><td><strong>~500 000+</strong></td><td><strong>250%+</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fragment note" style="margin-top:0.6em"><strong>Вывод:</strong> кодовая база не влезает целиком. Нужна стратегия отбора — что подать, а что отсечь.</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Токен как валюта: фиксированные и переменные расходы</h2>
+    <div class="cards c2">
+      <div class="card rose fragment">
+        <h3>Фиксированные расходы</h3>
+        <p>Платим каждый запрос, нельзя уменьшить до нуля:</p>
+        <ul>
+          <li>Системный промпт</li>
+          <li>AGENTS.md / CLAUDE.md</li>
+          <li>Описания инструментов (tools schema)</li>
+          <li>Правила и constraints</li>
+        </ul>
+        <p style="margin-top:0.4em">Обычно ~5-15% окна.</p>
+      </div>
+      <div class="card green fragment">
+        <h3>Переменные расходы</h3>
+        <p>Растут с каждым ходом сессии:</p>
+        <ul>
+          <li>История диалога (user + assistant)</li>
+          <li>Вывод инструментов (file reads, shell output)</li>
+          <li>Промежуточные рассуждения модели</li>
+          <li>Файлы, подгруженные по ходу работы</li>
+        </ul>
+        <p style="margin-top:0.4em">Основной потребитель. Именно здесь — рычаг оптимизации.</p>
+      </div>
+    </div>
+    <blockquote class="fragment" style="margin-top:0.8em"><p><strong>Правило:</strong> минимизируй фиксированные, контролируй переменные. Контекст, который не помогает текущей задаче, — это шум, за который ты платишь.</p></blockquote>
+  </div>
+</section>
+
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/plugin/notes/notes.min.js"></script>
+<script>
+Reveal.initialize({
+  hash: true,
+  slideNumber: "c/t",
+  width: 1360,
+  height: 768,
+  margin: 0.05,
+  transition: "slide",
+  backgroundTransition: "fade",
+  transitionSpeed: "fast",
+  plugins: [RevealHighlight, RevealNotes]
+}).then(function() {
+  var noFrag = !new URLSearchParams(location.search).has('fragments');
+  var btn = document.createElement('button');
+  btn.className = 'mode-toggle';
+  document.body.appendChild(btn);
+  function setMode(off) {
+    noFrag = off;
+    Reveal.configure({ fragments: !off });
+    document.body.classList.toggle('no-fragments', off);
+    btn.textContent = off ? 'A: анимации выкл' : 'A: анимации вкл';
+    var url = new URL(location);
+    if (!off) url.searchParams.set('fragments', '');
+    else url.searchParams.delete('fragments');
+    history.replaceState(null, '', url);
+  }
+  setMode(noFrag);
+  document.addEventListener('keydown', function(e) {
+    if ((e.key==='a'||e.key==='A'||e.key==='ф'||e.key==='Ф') && !e.ctrlKey && !e.metaKey && !e.altKey) setMode(!noFrag);
+  });
+  btn.addEventListener('click', function() { setMode(!noFrag); });
+});
+</script>
+</body>
+</html>
