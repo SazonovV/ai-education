@@ -1183,6 +1183,221 @@ table.mini th {
   </div>
 </section>
 
+<!-- ═══════════════════════════════════════════════════
+     SECTION 6 — Memory
+     ═══════════════════════════════════════════════════ -->
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 6</span>
+    <h2 class="hero-title">Memory</h2>
+    <p class="hero-sub">Контекст за пределами одной сессии</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">6.1 Проблема + три уровня памяти</h2>
+    <p style="margin-bottom:0.7em">Новая сессия — чистый лист. Агент не знает про вчерашние решения, выбранный стек, согласованные ограничения. Каждое «переоткрытие» — потраченные токены и риск противоречия.</p>
+    <div class="table-wrap">
+      <table class="mini">
+        <thead>
+          <tr><th>Уровень</th><th>Что хранит</th><th>Время жизни</th><th>Пример</th></tr>
+        </thead>
+        <tbody>
+          <tr class="fragment"><td>Файлы проекта</td><td>Решения, правила</td><td>Пока в репо</td><td>CLAUDE.md, spec</td></tr>
+          <tr class="fragment"><td>Проектная память</td><td>Факты, предпочтения</td><td>Между сессиями</td><td>CC project memory</td></tr>
+          <tr class="fragment"><td>Персональная память</td><td>Роль, стиль</td><td>Между проектами</td><td>~/.claude/memory/</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">6.2 Что хранить / чего не хранить</h2>
+    <div class="cards c2">
+      <div class="card green fragment">
+        <h3>Хранить</h3>
+        <ul>
+          <li>Решения, которые нельзя вывести из кода или git</li>
+          <li>Контринтуитивные предпочтения</li>
+          <li>Ссылки на внешние системы, не представленные в репозитории</li>
+        </ul>
+      </div>
+      <div class="card rose fragment">
+        <h3>Не хранить</h3>
+        <ul>
+          <li>Структуру проекта — можно получить за один вызов инструмента</li>
+          <li>Паттерны кода — модель видит их в файлах</li>
+          <li>Историю коммитов — доступна через git log</li>
+        </ul>
+      </div>
+    </div>
+    <blockquote class="fragment" style="margin-top:0.7em"><p><strong>Принцип:</strong> Memory — кэш, не архив. Хранить то, что дорого получить заново.</p></blockquote>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">6.3 Поддержка в инструментах</h2>
+    <div class="cards c3">
+      <div class="card teal fragment">
+        <h3>Claude Code</h3>
+        <p><code>~/.claude/projects/&lt;project&gt;/memory/</code> — файлы с frontmatter, индекс <code>MEMORY.md</code> загружается в каждую сессию.</p>
+        <p style="margin-top:0.3em">Дополнительные файлы подгружаются по ссылкам из индекса.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>Kilo Code</h3>
+        <p>Встроенная memory через интерфейс VS Code, per-workspace.</p>
+        <p style="margin-top:0.3em">Управляется из боковой панели без ручного редактирования файлов.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>OpenCode</h3>
+        <p>Состояние сессии через API, сохраняемость через конфигурацию проекта.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 7 — Подводные камни
+     ═══════════════════════════════════════════════════ -->
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 7</span>
+    <h2 class="hero-title">Подводные камни</h2>
+    <p class="hero-sub">4 ловушки context engineering</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Четыре ловушки</h2>
+    <div class="cards c2">
+      <div class="card amber fragment">
+        <h3>«Большое окно — можно не думать»</h3>
+        <p><strong>Проблема:</strong> окно в 1-2M токенов создаёт иллюзию, что управление контекстом необязательно.</p>
+        <p style="margin-top:0.3em"><strong>Решение:</strong> большое окно — запас прочности, не приглашение к расточительству. Деградация всё равно наступает скачком.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>«Переоптимизация контекста»</h3>
+        <p><strong>Проблема:</strong> стремление сократить каждый токен — телеграфный стиль, выброшенные детали.</p>
+        <p style="margin-top:0.3em"><strong>Решение:</strong> экономить на шуме, не на сигнале. Подробное описание задачи — инвестиция, а не трата.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>«Memory как свалка»</h3>
+        <p><strong>Проблема:</strong> в memory пишется всё подряд — тысячи токенов фиксированных расходов в каждой сессии.</p>
+        <p style="margin-top:0.3em"><strong>Решение:</strong> memory — кэш, не архив. Регулярно пересматривайте, удаляйте устаревшее.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>«Compact как волшебная кнопка»</h3>
+        <p><strong>Проблема:</strong> работа до упора, затем compact — и агент забывает ключевые детали.</p>
+        <p style="margin-top:0.3em"><strong>Решение:</strong> compact — аварийный инструмент, не штатный. Лучше новая сессия с компактным резюме.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     SECTION 8 — Итоги
+     ═══════════════════════════════════════════════════ -->
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Часть 8</span>
+    <h2 class="hero-title">Итоги</h2>
+    <p class="hero-sub">Ключевые принципы и практика</p>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Шесть ключевых выводов</h2>
+    <div class="cards c2">
+      <div class="card teal fragment">
+        <h3>1. Токен — атом контекста</h3>
+        <p>Язык, формат и стиль влияют на расход. Русский текст дороже английского, JSON дороже строки, весь файл дороже нужного фрагмента.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>2. Окно — структура, не буфер</h3>
+        <p>Зоны, позиции, фиксированные и переменные расходы. <em>Где</em> лежит информация — не менее важно, чем <em>что</em> в ней написано.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>3. Пожиратели — не промпты</h3>
+        <p>Результаты вызовов инструментов, накопленная история, фиксированные расходы на system prompt и MCP-схемы — вот куда уходит бюджет.</p>
+      </div>
+      <div class="card teal fragment">
+        <h3>4. Деградация скачком</h3>
+        <p>Кривая деградации — главная причина, почему большое окно не спасает. К 70% заполнения уже нужно завершать или сбрасывать.</p>
+      </div>
+      <div class="card amber fragment">
+        <h3>5. Экономить на шуме, не на сигнале</h3>
+        <p>Сжатие, декомпозиция, новые сессии — инструменты борьбы с шумом. Описание задачи — инвестиция.</p>
+      </div>
+      <div class="card rose fragment">
+        <h3>6. Memory — кэш, не архив</h3>
+        <p>Хранить то, что дорого получить заново. Всё остальное — лишние фиксированные расходы.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Практическое задание — «Аудит контекста»</h2>
+    <div class="card teal">
+      <h3>Аудит контекста</h3>
+      <ol>
+        <li class="fragment"><strong>Подсчитайте распределение бюджета.</strong> Сколько токенов ушло на system prompt и MCP-схемы? На историю диалога? На результаты вызовов инструментов? На ваши сообщения?</li>
+        <li class="fragment"><strong>Найдите три самых дорогих вызова инструментов.</strong> Можно ли было получить тот же результат дешевле — с параметрами offset/limit, более точным паттерном?</li>
+        <li class="fragment"><strong>Определите момент деградации качества.</strong> На каком шаге ответы стали менее точными? Сколько процентов окна было занято?</li>
+        <li class="fragment"><strong>Сформулируйте три правила для CLAUDE.md.</strong> Что нужно изменить в рабочем процессе для следующей аналогичной сессии?</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     CLOSING SLIDES
+     ═══════════════════════════════════════════════════ -->
+
+<section>
+  <div class="chapter-shell">
+    <span class="kicker">Дальше</span>
+    <h1>Лекция 7</h1>
+    <p class="cta">RAG — embedding, vector store, retrieval. Когда контекстного окна не хватает — доставать нужное точечно.</p>
+    <div class="meta-row" style="justify-content:center">
+      <a class="pill" href="../part1/">Слайды · Лекция 1</a>
+      <a class="pill" href="../part2/">Слайды · Лекция 2</a>
+      <a class="pill" href="../part3/">Слайды · Лекция 3</a>
+      <a class="pill" href="../part4/">Слайды · Лекция 4</a>
+      <a class="pill" href="../part5/">Слайды · Лекция 5</a>
+      <a class="pill" href="../../">Главная</a>
+    </div>
+  </div>
+</section>
+
+<!-- Closing slide — Остаёмся на связи -->
+<section>
+  <div class="slide-shell">
+    <h2 class="section-title">Остаёмся на связи</h2>
+    <div class="promo-layout">
+      <div class="promo-photo-box">
+        <img src="../../assets/avatar.jpg" alt="Фото автора канала" onerror="this.style.display='none'">
+      </div>
+      <div class="promo-qr-box">
+        <h3>Telegram канал</h3>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=420x420&data=https%3A%2F%2Ft.me%2FSazonovMaybeTalks" alt="QR код на Telegram канал SazonovMaybeTalks">
+        <a class="promo-link" href="https://t.me/SazonovMaybeTalks" target="_blank" rel="noopener noreferrer">t.me/SazonovMaybeTalks</a>
+        <p class="note">Сканируйте QR или переходите по ссылке, чтобы получить обновления по следующим материалам.</p>
+      </div>
+    </div>
+</div>
+</section>
+
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/5.2.1/reveal.min.js"></script>
