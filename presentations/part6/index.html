@@ -747,7 +747,7 @@ table.mini th {
 <section>
   <div class="slide-shell">
     <h2 class="section-title">Context Engineering: определение</h2>
-    <blockquote><p><strong>Context Engineering</strong> — дисциплина проектирования информации, которая попадает в контекстное окно модели: что подать, в каком объёме, в каком порядке — и что отсечь.</p></blockquote>
+    <blockquote><p><strong>Context Engineering</strong> — осознанное проектирование того, что попадает в контекстное окно модели: что подать, в каком объёме, в каком порядке — и что отсечь.</p></blockquote>
     <div class="cards c2" style="margin-top:0.8em">
       <div class="card amber fragment">
         <h3>Prompt Engineering</h3>
@@ -819,7 +819,7 @@ table.mini th {
     <h2 class="section-title">BPE: как строится словарь токенов</h2>
     <div class="card amber" style="margin-bottom:0.7em">
       <h3>Byte Pair Encoding (BPE)</h3>
-      <p>Алгоритм, которым обучается токенизатор. Начинает с отдельных байтов и итеративно склеивает самые частые пары.</p>
+      <p>Алгоритм, которым обучается токенизатор. Начинает с отдельных байтов и шаг за шагом склеивает самые частые пары.</p>
     </div>
     <div class="process">
       <div class="step fragment"><h4>Шаг 1</h4><p>Начинаем с байтов: каждый символ — отдельный токен</p></div>
@@ -830,7 +830,7 @@ table.mini th {
       <div class="arrow">→</div>
       <div class="step fragment"><h4>Результат</h4><p>Частые слова = 1 токен, редкие = несколько</p></div>
     </div>
-    <p class="fragment note" style="margin-top:0.8em">BPE обучается на корпусе. Английский доминирует → английские слова компактнее. Кириллица, иероглифы, редкий код — дороже.</p>
+    <p class="fragment note" style="margin-top:0.8em">BPE строит словарь по обучающим данным. Английского текста в них больше всего → английские слова компактнее. Кириллица, иероглифы, редкий код — дороже.</p>
   </div>
 </section>
 
@@ -1170,8 +1170,8 @@ table.mini th {
         </thead>
         <tbody>
           <tr class="fragment"><td>Read/Grep с ограничениями</td><td>Переменные расходы на tool calls</td><td>5-10x за один вызов</td></tr>
-          <tr class="fragment"><td>Подключать только нужные MCP-серверы</td><td>Фиксированные расходы (каждый запрос)</td><td>1-5 тысяч токенов per запрос</td></tr>
-          <tr class="fragment"><td>Краткий и точный system prompt / AGENTS.md</td><td>Фиксированные расходы (каждый запрос)</td><td>2-4 тысяч токенов per запрос</td></tr>
+          <tr class="fragment"><td>Подключать только нужные MCP-серверы</td><td>Фиксированные расходы (каждый запрос)</td><td>1-5 тысяч токенов на запрос</td></tr>
+          <tr class="fragment"><td>Краткий и точный system prompt / AGENTS.md</td><td>Фиксированные расходы (каждый запрос)</td><td>2-4 тысячи токенов на запрос</td></tr>
           <tr class="fragment"><td>Новая сессия вместо накопления истории</td><td>Переменные расходы (история диалога)</td><td>Десятки тысяч токенов</td></tr>
           <tr class="fragment"><td>Compact при шумной истории</td><td>Переменные расходы (история диалога)</td><td>30-70% объёма истории</td></tr>
           <tr class="fragment"><td>Декомпозиция на субагентов</td><td>Полный объём контекста задачи</td><td>Чистое окно для каждой части</td></tr>
@@ -1222,7 +1222,7 @@ table.mini th {
         <h3>Хранить</h3>
         <ul>
           <li>Решения, которые нельзя вывести из кода или git</li>
-          <li>Контринтуитивные предпочтения</li>
+          <li>Неочевидные предпочтения</li>
           <li>Ссылки на внешние системы, не представленные в репозитории</li>
         </ul>
       </div>
