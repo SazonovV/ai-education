@@ -1181,8 +1181,8 @@ model: claude-sonnet-4-6
 }</code></pre>
     <div class="grid-2" style="margin-top: 0.5em;">
       <div class="card rose fragment">
-        <h3>Ключевое отличие</h3>
-        <p>Агенты в OpenCode — <strong>предустановленные профили</strong>, а не динамически порождаемые субагенты. Переключение — смена конфигурации внутри одного сеанса.</p>
+        <h3>Делегация через Task tool</h3>
+        <p>Агенты определяются в конфигурации, но делегация — динамическая через <strong>Task tool</strong>. Встроенный <code>general</code>-субагент выполняет несколько задач параллельно. Worktree-изоляция — через плагин <a href="https://github.com/kdcokenny/opencode-worktree">opencode-worktree</a>.</p>
       </div>
       <div class="card green fragment">
         <h3>Markdown-формат</h3>
@@ -1211,7 +1211,7 @@ model: claude-sonnet-4-6
             <td><strong>Модель</strong></td>
             <td>Делегация через Agent tool</td>
             <td>Агенты с нативными субагентами</td>
-            <td>Агенты-профили в конфигурации</td>
+            <td>Task tool + агенты в конфигурации</td>
           </tr>
           <tr class="fragment">
             <td><strong>Конфигурация</strong></td>
@@ -1223,13 +1223,13 @@ model: claude-sonnet-4-6
             <td><strong>Параллельность</strong></td>
             <td style="color: var(--green);">Да (несколько Agent-вызовов)</td>
             <td style="color: var(--red);">Последовательная</td>
-            <td style="color: var(--red);">Нет (профили)</td>
+            <td style="color: var(--green);">Да (Task tool, general)</td>
           </tr>
           <tr class="fragment">
             <td><strong>Изоляция</strong></td>
             <td style="color: var(--green);">Worktree (git-копия)</td>
             <td>Отдельный контекст (общая FS)</td>
-            <td>Отдельный контекст (общая FS)</td>
+            <td>Отдельный контекст (общая FS); worktree через плагин</td>
           </tr>
           <tr class="fragment">
             <td><strong>Пользовательские типы</strong></td>
@@ -1247,7 +1247,7 @@ model: claude-sonnet-4-6
       </table>
     </div>
     <blockquote class="fragment">
-      <p>Самая продвинутая модель — у Claude Code: worktree-изоляция, параллелизм и фоновый режим. Kilo Code компактнее: нативная субагентность без оркестратора. OpenCode — минимальный подход с профилями.</p>
+      <p>Самая продвинутая модель — у Claude Code: worktree-изоляция, параллелизм и фоновый режим из коробки. OpenCode — Task tool с параллельными субагентами; worktree через плагин. Kilo Code — нативная субагентность с последовательной делегацией.</p>
     </blockquote>
 </div>
 </section>
@@ -1409,7 +1409,8 @@ model: claude-sonnet-4-6
       <div class="card amber fragment">
         <h3>Поддержка</h3>
         <ul>
-          <li><strong>Claude Code</strong> — нативные параллельные вызовы Agent tool</li>
+          <li><strong>Claude Code</strong> — нативные параллельные вызовы Agent tool с worktree-изоляцией</li>
+          <li><strong>OpenCode</strong> — параллельные Task-вызовы (worktree через плагин)</li>
           <li><strong>Kilo Code</strong> — только последовательная делегация</li>
         </ul>
       </div>
@@ -1517,7 +1518,7 @@ model: claude-sonnet-4-6
             <td><strong>Fan-out / fan-in</strong></td>
             <td>Параллельные субагенты, родитель собирает</td>
             <td>Обновление 5 микросервисов</td>
-            <td>Claude Code <span style="color: var(--green);">(параллельно)</span>, Kilo Code <span style="color: var(--red);">(последовательно)</span></td>
+            <td>Claude Code <span style="color: var(--green);">(параллельно)</span>, OpenCode <span style="color: var(--green);">(параллельно)</span>, Kilo Code <span style="color: var(--red);">(последовательно)</span></td>
           </tr>
           <tr class="fragment">
             <td><strong>Pipeline</strong></td>
@@ -1935,7 +1936,7 @@ model: claude-sonnet-4-6
       </div>
       <div class="card rose fragment">
         <h3>3</h3>
-        <p><strong>Каждый инструмент — своя модель.</strong> Claude Code: Agent tool + worktree-изоляция и параллелизм. Kilo Code: нативные агенты с делегацией. OpenCode: агенты-профили.</p>
+        <p><strong>Каждый инструмент — своя модель.</strong> Claude Code: Agent tool + worktree + фоновый режим. OpenCode: Task tool с параллельными субагентами; worktree через плагин. Kilo Code: последовательная делегация.</p>
       </div>
       <div class="card green fragment">
         <h3>4</h3>
