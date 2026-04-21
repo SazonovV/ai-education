@@ -593,8 +593,8 @@ function getPartId() {
 function slugify(text) {
   const base = text
     .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^\p{Letter}\p{Number}]+/gu, "-")
+    .replace(/[^\p{Letter}\p{Number} -]+/gu, "")
+    .replace(/ /g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
   return base || "section";
@@ -603,8 +603,15 @@ function slugify(text) {
 function buildToc() {
   const headings = contentEl.querySelectorAll("h2, h3");
   tocEl.innerHTML = "";
-  headings.forEach((h, i) => {
-    if (!h.id) h.id = `${slugify(h.textContent)}-${i}`;
+  const usedIds = new Set();
+  headings.forEach((h) => {
+    if (!h.id) {
+      let id = slugify(h.textContent);
+      let n = 1;
+      while (usedIds.has(id)) { id = `${slugify(h.textContent)}-${n++}`; }
+      h.id = id;
+    }
+    usedIds.add(h.id);
     const a = document.createElement("a");
     a.href = `#${h.id}`;
     a.textContent = h.textContent;
@@ -802,6 +809,11 @@ async function renderArticle(lectures, partId) {
     statusEl.hidden = true;
     buildToc();
     buildBottomNav(lectures, partId);
+
+    if (location.hash) {
+      const target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (target) requestAnimationFrame(() => target.scrollIntoView());
+    }
   } catch (err) {
     statusEl.textContent = "Не удалось загрузить конспект. Проверьте подключение.";
     console.error(err);
