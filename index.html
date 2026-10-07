@@ -25,6 +25,7 @@ try {
 :root {
   color-scheme: dark;
   --bg: #0b0c0e;
+  --pass-bg: #111317;
   --line: #24272d;
   --text: #f2f2ee;
   --muted: #9aa0aa;
@@ -48,6 +49,7 @@ try {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
     --bg: #f2eee5;
+    --pass-bg: #fbf9f4;
     --line: #d8d1c2;
     --text: #1b1a17;
     --muted: #6f695e;
@@ -64,6 +66,7 @@ try {
 :root[data-theme="light"] {
   color-scheme: light;
   --bg: #f2eee5;
+  --pass-bg: #fbf9f4;
   --line: #d8d1c2;
   --text: #1b1a17;
   --muted: #6f695e;
@@ -106,12 +109,61 @@ body::after {
 }
 
 /* ---- Шапка ---- */
-.who { position: relative; display: flex; align-items: center; gap: 22px; margin-bottom: 40px; }
-.who .photo { width: 104px; height: 104px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-.who h1 { font-family: "Unbounded", "Manrope", sans-serif; font-size: 28px; margin: 0 0 6px; }
-.who .role { color: var(--accent); font-weight: 700; margin: 0 0 6px; }
-.who .bio { color: var(--muted); margin: 0 0 4px; line-height: 1.55; }
-.who .extra { color: var(--muted); opacity: .75; font-size: 13px; margin: 0; }
+.pass {
+  position: relative;
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  background: var(--pass-bg);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  margin-bottom: 44px;
+}
+.pass-stub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 18px;
+}
+.pass-photo {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  object-position: 50% 12%;
+  border-radius: 10px;
+  display: block;
+}
+.pass-main {
+  position: relative;
+  padding: 24px 28px;
+  border-left: 2px dashed var(--line);
+}
+/* notches of the tear-off line */
+.pass-main::before, .pass-main::after {
+  content: "";
+  position: absolute;
+  left: -11px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+.pass-main::before { top: -11px; }
+.pass-main::after { bottom: -11px; }
+.pass-label {
+  display: block;
+  font: 500 10px/1 var(--mono);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.pass-main .pass-label { margin-bottom: 14px; }
+.pass h1 { font-family: "Unbounded", "Manrope", sans-serif; font-size: 30px; margin: 0 0 8px; color: var(--text); }
+.pass .role { color: var(--accent); font-weight: 700; margin: 0 0 16px; }
+.pass .bio { color: var(--text); opacity: .86; font-size: 16px; line-height: 1.65; margin: 0 0 12px; max-width: 62ch; }
+.pass .extra { color: var(--muted); font-size: 13px; margin: 16px 0 0; }
 
 /* ---- Табло ---- */
 .board { margin-bottom: 36px; }
@@ -186,7 +238,7 @@ body::after {
 
 /* ---- Переключатель темы ---- */
 .theme-toggle {
-  position: absolute; top: 0; right: 0;
+  position: absolute; top: 20px; right: 20px;
   font: 500 11px/1 var(--mono);
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -203,9 +255,16 @@ body::after {
 /* ---- Телефон ---- */
 @media (max-width: 719px) {
   body { padding: 32px 16px; }
-  .who { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .who .photo { width: 80px; height: 80px; }
-  .who h1 { font-size: 22px; }
+  .pass { grid-template-columns: 1fr; }
+  .pass-stub { padding: 14px 14px 12px; }
+  .pass-photo { aspect-ratio: 4 / 3; object-position: 50% 14%; }
+  .pass-main { padding: 20px 18px; border-left: 0; border-top: 2px dashed var(--line); }
+  .pass-main::before, .pass-main::after { top: -11px; bottom: auto; }
+  .pass-main::before { left: -11px; }
+  .pass-main::after { left: auto; right: -11px; }
+  .pass h1 { font-size: 22px; }
+  .pass .bio { font-size: 15px; }
+  .theme-toggle { top: 16px; right: 14px; }
   .board-head { display: none; }
   :root { --fw: 14px; --fh: 20px; }
   .board--dest .row, .board--talks .row { grid-template-columns: minmax(0, 1fr) var(--col-status); }
@@ -219,13 +278,18 @@ body::after {
 </head>
 <body>
 <main class="shell">
-  <header class="who">
-    <button class="theme-toggle" type="button" aria-label="Переключить тему"></button>
-    <img class="photo" src="./assets/avatar.jpg" alt="Владислав Сазонов" width="104" height="104">
-    <div>
+  <header class="pass">
+    <div class="pass-stub">
+      <img class="pass-photo" src="./assets/photo-2026.jpg" alt="Владислав Сазонов на сцене TeamLead Conf" width="705" height="1280">
+      <span class="pass-label">Пассажир</span>
+    </div>
+    <div class="pass-main">
+      <button class="theme-toggle" type="button" aria-label="Переключить тему"></button>
+      <span class="pass-label">Посадочный талон</span>
       <h1>Владислав Сазонов</h1>
       <p class="role">ИТ-лидер в Альфа-Банке · AI в инженерных командах</p>
-      <p class="bio">Работаю на стыке управления и ИИ: смотрю, как ИИ меняет устройство команд и процессов.</p>
+      <p class="bio">Отвечаю не только за технологии, но и за людей и процессы — и за то, как всё это срастается с бизнесом. Последние годы работаю на стыке управления и ИИ: внедряю агентов в работу команд и смотрю, как ИИ меняет само устройство разработки.</p>
+      <p class="bio">Ценю прозрачность и прямоту, к каждому человеку ищу свой подход, а процесс, по-моему, должен жить, пока приносит пользу, — и не дольше. Веду открытый курс Agentic Engineering, выступаю на конференциях и помогаю руководителям как ментор.</p>
       <p class="extra">Программный комитет трека AI Native, Ontico</p>
     </div>
   </header>
