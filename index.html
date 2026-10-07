@@ -154,15 +154,7 @@ body::after {
 }
 .pass-main::before { top: -11px; }
 .pass-main::after { bottom: -11px; }
-.pass-label {
-  display: block;
-  font: 500 10px/1 var(--mono);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.pass-main .pass-label { margin-bottom: 14px; }
-.pass h1 { font-family: "Unbounded", "Manrope", sans-serif; font-size: 30px; margin: 0 0 8px; color: var(--text); }
+.pass h1 { font-family: "Unbounded", "Manrope", sans-serif; font-size: 30px; margin: 0 0 8px; padding-right: 110px; color: var(--text); }
 .pass .role { color: var(--accent); font-weight: 700; margin: 0 0 16px; }
 .pass .bio { color: var(--text); opacity: .86; font-size: 16px; line-height: 1.65; margin: 0 0 12px; max-width: 62ch; }
 .pass .extra { color: var(--muted); font-size: 13px; margin: 16px 0 0; }
@@ -259,12 +251,12 @@ body::after {
   body { padding: 32px 16px; }
   .pass { grid-template-columns: 1fr; }
   .pass-stub { padding: 14px 14px 12px; }
-  .pass-photo { flex: none; height: auto; aspect-ratio: 4 / 3; object-position: 50% 18%; }
-  .pass-main { padding: 20px 18px; border-left: 0; border-top: 2px dashed var(--line); }
+  .pass-photo { flex: none; height: auto; aspect-ratio: 4 / 3; object-position: 50% 0%; }
+  .pass-main { padding: 54px 18px 20px; border-left: 0; border-top: 2px dashed var(--line); }
   .pass-main::before, .pass-main::after { top: -11px; bottom: auto; }
   .pass-main::before { left: -11px; }
   .pass-main::after { left: auto; right: -11px; }
-  .pass h1 { font-size: 22px; }
+  .pass h1 { font-size: 22px; padding-right: 0; }
   .pass .bio { font-size: 15px; }
   .theme-toggle { top: 16px; right: 14px; }
   .board-head { display: none; }
@@ -283,11 +275,9 @@ body::after {
   <header class="pass">
     <div class="pass-stub">
       <img class="pass-photo" src="./assets/photo-2026.jpg" alt="Владислав Сазонов на сцене TeamLead Conf" width="480" height="640">
-      <span class="pass-label">Пассажир</span>
     </div>
     <div class="pass-main">
       <button class="theme-toggle" type="button" aria-label="Переключить тему"></button>
-      <span class="pass-label">Посадочный талон</span>
       <h1>Владислав Сазонов</h1>
       <p class="role">ИТ-лидер в Альфа-Банке · AI в инженерных командах</p>
       <p class="bio">Отвечаю не только за технологии, но и за людей и процессы — и за то, как всё это срастается с бизнесом. Последние годы работаю на стыке управления и ИИ: внедряю агентов в работу команд и смотрю, как ИИ меняет само устройство разработки.</p>
