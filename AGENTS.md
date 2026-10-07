@@ -50,6 +50,8 @@ Talks live in the `TALKS` array in `/index.html`. Add one object:
 
 Order does not matter (sorted by date). Status (СКОРО / СЕГОДНЯ / ВИДЕО / СЛАЙДЫ / ПРОШЁЛ) is computed from the date and materials; when slides or video appear, fill `slides` / `video`. Destinations live in `DESTINATIONS` — when changing them, update the `<noscript>` list too. No phone or e-mail on the card; Telegram is the only contact.
 
+Files under `/assets/` and `/ai-course/assets/` are served with a one-year `immutable` cache — when replacing an image, give it a new file name and update the reference.
+
 ## Linguistic rules for Russian content
 
 All conspects and slides are in Russian. After writing or editing text, verify there are no direct calques from English. Common violations:

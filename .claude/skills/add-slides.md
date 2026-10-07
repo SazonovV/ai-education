@@ -5,7 +5,7 @@ description: Add slides to an existing reveal.js presentation — reference for 
 
 # Add slides to a presentation
 
-Use this skill when adding new slides to an existing presentation in `presentations/partN/index.html`.
+Use this skill when adding new slides to an existing presentation in `ai-course/presentations/partN/index.html`.
 
 ## Design system
 

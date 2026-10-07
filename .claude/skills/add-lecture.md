@@ -11,7 +11,7 @@ Use this skill when adding a new lecture/part to the presentation project.
 
 ### 1. Create the markdown content file
 
-Create `content/<id>.md` where `<id>` is the lecture identifier (e.g., `part2_advanced`).
+Create `ai-course/content/<id>.md` where `<id>` is the lecture identifier (e.g., `part2_advanced`).
 
 Structure:
 
@@ -50,7 +50,7 @@ Content...
 
 ### 2. Update the manifest
 
-Add an entry to `content/lectures.json`:
+Add an entry to `ai-course/content/lectures.json`:
 
 ```json
 {
@@ -62,11 +62,11 @@ Add an entry to `content/lectures.json`:
 }
 ```
 
-After this, the lecture automatically appears in the reading page at `/reading/?part=<id>`.
+After this, the lecture automatically appears in the reading page at `/ai-course/reading/?part=<id>`.
 
 ### 3. Create the presentation
 
-Create `presentations/<folder>/index.html`. Copy the structure from an existing presentation (part0 or part1) including:
+Create `ai-course/presentations/<folder>/index.html`. Copy the structure from an existing presentation (part0 or part1) including:
 
 - Yandex.Metrika counter (same snippet)
 - All CSS variables and styles (copy the full `<style>` block)
@@ -111,14 +111,14 @@ Update the deck-switcher in ALL existing presentations to include the new lectur
 </div>
 ```
 
-Also update `index.html` (home page) to add a card for the new lecture.
+Also update `ai-course/index.html` (course home page) to add a card for the new lecture.
 
 ### 5. Checklist
 
-- [ ] Markdown file created in `content/`
-- [ ] Entry added to `content/lectures.json`
-- [ ] Presentation HTML created in `presentations/<folder>/`
+- [ ] Markdown file created in `ai-course/content/`
+- [ ] Entry added to `ai-course/content/lectures.json`
+- [ ] Presentation HTML created in `ai-course/presentations/<folder>/`
 - [ ] Deck-switcher updated in ALL presentations (part0, part1, and new)
-- [ ] Home page `index.html` updated with new card
-- [ ] Reading page works: `/reading/?part=<id>`
+- [ ] Course home page `ai-course/index.html` updated with new card
+- [ ] Reading page works: `/ai-course/reading/?part=<id>`
 - [ ] Presentation loads without errors

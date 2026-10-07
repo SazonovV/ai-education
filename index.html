@@ -53,7 +53,7 @@ try {
     --line: #d8d1c2;
     --text: #1b1a17;
     --muted: #6f695e;
-    --accent: #d9431f;
+    --accent: #c23a1a;
     --flap-bg: #1c1c1c;
     --flap-fg: #f5f1e8;
     --ok: #3ddc84;
@@ -70,7 +70,7 @@ try {
   --line: #d8d1c2;
   --text: #1b1a17;
   --muted: #6f695e;
-  --accent: #d9431f;
+  --accent: #c23a1a;
   --flap-bg: #1c1c1c;
   --flap-fg: #f5f1e8;
   --ok: #3ddc84;
@@ -202,6 +202,7 @@ body::after {
 /* ---- Плашки ---- */
 .flaps { display: flex; flex-wrap: wrap; gap: var(--fgap); min-width: 0; }
 .c-status .flaps { justify-content: flex-end; }
+.flap-word { display: inline-flex; flex-wrap: nowrap; gap: var(--fgap); }
 .flap {
   position: relative;
   display: inline-grid;
@@ -277,7 +278,7 @@ body::after {
       <img class="pass-photo" src="./assets/photo-2026.jpg" alt="Владислав Сазонов на сцене TeamLead Conf" width="480" height="640">
     </div>
     <div class="pass-main">
-      <button class="theme-toggle" type="button" aria-label="Переключить тему"></button>
+      <button class="theme-toggle" type="button" title="Переключить тему"></button>
       <h1>Владислав Сазонов</h1>
       <p class="role">ИТ-лидер в Альфа-Банке · AI в инженерных командах</p>
       <p class="bio">Отвечаю не только за технологии, но и за людей и процессы — и за то, как всё это срастается с бизнесом. Последние годы работаю на стыке управления и ИИ: внедряю агентов в работу команд и смотрю, как ИИ меняет само устройство разработки.</p>
@@ -361,8 +362,15 @@ function flapCell(text, className) {
   const flaps = el("span", "flaps");
   flaps.setAttribute("aria-hidden", "true");
   flaps.dataset.text = text;
+  let word = null;
   for (const ch of text) {
-    flaps.append(el("span", ch === " " ? "flap flap--space" : "flap", ch === " " ? "" : ch));
+    if (ch === " ") {
+      word = null;
+      flaps.append(el("span", "flap flap--space", ""));
+    } else {
+      if (!word) { word = el("span", "flap-word"); flaps.append(word); }
+      word.append(el("span", "flap", ch));
+    }
   }
   cell.append(flaps, el("span", "vh", text));
   return cell;
@@ -478,7 +486,6 @@ boardIntro();
   const render = () => {
     const light = current() === "light";
     btn.textContent = light ? "☾ НОЧЬ" : "☀ ДЕНЬ";
-    btn.setAttribute("aria-pressed", light ? "true" : "false");
   };
   btn.addEventListener("click", () => {
     const next = current() === "light" ? "dark" : "light";
