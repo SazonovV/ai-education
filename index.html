@@ -112,7 +112,7 @@ body::after {
 .pass {
   position: relative;
   display: grid;
-  grid-template-columns: 240px minmax(0, 1fr);
+  grid-template-columns: 260px minmax(0, 1fr);
   background: var(--pass-bg);
   border: 1px solid var(--line);
   border-radius: 16px;
@@ -127,10 +127,12 @@ body::after {
 }
 .pass-photo {
   width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 4;
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  aspect-ratio: auto;
   object-fit: cover;
-  object-position: 50% 12%;
+  object-position: 50% 20%;
   border-radius: 10px;
   display: block;
 }
@@ -139,7 +141,7 @@ body::after {
   padding: 24px 28px;
   border-left: 2px dashed var(--line);
 }
-/* notches of the tear-off line */
+/* вырезы на линии отрыва */
 .pass-main::before, .pass-main::after {
   content: "";
   position: absolute;
@@ -257,7 +259,7 @@ body::after {
   body { padding: 32px 16px; }
   .pass { grid-template-columns: 1fr; }
   .pass-stub { padding: 14px 14px 12px; }
-  .pass-photo { aspect-ratio: 4 / 3; object-position: 50% 14%; }
+  .pass-photo { flex: none; height: auto; aspect-ratio: 4 / 3; object-position: 50% 18%; }
   .pass-main { padding: 20px 18px; border-left: 0; border-top: 2px dashed var(--line); }
   .pass-main::before, .pass-main::after { top: -11px; bottom: auto; }
   .pass-main::before { left: -11px; }
@@ -280,7 +282,7 @@ body::after {
 <main class="shell">
   <header class="pass">
     <div class="pass-stub">
-      <img class="pass-photo" src="./assets/photo-2026.jpg" alt="Владислав Сазонов на сцене TeamLead Conf" width="705" height="1280">
+      <img class="pass-photo" src="./assets/photo-2026.jpg" alt="Владислав Сазонов на сцене TeamLead Conf" width="480" height="640">
       <span class="pass-label">Пассажир</span>
     </div>
     <div class="pass-main">
