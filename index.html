@@ -294,7 +294,7 @@ renderTalks(TALKS, todayISO(new Date()));
 </script>
 <script>
 // Перелистывание плашек: каждая прокручивает несколько случайных символов и встаёт на свой.
-const FLAP_CHARSET = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЭЮЯ0123456789";
+const FLAP_CHARSET = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const FLAP_TICK_MS = 55;
 const ROW_STAGGER_MS = 110;
 const CHAR_STAGGER_MS = 14;
@@ -332,6 +332,14 @@ function flipRow(row, delay) {
 
 function boardIntro() {
   const rows = document.querySelectorAll(".row");
+  if (!reduceMotion.matches) {
+    // Прячем финальный текст до начала перелистывания, чтобы не было вспышки.
+    rows.forEach((row) => {
+      row.querySelectorAll(".flap").forEach((flap) => {
+        if (flap.textContent !== "") flap.textContent = "";
+      });
+    });
+  }
   rows.forEach((row, i) => {
     flipRow(row, i * ROW_STAGGER_MS);
     row.addEventListener("mouseenter", () => flipRow(row, 0));
