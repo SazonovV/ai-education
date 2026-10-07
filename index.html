@@ -292,6 +292,55 @@ function renderTalks(list, today) {
 renderDestinations(DESTINATIONS);
 renderTalks(TALKS, todayISO(new Date()));
 </script>
+<script>
+// Перелистывание плашек: каждая прокручивает несколько случайных символов и встаёт на свой.
+const FLAP_CHARSET = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЭЮЯ0123456789";
+const FLAP_TICK_MS = 55;
+const ROW_STAGGER_MS = 110;
+const CHAR_STAGGER_MS = 14;
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function flipFlap(flap, target, delay) {
+  const turns = 4 + Math.floor(Math.random() * 5);
+  let n = 0;
+  setTimeout(function tick() {
+    if (n < turns) {
+      flap.textContent = FLAP_CHARSET[Math.floor(Math.random() * FLAP_CHARSET.length)];
+      n++;
+      setTimeout(tick, FLAP_TICK_MS);
+    } else {
+      flap.textContent = target;
+    }
+  }, delay);
+}
+
+function flipRow(row, delay) {
+  if (reduceMotion.matches || row.dataset.flipping) return;
+  row.dataset.flipping = "1";
+  let longest = 0;
+  for (const group of row.querySelectorAll(".flaps")) {
+    const chars = [...group.dataset.text];
+    group.querySelectorAll(".flap").forEach((flap, i) => {
+      if (chars[i] === " ") return;
+      const d = delay + i * CHAR_STAGGER_MS;
+      flipFlap(flap, chars[i], d);
+      longest = Math.max(longest, d + 9 * FLAP_TICK_MS);
+    });
+  }
+  setTimeout(() => { delete row.dataset.flipping; }, longest);
+}
+
+function boardIntro() {
+  const rows = document.querySelectorAll(".row");
+  rows.forEach((row, i) => {
+    flipRow(row, i * ROW_STAGGER_MS);
+    row.addEventListener("mouseenter", () => flipRow(row, 0));
+    row.addEventListener("focus", () => flipRow(row, 0));
+  });
+}
+
+boardIntro();
+</script>
 
 <script>
 (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
