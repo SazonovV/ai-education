@@ -1,17 +1,20 @@
-# AI Engineering Course
+# vladsazonov.com
 
-Курс по AI-инженерии — от вайбкодинга до мультиагентных систем. 9 лекций с презентациями и конспектами.
+Личная страница и курс по AI-инженерии — от вайбкодинга до мультиагентных систем.
 
-**Сайт:** [vladsazonov.com](https://vladsazonov.com)
+- **Визитка:** [vladsazonov.com](https://vladsazonov.com)
+- **Курс:** [vladsazonov.com/ai-course/](https://vladsazonov.com/ai-course/)
 
 ## Структура
 
 ```text
 .
-├── assets/              # изображения и медиа
-├── content/             # исходные .md конспекты
-├── presentations/       # Reveal.js слайды (part1–part4)
-├── reading/             # HTML-страницы чтения конспектов
-└── index.html           # главная страница
+├── index.html           # визитка-табло
+├── assets/              # фото для визитки
+└── ai-course/
+    ├── assets/          # изображения курса
+    ├── content/         # исходные .md конспекты и lectures.json
+    ├── presentations/   # Reveal.js слайды (part1–part6)
+    ├── reading/         # SPA чтения конспектов
+    └── index.html       # главная курса
 ```
-
