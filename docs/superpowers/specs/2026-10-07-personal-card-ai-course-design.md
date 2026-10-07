@@ -167,7 +167,7 @@ const TALKS = [
 
 ### Мета и аналитика
 
-- `<title>`: «Владислав Сазонов»; `og:title`, `og:description`, `og:url = https://vladsazonov.com/`, `og:type = profile`. `og:image` не задаётся (отдельная картинка — вне объёма).
+- `<title>`: «Владислав Сазонов»; `og:title`, `og:description`, `og:url = https://vladsazonov.com/`, `og:type = profile`. `og:image = https://vladsazonov.com/assets/og-card-2026.jpg` (1200×630), `twitter:card = summary_large_image`, JSON-LD `Person`, canonical.
 - Яндекс Метрика: тот же счётчик `107242055`, с `trackLinks: true` — переходы по внешним ссылкам учитываются автоматически.
 - Фавикон — та же эмодзи-схема, что у курса, символ ✈️.
 

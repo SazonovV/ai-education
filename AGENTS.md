@@ -41,8 +41,11 @@ The top bar shows only two buttons:
 2. Add entry to `/ai-course/content/lectures.json`
 3. Create `/ai-course/presentations/partN/index.html`
 4. Add card to `/ai-course/index.html`
+5. Add the lecture's reading URL (`/ai-course/reading/?part=<id>`) and presentation URL to `/sitemap.xml`.
 
 ### Personal card: adding a talk
+
+Preview image: `/assets/og-card-2026.jpg` (1200×630); when regenerating, use a new file name.
 
 Talks live in the `TALKS` array in `/index.html`. Add one object:
 
