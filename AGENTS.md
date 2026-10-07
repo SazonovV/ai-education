@@ -73,4 +73,5 @@ Acceptable English in Russian text: established tech terms (`hooks`, `pipeline`,
 - Pure HTML/CSS/JS, no build system
 - Reveal.js for presentations
 - Marked.js + Highlight.js for markdown rendering
+- Web fonts are self-hosted in `/assets/fonts/fonts-v1.css` (cyrillic + latin subsets), shared by the card and the course via relative paths; /assets is cached immutable — on change, create `fonts-v2.css`.
 - Served by nginx from this repo's working copy (configs in /etc/nginx, outside the repo)
