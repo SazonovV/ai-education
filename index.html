@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Владислав Сазонов</title>
+<meta name="description" content="ИТ-лидер в Альфа-Банке · AI в инженерных командах. Курс Agentic Engineering, выступления, менторство.">
+<meta property="og:title" content="Владислав Сазонов">
+<meta property="og:description" content="ИТ-лидер в Альфа-Банке · AI в инженерных командах. Курс, выступления, менторство.">
+<meta property="og:url" content="https://vladsazonov.com/">
+<meta property="og:type" content="profile">
+<meta property="og:locale" content="ru_RU">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✈️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700&family=Unbounded:wght@700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080707;
+  --bg-soft: #12100f;
+  --line: #3d322a;
+  --text: #f8f0e4;
+  --muted: #c7b095;
+  --teal: #38d7c5;
+  --amber: #f6a54b;
+  --rose: #e8657a;
+  --green: #5ec269;
+  --flap-bg: #1d1916;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 10% 12%, rgba(56,215,197,0.14), transparent 35%),
+    radial-gradient(circle at 90% 10%, rgba(246,165,75,0.14), transparent 28%),
+    linear-gradient(145deg, #090807 0%, #0f0d0c 55%, #090807 100%);
+  background-color: var(--bg);
+  min-height: 100vh;
+  padding: 48px 16px;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px;
+}
+
+.shell { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; }
+
+.vh {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---- Шапка ---- */
+.who { display: flex; align-items: center; gap: 22px; margin-bottom: 40px; }
+.who .photo { width: 104px; height: 104px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.who h1 { font-family: "Unbounded", "Manrope", sans-serif; font-size: 28px; margin: 0 0 6px; }
+.who .role { color: var(--teal); font-weight: 700; margin: 0 0 6px; }
+.who .bio { color: var(--muted); margin: 0 0 4px; line-height: 1.55; }
+.who .extra { color: var(--muted); opacity: .75; font-size: 13px; margin: 0; }
+
+/* ---- Табло ---- */
+.board { margin-bottom: 36px; }
+.board-title {
+  font: 700 12px/1 "Manrope", sans-serif;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(56, 215, 197, 0.75);
+  margin: 0 0 10px;
+}
+.board-head, .row {
+  display: grid;
+  gap: 8px 16px;
+  align-items: center;
+  padding: 10px 12px;
+}
+.board-head {
+  font: 500 11px/1 var(--mono);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: .7;
+  border-bottom: 1px solid var(--line);
+}
+.board--dest .board-head, .board--dest .row { grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr) auto; }
+.board--talks .board-head, .board--talks .row { grid-template-columns: auto minmax(0, 2.2fr) minmax(0, 1fr) auto; }
+
+.rows { list-style: none; margin: 0; padding: 0; }
+.row {
+  color: var(--text);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  transition: background-color .15s;
+}
+.row:hover { background: rgba(246, 165, 75, 0.06); }
+.row:focus-visible { outline: 2px solid var(--teal); outline-offset: -2px; }
+
+.c-text { font-family: var(--mono); font-size: 13px; color: var(--muted); min-width: 0; }
+.c-title { color: var(--amber); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---- Плашки ---- */
+.flaps { display: flex; flex-wrap: wrap; gap: 2px; min-width: 0; }
+.flap {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 1.05em;
+  height: 1.5em;
+  background: var(--flap-bg);
+  color: var(--amber);
+  border-radius: 3px;
+  font: 500 15px/1 var(--mono);
+}
+.flap::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: rgba(0, 0, 0, 0.6);
+}
+.flap--space { background: transparent; width: .55em; }
+.flap--space::after { display: none; }
+
+.tone-open .flap, .tone-done .flap { color: var(--teal); }
+.tone-soon .flap { color: var(--rose); }
+.tone-past .flap { color: var(--muted); }
+
+.plain { line-height: 2; }
+.plain a { color: var(--teal); }
+
+/* ---- Телефон ---- */
+@media (max-width: 719px) {
+  body { padding: 32px 16px; }
+  .who { flex-direction: column; align-items: flex-start; gap: 14px; }
+  .who .photo { width: 80px; height: 80px; }
+  .who h1 { font-size: 22px; }
+  .board-head { display: none; }
+  .board--dest .row, .board--talks .row { grid-template-columns: minmax(0, 1fr) auto; }
+  .c-key { order: 0; }
+  .c-status { order: 1; }
+  .c-title { order: 2; grid-column: 1 / -1; white-space: normal; }
+  .c-where { order: 3; grid-column: 1 / -1; }
+  .flap { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="who">
+    <img class="photo" src="./assets/avatar.jpg" alt="Владислав Сазонов" width="104" height="104">
+    <div>
+      <h1>Владислав Сазонов</h1>
+      <p class="role">ИТ-лидер в Альфа-Банке · AI в инженерных командах</p>
+      <p class="bio">Работаю на стыке управления и ИИ: смотрю, как ИИ меняет устройство команд и процессов.</p>
+      <p class="extra">Программный комитет трека AI Native, Ontico</p>
+    </div>
+  </header>
+
+  <section class="board board--dest" aria-labelledby="dest-title">
+    <h2 class="board-title" id="dest-title">Направления</h2>
+    <div class="board-head" aria-hidden="true"><span>Направление</span><span>Где</span><span>Статус</span></div>
+    <ul class="rows" id="destinations"></ul>
+    <noscript>
+      <ul class="plain">
+        <li><a href="./ai-course/">Курс Agentic Engineering</a></li>
+        <li><a href="https://getmentor.dev/mentor/vladislav-sazonov-7056" target="_blank" rel="noopener noreferrer">Менторство на GetMentor</a></li>
+        <li><a href="https://t.me/SazonovMaybeTalks" target="_blank" rel="noopener noreferrer">Telegram-канал «Вы не просили — я рассказал»</a></li>
+      </ul>
+    </noscript>
+  </section>
+
+  <section class="board board--talks" aria-labelledby="talks-title">
+    <h2 class="board-title" id="talks-title">Выступления</h2>
+    <div class="board-head" aria-hidden="true"><span>Дата</span><span>Выступление</span><span>Где</span><span>Статус</span></div>
+    <ul class="rows" id="talks"></ul>
+  </section>
+</main>
+
+<script>
+// Направления: меняются редко. При правке обновить и <noscript> выше.
+const DESTINATIONS = [
+  { name: "КУРС AGENTIC ENGINEERING", where: "/ai-course/", status: "ОТКРЫТ", url: "./ai-course/", external: false },
+  { name: "МЕНТОРСТВО", where: "GetMentor", status: "ЗАПИСЬ", url: "https://getmentor.dev/mentor/vladislav-sazonov-7056", external: true },
+  { name: "TELEGRAM", where: "«Вы не просили — я рассказал»", status: "LIVE", url: "https://t.me/SazonovMaybeTalks", external: true },
+];
+
+// Выступления: добавить доклад = дописать строку. Порядок не важен, сортировка по дате.
+// slides / video — ссылки на материалы или null; статус считается автоматически.
+const TALKS = [
+  { date: "2026-10-16", title: "Ужесточаем harness, или Сага об агентской предсказуемости", where: "ГигаКонф", url: "https://gigaconf.ru/program", slides: null, video: null },
+  { date: "2026-09-10", title: "Молиться на модель или строить harness", where: "TeamLead Conf Сибирь", url: "https://teamleadconf.ru/siberia/2026/abstracts/18628", slides: "https://disk.yandex.ru/i/qI7HiEa-vA2wdA", video: null },
+  { date: "2026-07-03", title: "Круглый стол «MCP vs CLI, harness, агентские платформы»", where: "Agentic Dev Conf", url: "https://agenticdevconf.ru/talks/sazonov_vlad", slides: null, video: null },
+  { date: "2025-10-21", title: "Гильдии фронтендеров: что это и нужно ли вообще", where: "FrontendConf", url: "https://frontendconf.ru/moscow/2025/abstracts/16364", slides: null, video: null },
+  { date: "2025-08-28", title: "Гильдия: место, где разработчик перестаёт быть одиноким кузнецом", where: "MoscowJS 67", url: "http://digital.alfabank.ru/events/moscow_JS_67", slides: null, video: null },
+];
+
+// BEGIN pure
+function todayISO(d) {
+  const p = n => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
+function talkStatus(talk, today) {
+  if (talk.date > today) return { label: "СКОРО", tone: "soon" };
+  if (talk.date === today) return { label: "СЕГОДНЯ", tone: "soon" };
+  if (talk.video) return { label: "ВИДЕО", tone: "done" };
+  if (talk.slides) return { label: "СЛАЙДЫ", tone: "done" };
+  return { label: "ПРОШЁЛ", tone: "past" };
+}
+
+function talkHref(talk) {
+  return talk.video || talk.slides || talk.url;
+}
+
+function fmtDate(iso) {
+  const [y, m, d] = iso.split("-");
+  return `${d}.${m}.${y.slice(2)}`;
+}
+// END pure
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text != null) node.textContent = text;
+  return node;
+}
+
+// Поле плашками: визуальные плашки скрыты от скринридеров, настоящий текст — в .vh.
+function flapCell(text, className) {
+  const cell = el("span", className);
+  const flaps = el("span", "flaps");
+  flaps.setAttribute("aria-hidden", "true");
+  flaps.dataset.text = text;
+  for (const ch of text) {
+    flaps.append(el("span", ch === " " ? "flap flap--space" : "flap", ch === " " ? "" : ch));
+  }
+  cell.append(flaps, el("span", "vh", text));
+  return cell;
+}
+
+function rowLink(url, external, title) {
+  const a = el("a", "row");
+  a.href = url;
+  if (external) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+  if (title) a.title = title;
+  return a;
+}
+
+function renderDestinations(list) {
+  const ul = document.getElementById("destinations");
+  for (const d of list) {
+    const a = rowLink(d.url, d.external);
+    a.append(
+      flapCell(d.name, "c-key"),
+      el("span", "c-text c-where", d.where),
+      flapCell(d.status, "c-status tone-open"),
+    );
+    const li = el("li");
+    li.append(a);
+    ul.append(li);
+  }
+}
+
+function renderTalks(list, today) {
+  const ul = document.getElementById("talks");
+  const sorted = [...list].sort((a, b) => b.date.localeCompare(a.date));
+  for (const t of sorted) {
+    const status = talkStatus(t, today);
+    const a = rowLink(talkHref(t), true, `${t.title} — ${t.where}`);
+    a.append(
+      flapCell(fmtDate(t.date), "c-key"),
+      el("span", "c-text c-title", t.title),
+      el("span", "c-text c-where", t.where),
+      flapCell(status.label, `c-status tone-${status.tone}`),
+    );
+    const li = el("li");
+    li.append(a);
+    ul.append(li);
+  }
+}
+
+renderDestinations(DESTINATIONS);
+renderTalks(TALKS, todayISO(new Date()));
+</script>
+
+<script>
+(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+m[i].l=1*new Date();
+for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return}}
+k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");
+ym(107242055,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/107242055" style="position:absolute;left:-9999px" alt=""></div></noscript>
+</body>
+</html>
