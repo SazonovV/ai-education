@@ -359,9 +359,9 @@ renderTalks(TALKS, todayISO(new Date()));
 <script>
 // Перелистывание плашек: каждая прокручивает несколько случайных символов и встаёт на свой.
 const FLAP_CHARSET = "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-const FLAP_TICK_MS = 90;
-const ROW_STAGGER_MS = 190;
-const CHAR_STAGGER_MS = 22;
+const FLAP_TICK_MS = 126;
+const ROW_STAGGER_MS = 266;
+const CHAR_STAGGER_MS = 31;
 const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function flipFlap(flap, target, delay) {
