@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>G · Терминал</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:inherit;text-decoration:none}
+a:hover{color:inherit}
+@keyframes board-blink{0%,49%{opacity:1}50%,100%{opacity:.15}}
+</style>
+</helmet>
+<div style="background: {{page.bg}}; font-family: Manrope, 'Segoe UI', sans-serif; padding: 64px 24px; box-sizing: border-box">
+<div style="max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 48px">
+
+<section style="display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap">
+<h2 style="margin: 0; font: 700 12px/1 Manrope, sans-serif; letter-spacing: 2px; text-transform: uppercase; color: {{page.label}}">Направления</h2>
+<span style="font: 500 11px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 1.5px; color: {{page.label}}">ВЫХОД НА ПОСАДКУ · GATES</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 16px">
+<sc-for list="{{dest}}" as="d" hint-placeholder-count="3">
+<a href="{{d.url}}" style="display: flex; flex-direction: column; gap: 16px; min-height: 236px; box-sizing: border-box; padding: 18px 20px; border-radius: 14px; background: #111111; color: #f5f1e8; box-shadow: 0 0 0 1px {{page.edge}}, 0 18px 36px -26px rgba(0, 0, 0, 0.55)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font: 500 10px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 2px; color: #9d978b">ВЫХОД · GATE</span>
+<span style="display: flex; gap: 2px">
+<sc-for list="{{d.gateCells}}" as="c" hint-placeholder-count="2">
+<span style="position: relative; display: inline-grid; place-items: center; width: 30px; height: 44px; border-radius: 4px; background: linear-gradient(#282828 0 50%, #1e1e1e 50% 100%); color: #ffc93c; font: 600 30px/1 'Fira Sans Condensed', 'PT Sans Narrow', sans-serif">{{c.ch}}<span style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, 0.65)"></span></span>
+</sc-for>
+</span>
+</div>
+<span style="font: 500 13px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 1px; color: #9d978b">{{d.code}}</span>
+</div>
+<div style="flex: 1; display: flex; flex-direction: column; gap: 6px">
+<span style="font: 800 22px/1.2 Manrope, sans-serif; color: #f5f1e8; text-wrap: balance">{{d.name}}</span>
+<span style="font: 500 14px/1.4 Manrope, sans-serif; color: #a8a295">{{d.where}}</span>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 14px; border-top: 1px solid #262626">
+<span style="display: flex; align-items: center; gap: 8px">
+<sc-if value="{{d.blink}}" hint-placeholder-val="{{false}}"><span style="width: 8px; height: 8px; border-radius: 50%; background: #3ddc84; animation: board-blink 1.4s infinite"></span></sc-if>
+<span style="display: flex; gap: 2px">
+<sc-for list="{{d.statusCells}}" as="c" hint-placeholder-count="7">
+<span style="position: relative; display: inline-grid; place-items: center; width: 18px; height: 28px; border-radius: 3px; background: linear-gradient(#282828 0 50%, #1e1e1e 50% 100%); color: #3ddc84; font: 600 18px/1 'Fira Sans Condensed', 'PT Sans Narrow', sans-serif">{{c.ch}}<span style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, 0.65)"></span></span>
+</sc-for>
+</span>
+</span>
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3ddc84" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>
+</div>
+</a>
+</sc-for>
+</div>
+</section>
+
+<section style="background: #111111; color: #f5f1e8; border-radius: 16px; overflow: hidden; box-shadow: 0 0 0 1px {{page.edge}}, 0 22px 44px -28px rgba(0, 0, 0, 0.55)">
+<div style="display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 20px">
+<div style="display: flex; align-items: center; gap: 12px">
+<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ffc93c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 22h20"></path><path d="M6.36 17.4 4 17l-2-4 1.1-.55a2 2 0 0 1 1.8 0l.17.1a2 2 0 0 0 1.8 0L8 12 5 6l.9-.45a2 2 0 0 1 2.09.2l4.02 3a2 2 0 0 0 2.1.2l4.19-2.06a2.41 2.41 0 0 1 1.73-.17L21 7a1.4 1.4 0 0 1 .87 1.99l-.38.76c-.23.46-.6.84-1.07 1.08L7.58 17.2a2 2 0 0 1-1.22.18Z"></path></svg>
+<h2 style="margin: 0; font: 800 22px/1 Manrope, sans-serif; color: #f5f1e8">Выступления</h2>
+<span style="font: 500 15px/1 Manrope, sans-serif; color: #9d978b">Departures</span>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<span style="font: 500 11px/1 'JetBrains Mono', ui-monospace, monospace; letter-spacing: 1.5px; color: #9d978b">МСК</span>
+<span style="display: flex; gap: 2px">
+<sc-for list="{{clock}}" as="c" hint-placeholder-count="5">
+<span style="position: relative; display: inline-grid; place-items: center; width: 20px; height: 32px; border-radius: 3px; background: linear-gradient(#282828 0 50%, #1e1e1e 50% 100%); color: #ffc93c; font: 600 20px/1 'Fira Sans Condensed', 'PT Sans Narrow', sans-serif">{{c.ch}}<span style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, 0.65)"></span></span>
+</sc-for>
+</span>
+</div>
+</div>
+<div style="overflow-x: auto">
+<div style="min-width: 960px">
+<div style="display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; padding: 10px 20px; background: #0a0a0a">
+<span style="display: flex; gap: 12px">
+<span style="width: 130px; display: flex; flex-direction: column; gap: 3px"><span style="font: 800 11px/1 Manrope, sans-serif; letter-spacing: 0.1em; color: #ffc93c">ДАТА</span><span style="font: 500 11px/1 Manrope, sans-serif; color: #8f897e">Date</span></span>
+<span style="display: flex; flex-direction: column; gap: 3px"><span style="font: 800 11px/1 Manrope, sans-serif; letter-spacing: 0.1em; color: #ffc93c">НАПРАВЛЕНИЕ · ДОКЛАД</span><span style="font: 500 11px/1 Manrope, sans-serif; color: #8f897e">Destination · Talk</span></span>
+</span>
+<span style="display: flex; flex-direction: column; gap: 3px; align-items: flex-end"><span style="font: 800 11px/1 Manrope, sans-serif; letter-spacing: 0.1em; color: #ffc93c">СТАТУС</span><span style="font: 500 11px/1 Manrope, sans-serif; color: #8f897e">Remarks</span></span>
+</div>
+<ul style="list-style: none; margin: 0; padding: 0">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="2">
+<li style="padding: 8px 20px; background: #0a0a0a; border-top: 1px solid #1f1f1f; font: 800 12px/1 Manrope, sans-serif; letter-spacing: 0.14em; color: #ffc93c">{{g.year}}</li>
+<sc-for list="{{g.talks}}" as="t" hint-placeholder-count="3">
+<li>
+<a href="{{t.url}}" style="display: flex; flex-direction: column; gap: 8px; padding: 12px 20px 14px; background: {{t.bg}}">
+<span style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+<span style="display: flex; gap: 12px">
+<span style="display: flex; gap: 2px">
+<sc-for list="{{t.dateCells}}" as="c" hint-placeholder-count="6">
+<span style="position: relative; display: inline-grid; place-items: center; width: 20px; height: 32px; border-radius: 3px; background: linear-gradient(#282828 0 50%, #1e1e1e 50% 100%); color: #f5f1e8; font: 600 20px/1 'Fira Sans Condensed', 'PT Sans Narrow', sans-serif">{{c.ch}}<span style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, 0.65)"></span></span>
+</sc-for>
+</span>
+<span style="display: flex; gap: 2px">
+<sc-for list="{{t.destCells}}" as="c" hint-placeholder-count="20">
+<span style="position: relative; display: inline-grid; place-items: center; width: 20px; height: 32px; border-radius: 3px; background: linear-gradient(#282828 0 50%, #1e1e1e 50% 100%); color: #f5f1e8; font: 600 20px/1 'Fira Sans Condensed', 'PT Sans Narrow', sans-serif">{{c.ch}}<span style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, 0.65)"></span></span>
+</sc-for>
+</span>
+</span>
+<span style="display: flex; align-items: center; gap: 8px">
+<sc-if value="{{t.blink}}" hint-placeholder-val="{{false}}"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{t.color}}; animation: board-blink 1.4s infinite"></span></sc-if>
+<span style="display: flex; gap: 2px">
+<sc-for list="{{t.statusCells}}" as="c" hint-placeholder-count="7">
+<span style="position: relative; display: inline-grid; place-items: center; width: 20px; height: 32px; border-radius: 3px; background: linear-gradient(#282828 0 50%, #1e1e1e 50% 100%); color: {{t.color}}; font: 600 20px/1 'Fira Sans Condensed', 'PT Sans Narrow', sans-serif">{{c.ch}}<span style="position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: rgba(0, 0, 0, 0.65)"></span></span>
+</sc-for>
+</span>
+</span>
+</span>
+<span style="padding-left: 142px; font: 600 16px/1.4 Manrope, sans-serif; color: #ece6da; text-wrap: pretty">{{t.title}}</span>
+</a>
+</li>
+</sc-for>
+</sc-for>
+</ul>
+</div>
+</div>
+</section>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"theme":{"editor":"enum","options":["светлая","тёмная"],"default":"светлая","section":"Страница"},"words":{"editor":"enum","options":["аэропорт","как сейчас"],"default":"аэропорт","section":"Статусы"},"$preview":{"width":1120,"height":1220}}'>
+class Component extends DCLogic {
+  renderVals() {
+    var dark = (this.props.theme ?? 'светлая') === 'тёмная';
+    var air = (this.props.words ?? 'аэропорт') === 'аэропорт';
+    var page = dark ? { bg: '#0b0c0e', edge: '#24272d', label: '#9aa0aa' } : { bg: '#f2eee5', edge: '#d8d1c2', label: '#6f695e' };
+    var TONE = { ok: '#3ddc84', soon: dark ? '#ffc93c' : '#ff5a36', past: '#a7a196' };
+    var TODAY = '2026-10-08';
+    var MON = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'];
+    function cells(text, n, right) {
+      var arr = Array.from(String(text).toUpperCase()).slice(0, n);
+      var pad = n - arr.length;
+      var out = [];
+      var i;
+      if (right) { for (i = 0; i < pad; i++) out.push(''); }
+      arr.forEach(function (ch) { out.push(ch === ' ' ? '' : ch); });
+      if (!right) { for (i = 0; i < pad; i++) out.push(''); }
+      return out.map(function (ch) { return { ch: ch }; });
+    }
+    var DEST = [
+      { gate: 'A1', code: 'AE 101', name: 'Курс Agentic Engineering', where: 'vladsazonov.com/ai-course', url: 'https://vladsazonov.com/ai-course/', now: 'ОТКРЫТ', air: 'ПОСАДКА', blink: true },
+      { gate: 'A2', code: 'MT 202', name: 'Менторство', where: 'GetMentor', url: 'https://getmentor.dev/mentor/vladislav-sazonov-7056', now: 'ЗАПИСЬ', air: 'РЕГИСТРАЦИЯ', blink: false },
+      { gate: 'A3', code: 'TG 303', name: 'Telegram-канал', where: '«Вы не просили — я рассказал»', url: 'https://t.me/SazonovMaybeTalks', now: 'LIVE', air: 'В ПОЛЁТЕ', blink: false }
+    ];
+    var TALKS = [
+      { date: '2026-10-16', title: 'Ужесточаем harness, или Сага об агентской предсказуемости', where: 'ГигаКонф', url: 'https://gigaconf.ru/program', slides: null, video: null },
+      { date: '2026-09-10', title: 'Молиться на модель или строить harness', where: 'TeamLead Conf Сибирь', url: 'https://teamleadconf.ru/siberia/2026/abstracts/18628', slides: 'https://disk.yandex.ru/i/qI7HiEa-vA2wdA', video: null },
+      { date: '2026-07-03', title: 'Круглый стол «MCP vs CLI, harness, агентские платформы»', where: 'Agentic Dev Conf', url: 'https://agenticdevconf.ru/talks/sazonov_vlad', slides: null, video: null },
+      { date: '2025-10-21', title: 'Гильдии фронтендеров: что это и нужно ли вообще', where: 'FrontendConf', url: 'https://frontendconf.ru/moscow/2025/abstracts/16364', slides: null, video: null },
+      { date: '2025-08-28', title: 'Гильдия: место, где разработчик перестаёт быть одиноким кузнецом', where: 'MoscowJS 67', url: 'http://digital.alfabank.ru/events/moscow_JS_67', slides: null, video: null }
+    ];
+    function status(t) {
+      if (t.date > TODAY) return { label: air ? 'ПО РАСПИСАНИЮ' : 'СКОРО', tone: 'soon', blink: true };
+      if (t.date === TODAY) return { label: air ? 'ПОСАДКА' : 'СЕГОДНЯ', tone: 'soon', blink: true };
+      if (t.video) return { label: 'ВИДЕО', tone: 'ok', blink: false };
+      if (t.slides) return { label: 'СЛАЙДЫ', tone: 'ok', blink: false };
+      return { label: air ? 'ВЫЛЕТЕЛ' : 'ПРОШЁЛ', tone: 'past', blink: false };
+    }
+    var dest = DEST.map(function (d) {
+      var label = air ? d.air : d.now;
+      return { code: d.code, name: d.name, where: d.where, url: d.url, gateCells: cells(d.gate, 2, false), statusCells: cells(label, Array.from(label).length, false), blink: d.blink };
+    });
+    var sorted = TALKS.slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
+    var statusN = sorted.reduce(function (n, t) { return Math.max(n, Array.from(status(t).label).length); }, 0);
+    var groups = [];
+    sorted.forEach(function (t, i) {
+      var y = t.date.slice(0, 4);
+      var s = status(t);
+      var row = {
+        title: t.title,
+        url: t.video || t.slides || t.url,
+        dateCells: cells(t.date.slice(8, 10) + ' ' + MON[Number(t.date.slice(5, 7)) - 1], 6, false),
+        destCells: cells(t.where, 20, false),
+        statusCells: cells(s.label, statusN, true),
+        color: TONE[s.tone],
+        blink: s.blink,
+        bg: i % 2 ? '#171717' : '#111111'
+      };
+      var g = groups[groups.length - 1];
+      if (!g || g.year !== y) { g = { year: y, talks: [] }; groups.push(g); }
+      g.talks.push(row);
+    });
+    return { page: page, dest: dest, groups: groups, clock: cells('12:35', 5, false) };
+  }
+}
+</script>
+</body>
+</html>
