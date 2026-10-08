@@ -653,45 +653,58 @@ function flipFlap(flap, target, delay) {
       n++;
       setTimeout(tick, FLAP_TICK_MS);
     } else {
-      flap.textContent = target;
+      flap.textContent = flap.dataset.ch || target;
     }
   }, delay);
 }
 
-function flipRow(row, delay) {
-  if (reduceMotion.matches || row.dataset.flipping) return;
-  row.dataset.flipping = "1";
+// Карточка, строка щита или часы перелистываются целиком.
+function flipUnit(unit, delay) {
+  if (reduceMotion.matches || unit.dataset.flipping) return;
+  unit.dataset.flipping = "1";
   let longest = 0;
-  for (const group of row.querySelectorAll(".flaps")) {
-    const chars = [...group.dataset.text];
-    group.querySelectorAll(".flap").forEach((flap, i) => {
-      if (chars[i] === " ") return;
-      const d = delay + i * CHAR_STAGGER_MS;
-      flipFlap(flap, chars[i], d);
-      longest = Math.max(longest, d + 9 * FLAP_TICK_MS);
-    });
-  }
-  setTimeout(() => { delete row.dataset.flipping; }, longest);
+  unit.querySelectorAll(".tile[data-ch]").forEach((tile, i) => {
+    const d = delay + i * CHAR_STAGGER_MS;
+    flipFlap(tile, tile.dataset.ch, d);
+    longest = Math.max(longest, d + 9 * FLAP_TICK_MS);
+  });
+  setTimeout(() => { delete unit.dataset.flipping; }, longest);
 }
 
+// Каскад сверху вниз: карточки направлений, часы, строки щита.
 function boardIntro() {
-  const rows = document.querySelectorAll(".row");
+  const units = document.querySelectorAll(".flip-unit");
   if (!reduceMotion.matches) {
-    // Прячем финальный текст до начала перелистывания, чтобы не было вспышки.
-    rows.forEach((row) => {
-      row.querySelectorAll(".flap").forEach((flap) => {
-        if (flap.textContent !== "") flap.textContent = "";
-      });
-    });
+    // Прячем итоговый текст до начала перелистывания, чтобы не было вспышки.
+    units.forEach(u => u.querySelectorAll(".tile[data-ch]").forEach(t => { t.textContent = ""; }));
   }
-  rows.forEach((row, i) => {
-    flipRow(row, i * ROW_STAGGER_MS);
-    row.addEventListener("mouseenter", () => flipRow(row, 0));
-    row.addEventListener("focus", () => flipRow(row, 0));
+  units.forEach((u, i) => {
+    flipUnit(u, i * ROW_STAGGER_MS);
+    if (u.matches("a")) {
+      u.addEventListener("mouseenter", () => flipUnit(u, 0));
+      u.addEventListener("focus", () => flipUnit(u, 0));
+    }
   });
 }
 
+// Часы МСК: раз в минуту, перелистываются только изменившиеся цифры.
+function startClock() {
+  const clock = document.getElementById("clock");
+  const tick = () => {
+    cells(moscowHHMM(new Date()), 5).forEach((ch, i) => {
+      const tile = clock.children[i];
+      if (tile.dataset.ch === ch) return;
+      tile.dataset.ch = ch;
+      if (reduceMotion.matches) tile.textContent = ch;
+      else flipFlap(tile, ch, i * CHAR_STAGGER_MS);
+    });
+    setTimeout(tick, 60000 - (Date.now() % 60000) + 50);
+  };
+  setTimeout(tick, 60000 - (Date.now() % 60000) + 50);
+}
+
 boardIntro();
+startClock();
 </script>
 <script>
 (function () {
