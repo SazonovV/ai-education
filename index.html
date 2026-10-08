@@ -332,13 +332,15 @@ body::after {
 
 <script>
 // Направления: меняются редко. При правке обновить и <noscript> выше.
+// gate — выход (2 символа), code — код рейса; blink — мигающая точка у статуса.
 const DESTINATIONS = [
-  { name: "КУРС AGENTIC ENGINEERING", where: "/ai-course/", status: "ОТКРЫТ", url: "./ai-course/", external: false },
-  { name: "МЕНТОРСТВО", where: "GetMentor", status: "ЗАПИСЬ", url: "https://getmentor.dev/mentor/vladislav-sazonov-7056", external: true },
-  { name: "TELEGRAM", where: "«Вы не просили — я рассказал»", status: "LIVE", url: "https://t.me/SazonovMaybeTalks", external: true },
+  { gate: "A1", code: "AE 101", name: "Курс Agentic Engineering", where: "vladsazonov.com/ai-course", status: "ПОСАДКА", blink: true, url: "./ai-course/", external: false },
+  { gate: "A2", code: "MT 202", name: "Менторство", where: "GetMentor", status: "РЕГИСТРАЦИЯ", blink: false, url: "https://getmentor.dev/mentor/vladislav-sazonov-7056", external: true },
+  { gate: "A3", code: "TG 303", name: "Telegram-канал", where: "«Вы не просили — я рассказал»", status: "В ПОЛЁТЕ", blink: false, url: "https://t.me/SazonovMaybeTalks", external: true },
 ];
 
 // Выступления: добавить доклад = дописать строку. Порядок не важен, сортировка по дате.
+// where выводится на табло плашками (20 ячеек); если длиннее — добавить board с сокращением.
 // slides / video — ссылки на материалы или null; статус считается автоматически.
 const TALKS = [
   { date: "2026-10-16", title: "Ужесточаем harness, или Сага об агентской предсказуемости", where: "ГигаКонф", url: "https://gigaconf.ru/program", slides: null, video: null },
@@ -355,11 +357,11 @@ function todayISO(d) {
 }
 
 function talkStatus(talk, today) {
-  if (talk.date > today) return { label: "СКОРО", tone: "soon" };
-  if (talk.date === today) return { label: "СЕГОДНЯ", tone: "soon" };
-  if (talk.video) return { label: "ВИДЕО", tone: "done" };
-  if (talk.slides) return { label: "СЛАЙДЫ", tone: "done" };
-  return { label: "ПРОШЁЛ", tone: "past" };
+  if (talk.date > today) return { label: "ПО РАСПИСАНИЮ", tone: "soon", blink: true };
+  if (talk.date === today) return { label: "ПОСАДКА", tone: "soon", blink: true };
+  if (talk.video) return { label: "ВИДЕО", tone: "ok", blink: false };
+  if (talk.slides) return { label: "СЛАЙДЫ", tone: "ok", blink: false };
+  return { label: "ВЫЛЕТЕЛ", tone: "past", blink: false };
 }
 
 function talkHref(talk) {
@@ -369,6 +371,44 @@ function talkHref(talk) {
 function fmtDate(iso) {
   const [y, m, d] = iso.split("-");
   return `${d}.${m}.${y.slice(2)}`;
+}
+
+const MONTHS = ["ЯНВ", "ФЕВ", "МАР", "АПР", "МАЙ", "ИЮН", "ИЮЛ", "АВГ", "СЕН", "ОКТ", "НОЯ", "ДЕК"];
+function fmtBoardDate(iso) {
+  const [, m, d] = iso.split("-");
+  return `${d} ${MONTHS[Number(m) - 1]}`;
+}
+
+function boardWhere(talk) {
+  return talk.board || talk.where;
+}
+
+// Текст по плашкам: ровно n ячеек, пробел и пустое место — "" (пустая плашка).
+function cells(text, n, align = "left") {
+  const chars = [...String(text).toUpperCase()].slice(0, n).map(ch => (ch === " " ? "" : ch));
+  const pad = Array(n - chars.length).fill("");
+  return align === "right" ? [...pad, ...chars] : [...chars, ...pad];
+}
+
+function statusWidth(talks, today) {
+  return Math.max(0, ...talks.map(t => [...talkStatus(t, today).label].length));
+}
+
+// Доклады уже отсортированы по убыванию даты.
+function groupByYear(sorted) {
+  const groups = [];
+  for (const t of sorted) {
+    const year = t.date.slice(0, 4);
+    const last = groups[groups.length - 1];
+    if (last && last.year === year) last.talks.push(t);
+    else groups.push({ year, talks: [t] });
+  }
+  return groups;
+}
+
+const MSK_TIME = new Intl.DateTimeFormat("ru-RU", { timeZone: "Europe/Moscow", hour: "2-digit", minute: "2-digit" });
+function moscowHHMM(date) {
+  return MSK_TIME.format(date);
 }
 // END pure
 
