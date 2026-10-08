@@ -52,8 +52,6 @@ try {
   --text: #f2f2ee;
   --muted: #9aa0aa;
   --accent: #ffc93c;
-  --flap-bg: #1b1d22;
-  --flap-fg: #f2f2ee;
   --ok: #3ddc84;
   --soon: #ffc93c;
   --past: #a7a196;
@@ -85,8 +83,6 @@ try {
     --text: #1b1a17;
     --muted: #6f695e;
     --accent: #c23a1a;
-    --flap-bg: #1c1c1c;
-    --flap-fg: #f5f1e8;
     --ok: #3ddc84;
     --soon: #ff5a36;
     --past: #a7a196;
@@ -102,8 +98,6 @@ try {
   --text: #1b1a17;
   --muted: #6f695e;
   --accent: #c23a1a;
-  --flap-bg: #1c1c1c;
-  --flap-fg: #f5f1e8;
   --ok: #3ddc84;
   --soon: #ff5a36;
   --past: #a7a196;
@@ -294,8 +288,10 @@ body::after {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--board-shadow);
+  container-type: inline-size;
   --tw: 20px;
   --th: 32px;
+  --dep-gap: 28px;
 }
 .dep-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 20px; }
 .dep-title { display: flex; align-items: center; gap: 12px; color: var(--board-accent); }
@@ -304,7 +300,7 @@ body::after {
 .dep-sub { font: 500 15px/1 "Manrope", sans-serif; color: var(--board-label); }
 .dep-clock { display: flex; align-items: center; gap: 10px; }
 .dep-clock-label { font: 500 11px/1 var(--mono); letter-spacing: 1.5px; color: var(--board-label); }
-.dep-cols { display: flex; align-items: flex-end; gap: 12px; padding: 10px 20px; background: var(--board-band); }
+.dep-cols { display: flex; align-items: flex-end; gap: var(--dep-gap); padding: 10px 20px; background: var(--board-band); }
 .dep-col { display: flex; flex-direction: column; gap: 3px; }
 .dep-col--date { width: calc(6 * var(--tw) + 5 * 2px); }
 .dep-col--status { margin-left: auto; align-items: flex-end; }
@@ -330,9 +326,11 @@ body::after {
 }
 .talk-row--alt { background: var(--board-stripe); }
 .talk-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+/* Шире только промежуток дата → конференция: статус «ПО РАСПИСАНИЮ» должен остаться в строке. */
+.talk-date { margin-right: calc(var(--dep-gap) - 12px); }
 .talk-status { margin-left: auto; display: flex; align-items: center; gap: 8px; }
 .talk-title {
-  padding-left: calc(6 * var(--tw) + 5 * 2px + 12px);
+  padding-left: calc(6 * var(--tw) + 5 * 2px + var(--dep-gap));
   font: 600 16px/1.4 "Manrope", sans-serif;
   color: var(--board-text);
   text-wrap: pretty;
@@ -388,7 +386,9 @@ body::after {
   .dest-foot { margin-top: 8px; padding-top: 12px; gap: 10px; }
   .dest-status { gap: 7px; --tw: 16px; --th: 25px; }
   .blink-dot { width: 7px; height: 7px; }
-  .departures { border-radius: 14px; --tw: min(14px, calc((100vw - 98px) / 20)); --th: calc(var(--tw) * 1.64); }
+  .departures { border-radius: 14px; --dep-gap: 12px; }
+  /* 100cqi — ширина щита: 28 px отступы строки + 19 зазоров по 2 px. */
+  .talk-row { --tw: min(14px, calc((100cqi - 66px) / 20)); --th: calc(var(--tw) * 1.64); }
   .dep-head { padding: 14px; gap: 10px; }
   .dep-title { gap: 10px; }
   .dep-title svg { width: 22px; height: 22px; }
@@ -472,6 +472,7 @@ const DESTINATIONS = [
 // where выводится на табло плашками (20 ячеек); если длиннее — добавить board с сокращением.
 // slides / video — ссылки на материалы или null; статус считается автоматически.
 const TALKS = [
+  { date: "2026-12-03", title: "Поздравляем, теперь это ваши проблемы: гид по выживанию нового руководителя", where: "TeamLead Conf", url: "https://teamleadconf.ru/moscow/2026/abstracts/19065", slides: null, video: null },
   { date: "2026-10-16", title: "Ужесточаем harness, или Сага об агентской предсказуемости", where: "ГигаКонф", url: "https://gigaconf.ru/program", slides: null, video: null },
   { date: "2026-09-10", title: "Молиться на модель или строить harness", where: "TeamLead Conf Сибирь", url: "https://teamleadconf.ru/siberia/2026/abstracts/18628", slides: "https://disk.yandex.ru/i/qI7HiEa-vA2wdA", video: null },
   { date: "2026-07-03", title: "Круглый стол «MCP vs CLI, harness, агентские платформы»", where: "Agentic Dev Conf", url: "https://agenticdevconf.ru/talks/sazonov_vlad", slides: null, video: null },
@@ -480,11 +481,6 @@ const TALKS = [
 ];
 
 // BEGIN pure
-function todayISO(d) {
-  const p = n => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
-}
-
 function talkStatus(talk, today) {
   if (talk.date > today) return { label: "ПО РАСПИСАНИЮ", tone: "soon", blink: true };
   if (talk.date === today) return { label: "ПОСАДКА", tone: "soon", blink: true };
@@ -543,6 +539,12 @@ function groupByYear(sorted) {
 const MSK_TIME = new Intl.DateTimeFormat("ru-RU", { timeZone: "Europe/Moscow", hour: "2-digit", minute: "2-digit" });
 function moscowHHMM(date) {
   return MSK_TIME.format(date);
+}
+
+// «Сегодня» для статусов — по Москве, как часы на щите.
+const MSK_DATE = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Moscow", year: "numeric", month: "2-digit", day: "2-digit" });
+function moscowISO(date) {
+  return MSK_DATE.format(date);
 }
 // END pure
 
@@ -617,7 +619,7 @@ function renderTalks(list, today) {
     for (const t of group.talks) {
       const s = talkStatus(t, today);
       const a = link(talkHref(t), true, `talk-row flip-unit${n++ % 2 ? " talk-row--alt" : ""}`);
-      a.title = `${t.title} — ${t.where}`;
+      if (t.board) a.title = t.where;
       const line = el("span", "talk-line");
       const status = el("span", `talk-status tone tone-${s.tone}`);
       if (s.blink) status.append(el("span", "blink-dot"));
@@ -641,7 +643,7 @@ function renderClock(now) {
 }
 
 renderDestinations(DESTINATIONS);
-renderTalks(TALKS, todayISO(new Date()));
+renderTalks(TALKS, moscowISO(new Date()));
 renderClock(new Date());
 </script>
 <script>
