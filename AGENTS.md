@@ -51,7 +51,7 @@ Talks live in the `TALKS` array in `/index.html`. Add one object:
 
 `{ date: "YYYY-MM-DD", title: "…", where: "Conference", url: "talk page", slides: null, video: null }`
 
-Order does not matter (sorted by date). Status (СКОРО / СЕГОДНЯ / ВИДЕО / СЛАЙДЫ / ПРОШЁЛ) is computed from the date and materials; when slides or video appear, fill `slides` / `video`. Destinations live in `DESTINATIONS` — when changing them, update the `<noscript>` list too. No phone or e-mail on the card; Telegram is the only contact.
+Order does not matter (sorted by date, grouped by year). `where` is shown on split-flap tiles in 20 cells: if it is longer, add `board: "SHORT NAME"` (≤ 20 characters) — the full `where` stays for screen readers. Status is computed from the date and materials: ПО РАСПИСАНИЮ (future) / ПОСАДКА (today) / ВИДЕО / СЛАЙДЫ / ВЫЛЕТЕЛ (past, no materials); when slides or video appear, fill `slides` / `video`. Destinations live in `DESTINATIONS` (`gate`, `code`, `name`, `where`, `status`, `blink`) — when changing them, update the `<noscript>` list too. No phone or e-mail on the card; Telegram is the only contact.
 
 Files under `/assets/` and `/ai-course/assets/` are served with a one-year `immutable` cache — when replacing an image, give it a new file name and update the reference.
 
@@ -73,5 +73,5 @@ Acceptable English in Russian text: established tech terms (`hooks`, `pipeline`,
 - Pure HTML/CSS/JS, no build system
 - Reveal.js for presentations
 - Marked.js + Highlight.js for markdown rendering
-- Web fonts are self-hosted in `/assets/fonts/fonts-v1.css` (cyrillic + latin subsets), shared by the card and the course via relative paths; /assets is cached immutable — on change, create `fonts-v2.css`.
+- Web fonts are self-hosted in `/assets/fonts/` (cyrillic + latin subsets). The card uses `fonts-v2.css` (adds Fira Sans Condensed for the split-flap tiles), the course stays on `fonts-v1.css`; /assets is cached immutable — on change, create a new `fonts-vN.css`.
 - Served by nginx from this repo's working copy (configs in /etc/nginx, outside the repo)
