@@ -179,8 +179,15 @@ body::after {
 }
 .pass-main::before { top: -11px; }
 .pass-main::after { bottom: -11px; }
-.pass h1 { font-family: "Unbounded", "Manrope", sans-serif; font-size: 30px; margin: 0 0 8px; padding-right: 110px; color: var(--text); }
-.pass .role { color: var(--accent); font-weight: 700; margin: 0 0 16px; }
+.pass h1 { font-family: "Unbounded", "Manrope", sans-serif; font-size: 30px; margin: 0 0 8px; color: var(--text); }
+.pass .role { color: var(--accent); font-weight: 700; margin: 0; }
+.pass-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
+.pass-kicker { font: 500 12px/1.4 var(--mono); letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+.pass-label { display: block; font: 500 10px/1 var(--mono); letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+.pass-rule { border: 0; border-top: 1px solid var(--line); margin: 20px 0; }
+.pass-code { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 10px; color: var(--text); }
+.pass-barcode { display: block; width: 100%; height: 56px; }
+.pass-domain { font: 500 11px/1 var(--mono); letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
 .pass .bio { color: var(--text); opacity: .86; font-size: 16px; line-height: 1.65; margin: 0 0 12px; max-width: 62ch; }
 .pass .extra { color: var(--muted); font-size: 13px; margin: 16px 0 0; }
 
@@ -337,15 +344,18 @@ body::after {
 }
 /* ---- Переключатель темы ---- */
 .theme-toggle {
-  position: absolute; top: 20px; right: 20px;
-  font: 500 11px/1 var(--mono);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font: 600 12px/1 var(--mono);
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--muted);
   background: transparent;
   border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 8px;
+  padding: 8px 12px;
   cursor: pointer;
 }
 .theme-toggle:hover, .theme-toggle:focus-visible { color: var(--text); }
@@ -354,16 +364,19 @@ body::after {
 /* ---- Телефон ---- */
 @media (max-width: 719px) {
   body { padding: 32px 16px; }
-  .pass { grid-template-columns: 1fr; }
+  .pass { grid-template-columns: minmax(0, 1fr); }
   .pass-stub { padding: 14px 14px 12px; }
   .pass-photo { flex: none; height: auto; aspect-ratio: 4 / 3; object-position: 50% 0%; }
-  .pass-main { padding: 54px 18px 20px; border-left: 0; border-top: 2px dashed var(--line); }
+  .pass-main { padding: 20px 18px; border-left: 0; border-top: 2px dashed var(--line); }
   .pass-main::before, .pass-main::after { top: -11px; bottom: auto; }
   .pass-main::before { left: -11px; }
   .pass-main::after { left: auto; right: -11px; }
-  .pass h1 { font-size: 22px; padding-right: 0; }
+  .pass h1 { font-size: 22px; }
   .pass .bio { font-size: 15px; }
-  .theme-toggle { top: 16px; right: 14px; }
+  .pass-en { display: none; }
+  .pass-code { flex-direction: row; justify-content: space-between; gap: 14px; }
+  /* width: 0 + flex-grow: SVG берёт свободное место, а не свою ширину из viewBox. */
+  .pass-barcode { width: 0; flex: 1 1 auto; max-width: 220px; height: 40px; }
   .dest { margin-bottom: 32px; }
   .section-head { flex-direction: column; align-items: flex-start; margin-bottom: 12px; }
   .section-sub { font-size: 10px; }
@@ -410,12 +423,22 @@ body::after {
   <header class="pass">
     <div class="pass-stub">
       <img class="pass-photo" src="./assets/photo-2026.jpg" alt="Владислав Сазонов на сцене TeamLead Conf" width="480" height="640">
+      <div class="pass-code">
+        <!-- Code 128 «VLADSAZONOV.COM», сгенерирован bwip-js -->
+        <svg class="pass-barcode" viewBox="0 0 200 29" preserveAspectRatio="none" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg"><path stroke="currentColor" stroke-width="2" d="M1 29L1 0M18 29L18 0M27 29L27 0M40 29L40 0M47 29L47 0M56 29L56 0M73 29L73 0M82 29L82 0M97 29L97 0M108 29L108 0M119 29L119 0M128 29L128 0M136 29L136 0M152 29L152 0M163 29L163 0M172 29L172 0M181 29L181 0M188 29L188 0M199 29L199 0"/><path stroke="currentColor" stroke-width="1" d="M3.50 29L3.50 0M6.50 29L6.50 0M15.50 29L15.50 0M22.50 29L22.50 0M33.50 29L33.50 0M35.50 29L35.50 0M44.50 29L44.50 0M51.50 29L51.50 0M62.50 29L62.50 0M66.50 29L66.50 0M68.50 29L68.50 0M86.50 29L86.50 0M88.50 29L88.50 0M99.50 29L99.50 0M110.50 29L110.50 0M125.50 29L125.50 0M132.50 29L132.50 0M143.50 29L143.50 0M147.50 29L147.50 0M154.50 29L154.50 0M165.50 29L165.50 0M176.50 29L176.50 0M184.50 29L184.50 0M196.50 29L196.50 0"/><path stroke="currentColor" stroke-width="3" d="M12.50 29L12.50 0M30.50 29L30.50 0M59.50 29L59.50 0M78.50 29L78.50 0M93.50 29L93.50 0M102.50 29L102.50 0M115.50 29L115.50 0M122.50 29L122.50 0M140.50 29L140.50 0M159.50 29L159.50 0M168.50 29L168.50 0M193.50 29L193.50 0"/></svg>
+        <span class="pass-domain" aria-hidden="true">vladsazonov.com</span>
+      </div>
     </div>
     <div class="pass-main">
-      <button class="theme-toggle" type="button" title="Переключить тему"></button>
+      <div class="pass-top">
+        <span class="pass-kicker" aria-hidden="true">Посадочный талон<span class="pass-en" lang="en"> · Boarding pass</span></span>
+        <button class="theme-toggle" type="button" title="Переключить тему"></button>
+      </div>
+      <span class="pass-label" aria-hidden="true">Пассажир<span class="pass-en-inline" lang="en"> · Passenger</span></span>
       <h1>Владислав Сазонов</h1>
       <p class="role">ИТ-лидер в Альфа-Банке · ИИ в инженерных командах</p>
-      <p class="bio">Отвечаю не только за технологии, но и за людей и процессы — и за то, как всё это срастается с бизнесом. Последние годы работаю на стыке управления и ИИ: внедряю агентов в работу команд и смотрю, как ИИ меняет само устройство разработки.</p>
+
+      <hr class="pass-rule">      <p class="bio">Отвечаю не только за технологии, но и за людей и процессы — и за то, как всё это срастается с бизнесом. Последние годы работаю на стыке управления и ИИ: внедряю агентов в работу команд и смотрю, как ИИ меняет само устройство разработки.</p>
       <p class="bio">Ценю прозрачность и прямоту, к каждому человеку ищу свой подход, а процесс, по-моему, должен жить, пока приносит пользу, — и не дольше. Веду открытый курс Agentic Engineering, выступаю на конференциях и помогаю руководителям как ментор.</p>
       <p class="extra">Вхожу в программный комитет трека AI Native в Ontico — организаторе HighLoad++ и TeamLead Conf.</p>
     </div>
@@ -719,12 +742,15 @@ startClock();
 <script>
 (function () {
   const btn = document.querySelector(".theme-toggle");
+  const ICON = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
+  const MOON_SVG = `${ICON}<path d="M20.99 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 20.99 12.79z"/></svg>`;
+  const SUN_SVG = `${ICON}<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>`;
   if (!btn) return;
   const mq = window.matchMedia("(prefers-color-scheme: light)");
   const current = () => document.documentElement.dataset.theme || (mq.matches ? "light" : "dark");
   const render = () => {
     const light = current() === "light";
-    btn.textContent = light ? "☾ НОЧЬ" : "☀ ДЕНЬ";
+    btn.innerHTML = light ? `${MOON_SVG}НОЧЬ` : `${SUN_SVG}ДЕНЬ`;
   };
   btn.addEventListener("click", () => {
     const next = current() === "light" ? "dark" : "light";
