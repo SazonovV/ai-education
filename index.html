@@ -56,9 +56,22 @@ try {
   --flap-fg: #f2f2ee;
   --ok: #3ddc84;
   --soon: #ffc93c;
-  --past: #7d828c;
+  --past: #a7a196;
   --hover: rgba(255, 255, 255, 0.04);
   --grain: 0.028;
+  --board-bg: #111111;
+  --board-stripe: #171717;
+  --board-band: #0a0a0a;
+  --board-line: #262626;
+  --tile-top: #282828;
+  --tile-bottom: #1e1e1e;
+  --tile-fg: #f5f1e8;
+  --board-text: #ece6da;
+  --board-muted: #a8a295;
+  --board-label: #9d978b;
+  --board-accent: #ffc93c;
+  --board-edge: var(--line);
+  --board-shadow: 0 0 0 1px var(--board-edge), 0 22px 44px -28px rgba(0, 0, 0, .55);
   --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
   --tile-font: "Fira Sans Condensed", "PT Sans Narrow", sans-serif;
   --fw: 16px;
@@ -254,6 +267,90 @@ body::after {
 .plain { line-height: 2; }
 .plain a { color: var(--accent); }
 
+/* ---- Плашки табло ---- */
+.tiles { display: flex; gap: 2px; flex: none; }
+.tile {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--tw);
+  height: var(--th);
+  border-radius: 3px;
+  background: linear-gradient(var(--tile-top) 0 50%, var(--tile-bottom) 50% 100%);
+  color: var(--tile-fg);
+  font: 600 var(--tw)/1 var(--tile-font);
+}
+.tile::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 50%;
+  height: 1px;
+  background: rgba(0, 0, 0, .65);
+}
+.tone .tile { color: inherit; }
+.tone-ok { color: var(--ok); }
+.tone-soon { color: var(--soon); }
+.tone-past { color: var(--past); }
+.tone-accent { color: var(--board-accent); }
+.blink-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: currentColor;
+  animation: board-blink 1.4s infinite;
+}
+@keyframes board-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: .15; } }
+@media (prefers-reduced-motion: reduce) { .blink-dot { animation: none; } }
+/* ---- Направления: карточки выходов ---- */
+.dest { margin-bottom: 48px; }
+.section-head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px 14px; margin-bottom: 14px; }
+.section-head .board-title { margin: 0; }
+.section-sub { font: 500 11px/1 var(--mono); letter-spacing: 1.5px; color: var(--muted); }
+.dest-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+  gap: 16px;
+}
+.dest-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas: "gate code" "body body" "foot foot";
+  gap: 16px;
+  height: 100%;
+  min-height: 236px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: var(--board-bg);
+  color: var(--tile-fg);
+  text-decoration: none;
+  box-shadow: var(--board-shadow);
+}
+.dest-card:focus-visible, .talk-row:focus-visible { outline: 2px solid var(--board-accent); outline-offset: 2px; }
+.dest-gate { grid-area: gate; display: flex; flex-direction: column; gap: 8px; --tw: 30px; --th: 44px; }
+.dest-gate .tile { border-radius: 4px; }
+.dest-label { font: 500 10px/1 var(--mono); letter-spacing: 2px; color: var(--board-label); }
+.dest-code { grid-area: code; font: 500 13px/1 var(--mono); letter-spacing: 1px; color: var(--board-label); }
+.dest-body { grid-area: body; display: flex; flex-direction: column; gap: 6px; }
+.dest-name { font: 800 22px/1.2 "Manrope", sans-serif; color: var(--tile-fg); text-wrap: balance; }
+.dest-where { font: 500 14px/1.4 "Manrope", sans-serif; color: var(--board-muted); }
+.dest-foot {
+  grid-area: foot;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--board-line);
+  color: var(--ok);
+}
+.dest-status { display: flex; align-items: center; gap: 8px; --tw: 18px; --th: 28px; }
+.dest-arrow { flex: none; }
 /* ---- Переключатель темы ---- */
 .theme-toggle {
   position: absolute; top: 20px; right: 20px;
@@ -291,6 +388,28 @@ body::after {
   .c-title { order: 2; grid-column: 1 / -1; white-space: normal; }
   .c-where { order: 3; grid-column: 1 / -1; }
   .flap { font-size: 13px; }
+  .dest { margin-bottom: 32px; }
+  .section-head { flex-direction: column; align-items: flex-start; margin-bottom: 12px; }
+  .section-sub { font-size: 10px; }
+  .dest-cards { gap: 12px; }
+  .dest-card {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto auto auto;
+    grid-template-areas: "gate code" "gate body" "foot foot";
+    gap: 4px 14px;
+    min-height: 0;
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+  .dest-gate { gap: 6px; --tw: 26px; --th: 38px; }
+  .dest-label { font-size: 9px; letter-spacing: 1.5px; }
+  .dest-label-en { display: none; }
+  .dest-code { font-size: 11px; }
+  .dest-name { font-size: 18px; line-height: 1.25; }
+  .dest-where { font-size: 13px; line-height: 1.35; }
+  .dest-foot { margin-top: 8px; padding-top: 12px; gap: 10px; }
+  .dest-status { gap: 7px; --tw: 16px; --th: 25px; }
+  .blink-dot { width: 7px; height: 7px; }
 }
 </style>
 </head>
@@ -310,10 +429,12 @@ body::after {
     </div>
   </header>
 
-  <section class="board board--dest" aria-labelledby="dest-title">
-    <h2 class="board-title" id="dest-title">Направления</h2>
-    <div class="board-head" aria-hidden="true"><span>Куда</span><span>Где</span><span>Статус</span></div>
-    <ul class="rows" id="destinations"></ul>
+  <section class="dest" aria-labelledby="dest-title">
+    <div class="section-head">
+      <h2 class="board-title" id="dest-title">Направления</h2>
+      <span class="section-sub" aria-hidden="true">ВЫХОД НА ПОСАДКУ · <span lang="en">GATES</span></span>
+    </div>
+    <ul class="dest-cards" id="destinations"></ul>
     <noscript>
       <ul class="plain">
         <li><a href="./ai-course/">Курс Agentic Engineering</a></li>
@@ -419,6 +540,31 @@ function el(tag, className, text) {
   return node;
 }
 
+function tileEls(chars) {
+  return chars.map(ch => {
+    const tile = el("span", "tile", ch);
+    if (ch) tile.dataset.ch = ch;
+    return tile;
+  });
+}
+
+// Плашки скрыты от скринридеров: настоящий текст лежит рядом в .vh или виден обычным текстом.
+function tiles(chars, className) {
+  const wrap = el("span", className ? `tiles ${className}` : "tiles");
+  wrap.setAttribute("aria-hidden", "true");
+  wrap.append(...tileEls(chars));
+  return wrap;
+}
+
+function link(url, external, className) {
+  const a = el("a", className);
+  a.href = url;
+  if (external) { a.target = "_blank"; a.rel = "noopener noreferrer"; }
+  return a;
+}
+
+const ARROW_SVG = '<svg class="dest-arrow" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg>';
+
 // Поле плашками: визуальные плашки скрыты от скринридеров, настоящий текст — в .vh.
 function flapCell(text, className) {
   const cell = el("span", className);
@@ -450,12 +596,25 @@ function rowLink(url, external, title) {
 function renderDestinations(list) {
   const ul = document.getElementById("destinations");
   for (const d of list) {
-    const a = rowLink(d.url, d.external);
-    a.append(
-      flapCell(d.name, "c-key"),
-      el("span", "c-text c-where", d.where),
-      flapCell(d.status, "c-status tone-open"),
-    );
+    const a = link(d.url, d.external, "dest-card flip-unit");
+    const gate = el("span", "dest-gate");
+    const label = el("span", "dest-label", "ВЫХОД");
+    const labelEn = el("span", "dest-label-en", " · GATE");
+    labelEn.lang = "en";
+    label.append(labelEn);
+    label.setAttribute("aria-hidden", "true");
+    gate.append(label, tiles(cells(d.gate, 2), "tone tone-accent"));
+    const code = el("span", "dest-code", d.code);
+    code.setAttribute("aria-hidden", "true");
+    const body = el("span", "dest-body");
+    body.append(el("span", "vh", `Выход ${d.gate}, рейс ${d.code}.`), el("span", "dest-name", d.name), el("span", "dest-where", d.where));
+    const foot = el("span", "dest-foot");
+    const status = el("span", "dest-status");
+    if (d.blink) status.append(el("span", "blink-dot"));
+    status.append(tiles(cells(d.status, [...d.status].length), "tone tone-ok"), el("span", "vh", `Статус: ${d.status}.`));
+    foot.append(status);
+    foot.insertAdjacentHTML("beforeend", ARROW_SVG);
+    a.append(gate, code, body, foot);
     const li = el("li");
     li.append(a);
     ul.append(li);
