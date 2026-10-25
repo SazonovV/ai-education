@@ -45,7 +45,7 @@ The top bar shows only two buttons:
 
 ### Personal card: adding a talk
 
-Preview image: `/assets/og-card-2026-10.jpg` (1200×630, the boarding pass + gates design); when regenerating, use a new file name and keep the old file.
+Preview image: `/assets/og-card-2026-10-25.jpg` (1200×630, the boarding pass + gates design); when regenerating, use a new file name and keep the old file.
 
 Talks live in the `TALKS` array in `/index.html`. Add one object:
 
