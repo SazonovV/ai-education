@@ -358,6 +358,14 @@
   .passed h2 .bang { color: var(--clay); }
   .passed p { max-width: 640px; }
   .passed p b { color: var(--clay); font-weight: 700; }
+  .passed .tears {
+    margin-top: -6px;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(18px, 2.4vw, 24px);
+    opacity: .75;
+  }
   .passed.is-shown { animation: fade-in .6s ease; }
   @keyframes fade-in { from { opacity: 0; } }
 
@@ -458,6 +466,7 @@
   <div class="banned-inner">
     <h2 id="passed-title" tabindex="-1" class="burst"><span class="word" style="--i:0">Поздравляем</span><span class="word bang" style="--i:1">!</span></h2>
     <p id="passed-text" class="after-title" style="--delay: .9s"></p>
+    <p class="after-title tears" style="--delay: 1.6s">Утрите слёзы, ваши агенты с вами.</p>
   </div>
 </section>
 
