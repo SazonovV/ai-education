@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex, nofollow">
+<title>Верификация</title>
+<meta name="description" content="Пройдите верификацию.">
+<meta property="og:title" content="Верификация">
+<meta property="og:description" content="Пройдите верификацию.">
+<link rel="preload" href="../assets/fonts/source-serif-4-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/manrope-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link href="../assets/fonts/fonts-v1.css" rel="stylesheet">
+<style>
+  :root {
+    --bg: #faf9f5;
+    --card: #f0eee6;
+    --text: #141413;
+    --muted: #6b6a64;
+    --line: #e3dfd3;
+    --btn: #141413;
+    --btn-text: #faf9f5;
+    --clay: #d97757;
+    --ban: #d97757;
+    --ban-text: #141413;
+    --ban-card: #faf9f5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1918;
+      --card: #262624;
+      --text: #faf9f5;
+      --muted: #a3a197;
+      --line: #3a3936;
+      --btn: #faf9f5;
+      --btn-text: #141413;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .check {
+    width: 100%;
+    max-width: 460px;
+    padding: 40px 32px 32px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+  }
+  .check h1 {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: 40px;
+    line-height: 1.1;
+    margin: 0 0 12px;
+    font-weight: 500;
+    letter-spacing: -.015em;
+  }
+  .check h1 span { color: var(--clay); }
+  .check p {
+    margin: 0 0 28px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .widget {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 54px;
+    padding: 14px 20px;
+    background: var(--btn);
+    border: 0;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--btn-text);
+    cursor: pointer;
+    transition: opacity .15s, box-shadow .15s, transform .1s;
+  }
+  .widget:hover { opacity: .88; }
+  .widget:active { transform: scale(.98); }
+  .widget:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--clay); }
+  .widget[disabled] { cursor: progress; opacity: 1; transform: none; }
+
+  .box { display: none; }
+  .is-loading .box {
+    display: block;
+    flex: none;
+    width: 18px;
+    height: 18px;
+    border: 2.5px solid color-mix(in srgb, var(--btn-text) 30%, transparent);
+    border-top-color: var(--clay);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .meta {
+    margin-top: 16px;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  .banned {
+    position: fixed;
+    inset: 0;
+    z-index: 10;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 32px;
+    padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    background: var(--ban);
+    color: var(--ban-text);
+    text-align: center;
+    overflow-y: auto;
+  }
+  .banned.is-shown { display: flex; animation: rise .5s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: none; }
+  }
+  .banned h2 {
+    margin: 0;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 500;
+    font-size: clamp(44px, 11vw, 136px);
+    line-height: 1;
+    letter-spacing: -.03em;
+    overflow-wrap: anywhere;
+  }
+  .banned p {
+    margin: 0 auto;
+    max-width: 760px;
+    font-size: clamp(18px, 2.6vw, 24px);
+    line-height: 1.45;
+    font-weight: 500;
+  }
+  .banned address {
+    display: inline-block;
+    margin-top: 18px;
+    font-style: normal;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-size: clamp(24px, 4.4vw, 44px);
+    font-weight: 600;
+    line-height: 1.2;
+    padding: 18px 28px;
+    background: var(--ban-card);
+    color: var(--ban-text);
+    border-radius: 16px;
+  }
+  .banned address span { white-space: nowrap; }
+  .banned small span { white-space: nowrap; }
+  .banned small {
+    font-size: 13px;
+    opacity: .7;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  @media (max-width: 420px) {
+    .check { padding: 32px 22px 24px; }
+    .check h1 { font-size: 34px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .banned.is-shown { animation: none; }
+    .is-loading .box { animation-duration: 2s; }
+  }
+</style>
+</head>
+<body>
+
+<main class="check">
+  <h1>Верификация<span>.</span></h1>
+  <p>Чтобы продолжить, пройдите верификацию. Это займёт пару секунд.</p>
+  <button class="widget" id="verify" type="button">
+    <span class="box" aria-hidden="true"></span>
+    <span id="label">Пройти верификацию</span>
+  </button>
+  <div class="meta" id="ray"></div>
+</main>
+
+<section class="banned" id="banned" role="alertdialog" aria-labelledby="banned-title" aria-describedby="banned-text" hidden>
+  <h2 id="banned-title" tabindex="-1">Вы заблокированы</h2>
+  <div id="banned-text">
+    <p>Апелляцию направляйте по адресу:</p>
+    <address><span>г. Москва,</span> <span>ул. Пушкина,</span> <span>дом Колотушкина,</span><br><span>кв. Петрова,</span> <span>спросить Иванова</span></address>
+  </div>
+  <small><span id="ray-ban"></span> · <span>срок рассмотрения: никогда</span></small>
+</section>
+
+<script>
+  (function () {
+    var btn = document.getElementById('verify');
+    var label = document.getElementById('label');
+    var banned = document.getElementById('banned');
+    var id = Array.from({ length: 16 }, function () {
+      return '0123456789abcdef'[Math.floor(Math.random() * 16)];
+    }).join('');
+
+    document.getElementById('ray').textContent = 'ID сессии: ' + id;
+    document.getElementById('ray-ban').textContent = 'Номер обращения: ' + id;
+
+    btn.addEventListener('click', function () {
+      btn.disabled = true;
+      btn.classList.add('is-loading');
+      label.textContent = 'Проверяем…';
+
+      setTimeout(function () {
+        banned.hidden = false;
+        banned.classList.add('is-shown');
+        document.title = 'Вы заблокированы';
+        document.getElementById('banned-title').focus();
+      }, 1600);
+    });
+  })();
+</script>
+</body>
+</html>
