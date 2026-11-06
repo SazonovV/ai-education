@@ -22,9 +22,11 @@
     --btn: #141413;
     --btn-text: #faf9f5;
     --clay: #d97757;
+    --clay-deep: #b4512f;
     --ban: #d97757;
     --ban-text: #141413;
     --ban-card: #faf9f5;
+    --ease: cubic-bezier(.2, .8, .2, 1);
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -39,8 +41,10 @@
   }
 
   * { box-sizing: border-box; }
-  html, body { height: 100%; margin: 0; }
+  html { height: 100%; }
   body {
+    min-height: 100%;
+    margin: 0;
     background: var(--bg);
     color: var(--text);
     font-family: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -50,10 +54,12 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* ---------- verification card ---------- */
+
   .check {
     width: 100%;
     max-width: 460px;
-    padding: 40px 32px 32px;
+    padding: 36px 32px 28px;
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: 20px;
@@ -67,14 +73,40 @@
     letter-spacing: -.015em;
   }
   .check h1 span { color: var(--clay); }
-  .check p {
-    margin: 0 0 28px;
+  .check > p {
+    margin: 0 0 20px;
     color: var(--muted);
     font-size: 16px;
     line-height: 1.55;
   }
 
+  .jaw-wrap { max-width: 320px; margin: 0 auto 18px; text-align: center; }
+  .jaw { display: block; width: 100%; height: auto; overflow: visible; }
+  .jaw-caption {
+    margin-top: -4px;
+    font-size: 13px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  .think {
+    height: 24px;
+    margin: 0 0 10px;
+    text-align: center;
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-style: italic;
+    font-size: 17px;
+    color: var(--muted);
+  }
+  .think span { display: inline-block; animation: think-in .35s var(--ease); }
+  @keyframes think-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: none; }
+  }
+
   .widget {
+    position: relative;
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -96,56 +128,139 @@
   .widget:active { transform: scale(.98); }
   .widget:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px var(--clay); }
   .widget[disabled] { cursor: progress; opacity: 1; transform: none; }
+  .widget.is-empty[disabled] { cursor: not-allowed; opacity: .45; }
 
-  .box { display: none; }
-  .is-loading .box {
-    display: block;
-    flex: none;
-    width: 18px;
-    height: 18px;
-    border: 2.5px solid color-mix(in srgb, var(--btn-text) 30%, transparent);
-    border-top-color: var(--clay);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
+  /* Progress stalls near the end, like every real check does. */
+  .widget::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 0;
+    background: var(--clay);
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .is-loading.widget::after { animation: progress var(--dur, 2.4s) linear forwards; }
+  @keyframes progress {
+    0%   { width: 0; }
+    45%  { width: 62%; }
+    80%  { width: 91%; }
+    94%  { width: 93%; }
+    100% { width: 100%; }
+  }
 
   .meta {
-    margin-top: 16px;
+    margin-top: 14px;
     font-size: 12px;
     color: var(--muted);
     font-family: 'JetBrains Mono', ui-monospace, monospace;
   }
+
+  /* ---------- teeth ---------- */
+
+  /* Teeth stay ivory with a dark outline in both themes. */
+  .tooth path {
+    fill: #faf9f5;
+    stroke: #141413;
+    stroke-width: 1.3;
+    stroke-linejoin: round;
+    transition: fill .2s, stroke-width .2s;
+  }
+  .tooth .hit { fill: transparent; stroke: none; }
+  .tooth .lift { transition: transform .2s var(--ease); }
+  .tooth .lift, .tooth .fly { transform-box: fill-box; transform-origin: center; }
+  .tooth.is-gone path {
+    fill: none;
+    stroke: var(--text);
+    stroke-dasharray: 2 2.4;
+    opacity: .35;
+  }
+
+  .banned .tooth path { fill: var(--ban-card); stroke: var(--ban-text); }
+  .banned .tooth.is-gone path { fill: none; }
+  .is-choosing .tooth:not(.is-gone) { cursor: pointer; }
+  .is-choosing .tooth:not(.is-gone):focus-visible .lift { transform: scale(1.22); }
+  @media (hover: hover) {
+    .is-choosing .tooth:not(.is-gone):hover .lift { transform: scale(1.22); animation: none; }
+    .is-choosing .tooth:not(.is-gone):hover path { stroke-width: 1.8; }
+  }
+  .tooth:focus { outline: none; }
+  .tooth:focus-visible path { stroke: var(--btn-text); stroke-width: 2.4; }
+  .banned .tooth:focus-visible path { stroke: var(--ban-text); stroke-width: 2.6; fill: #fff; }
+
+  /* Teeth on the lower jaw wiggle a little while the fairy waits. */
+  .is-choosing .tooth:not(.is-gone) .lift { animation: wiggle 3.2s ease-in-out infinite; animation-delay: var(--d); }
+  @keyframes wiggle {
+    0%, 86%, 100% { transform: none; }
+    90% { transform: rotate(-7deg); }
+    95% { transform: rotate(6deg); }
+  }
+
+  .banned .tooth.is-flying path { fill: var(--ban-card); stroke-dasharray: none; opacity: 1; }
+  .tooth.is-flying .fly { animation: fly 1.1s cubic-bezier(.45, 0, .25, 1) forwards; }
+  @keyframes fly {
+    0%   { transform: none; opacity: 1; }
+    25%  { transform: translate(0, 6px) scale(1.15); opacity: 1; }
+    100% { transform: translate(var(--fx), -150px) rotate(var(--fr)) scale(.35); opacity: 0; }
+  }
+
+  .spark { fill: var(--clay); transform-box: fill-box; transform-origin: center; }
+  .banned .spark { fill: var(--ban-card); }
+  .spark.go { animation: spark .9s var(--ease) forwards; animation-delay: var(--sd); opacity: 0; }
+  @keyframes spark {
+    0%   { opacity: 0; transform: translate(0, 0) scale(.2) rotate(0); }
+    30%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--sx), var(--sy)) scale(1) rotate(90deg); }
+  }
+
+  /* ---------- full-screen results ---------- */
 
   .banned {
     position: fixed;
     inset: 0;
     z-index: 10;
     display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 32px;
     padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
     background: var(--ban);
     color: var(--ban-text);
     text-align: center;
     overflow-y: auto;
   }
-  .banned.is-shown { display: flex; animation: rise .5s cubic-bezier(.2, .8, .2, 1); }
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: none; }
+  .banned-inner {
+    position: relative;
+    z-index: 1;
+    margin: auto;
+    width: 100%;
+    max-width: 1240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 26px;
   }
+  .banned.is-shown { display: flex; animation: curtain .7s var(--ease); }
+  @keyframes curtain {
+    from { clip-path: inset(100% 0 0 0); }
+    to   { clip-path: inset(0 0 0 0); }
+  }
+  .banned.is-leaving { display: flex; animation: fade-out .3s ease forwards; }
+  @keyframes fade-out { to { opacity: 0; } }
+
   .banned h2 {
     margin: 0;
     font-family: 'Source Serif 4', Georgia, serif;
     font-weight: 500;
-    font-size: clamp(44px, 11vw, 136px);
+    font-size: clamp(40px, min(11vw, 17vh), 128px);
     line-height: 1;
     letter-spacing: -.03em;
-    overflow-wrap: anywhere;
   }
+  .word { display: inline-block; }
+  .is-shown .word { animation: word .7s var(--ease) both; animation-delay: calc(.25s + var(--i) * .12s); }
+  @keyframes word {
+    from { opacity: 0; transform: translateY(.35em); }
+    to   { opacity: 1; transform: none; }
+  }
+  .is-shown .after-title { animation: word .6s var(--ease) both; animation-delay: var(--delay, .6s); }
+
   .banned p {
     margin: 0 auto;
     max-width: 760px;
@@ -153,12 +268,12 @@
     line-height: 1.45;
     font-weight: 500;
   }
+  .address-wrap { position: relative; display: inline-block; margin-top: 14px; }
   .banned address {
-    display: inline-block;
-    margin-top: 18px;
+    display: block;
     font-style: normal;
     font-family: 'Source Serif 4', Georgia, serif;
-    font-size: clamp(24px, 4.4vw, 44px);
+    font-size: clamp(20px, min(4.2vw, 6.5vh), 42px);
     font-weight: 600;
     line-height: 1.2;
     padding: 18px 28px;
@@ -166,22 +281,142 @@
     color: var(--ban-text);
     border-radius: 16px;
   }
-  .banned address span { white-space: nowrap; }
-  .banned small span { white-space: nowrap; }
+  .is-shown .address-wrap { animation: word .6s var(--ease) both .65s, thud .3s ease 1.55s; }
+  @keyframes thud {
+    30% { transform: translate(2px, 3px) rotate(.4deg); }
+    60% { transform: translate(-2px, -1px) rotate(-.3deg); }
+  }
+  .banned address span, .banned small span, .banned p b { white-space: nowrap; }
+
+  .stamp {
+    position: absolute;
+    right: -10px;
+    bottom: -22px;
+    padding: 6px 12px 5px;
+    border: 3px solid var(--clay-deep);
+    border-radius: 8px;
+    color: var(--clay-deep);
+    background: color-mix(in srgb, var(--ban-card) 70%, transparent);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: clamp(11px, 1.6vw, 15px);
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    transform: rotate(-8deg);
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+  .is-shown .stamp { animation: stamp .45s cubic-bezier(.3, 1.5, .5, 1) both 1.3s; }
+  @keyframes stamp {
+    from { opacity: 0; transform: rotate(-14deg) scale(2.4); }
+    to   { opacity: 1; transform: rotate(-8deg) scale(1); }
+  }
+
+  .toll { width: 100%; max-width: 460px; }
+  .toll p { font-size: clamp(16px, 2.2vw, 20px); font-weight: 600; }
+  .toll .jaw { max-width: 420px; margin: 8px auto 0; }
+  .count { display: inline-block; }
+  .count.roll { animation: roll .5s var(--ease); }
+  @keyframes roll {
+    from { opacity: 0; transform: translateY(-.8em); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  .retry {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 52px;
+    padding: 14px 26px;
+    background: var(--ban-text);
+    color: var(--ban-card);
+    border: 0;
+    border-radius: 12px;
+    font: inherit;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s, transform .1s;
+  }
+  .retry:hover { opacity: .88; }
+  .retry:active { transform: scale(.98); }
+  .retry:focus-visible { outline: 3px solid var(--ban-card); outline-offset: 3px; }
+  .retry[hidden] { display: none; }
+
   .banned small {
     font-size: 13px;
     opacity: .7;
     font-family: 'JetBrains Mono', ui-monospace, monospace;
   }
 
+  .passed {
+    --ban: #141413;
+    --ban-text: #faf9f5;
+    overflow: hidden;
+  }
+  .passed h2 .bang { color: var(--clay); }
+  .passed p { max-width: 640px; }
+  .passed p b { color: var(--clay); font-weight: 700; }
+  .passed.is-shown { animation: fade-in .6s ease; }
+  @keyframes fade-in { from { opacity: 0; } }
+
+  .burst { position: relative; }
+  .burst i {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    z-index: -1;
+    background: var(--c, var(--clay));
+    clip-path: path('M11 0C12 7 15 10 22 11C15 12 12 15 11 22C10 15 7 12 0 11C7 10 10 7 11 0Z');
+    opacity: 0;
+  }
+  .is-shown .burst i { animation: burst 1.2s var(--ease) both; animation-delay: calc(.35s + var(--k) * .03s); }
+  @keyframes burst {
+    0%   { opacity: 0; transform: translate(0, 0) scale(.2) rotate(0); }
+    25%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(var(--bx), var(--by)) scale(var(--bs)) rotate(120deg); }
+  }
+
+  .rain { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .rain svg {
+    position: absolute;
+    top: -40px;
+    width: var(--w);
+    left: var(--x);
+    opacity: 0;
+    animation: fall var(--t) linear both;
+    animation-delay: var(--d);
+  }
+  .rain path { fill: #faf9f5; stroke: #141413; stroke-width: 1.2; }
+  @keyframes fall {
+    0%   { opacity: 0; transform: translate(0, 0) rotate(0); }
+    8%   { opacity: .9; }
+    50%  { transform: translate(var(--sway), 55vh) rotate(var(--r)); }
+    92%  { opacity: .9; }
+    100% { opacity: 0; transform: translate(0, 110vh) rotate(calc(var(--r) * 2)); }
+  }
+
   @media (max-width: 420px) {
-    .check { padding: 32px 22px 24px; }
+    .check { padding: 30px 22px 22px; }
     .check h1 { font-size: 34px; }
+    .banned-inner { gap: 22px; }
+    .toll .jaw { max-width: 300px; }
+    .jaw-wrap { max-width: 280px; }
+    .stamp { right: -4px; bottom: -20px; }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .banned.is-shown { animation: none; }
-    .is-loading .box { animation-duration: 2s; }
+    *, *::before, *::after {
+      animation-duration: .01ms !important;
+      animation-delay: 0s !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: .01ms !important;
+    }
+    .rain, .burst i { display: none; }
   }
 </style>
 </head>
@@ -190,46 +425,413 @@
 <main class="check">
   <h1>Верификация<span>.</span></h1>
   <p>Чтобы продолжить, пройдите верификацию. Это займёт пару секунд.</p>
-  <button class="widget" id="verify" type="button">
-    <span class="box" aria-hidden="true"></span>
-    <span id="label">Пройти верификацию</span>
-  </button>
+  <div class="jaw-wrap" aria-hidden="true">
+    <svg class="jaw" id="jaw-card" viewBox="0 0 320 250"></svg>
+    <div class="jaw-caption">зубов в запасе: <span id="teeth-card"></span> из 32</div>
+  </div>
+  <p class="think" id="think" aria-live="polite"></p>
+  <button class="widget" id="verify" type="button"><span id="label">Пройти верификацию</span></button>
   <div class="meta" id="ray"></div>
 </main>
 
 <section class="banned" id="banned" role="alertdialog" aria-labelledby="banned-title" aria-describedby="banned-text" hidden>
-  <h2 id="banned-title" tabindex="-1">Вы заблокированы</h2>
-  <div id="banned-text">
-    <p>Апелляцию направляйте по адресу:</p>
-    <address><span>г. Москва,</span> <span>ул. Пушкина,</span> <span>дом Колотушкина,</span><br><span>кв. Петрова,</span> <span>спросить Иванова</span></address>
+  <div class="banned-inner">
+    <h2 id="banned-title" tabindex="-1"><span class="word" style="--i:0">Вы</span> <span class="word" style="--i:1">заблокированы</span></h2>
+    <div id="banned-text">
+      <p class="after-title">Апелляцию направляйте по адресу:</p>
+      <div class="address-wrap">
+        <address><span>г. Москва,</span> <span>ул. Пушкина,</span> <span>дом Колотушкина,</span><br><span>кв. Петрова,</span> <span>спросить Иванова</span></address>
+        <div class="stamp" aria-hidden="true">Принято<br>к нерассмотрению</div>
+      </div>
+    </div>
+    <div class="toll after-title" style="--delay: 1.9s">
+      <p id="toll-text" aria-live="polite"></p>
+      <svg class="jaw" id="jaw-ban" viewBox="0 0 320 250" role="group" aria-label="Зубы"></svg>
+    </div>
+    <button class="retry after-title" id="retry" type="button" style="--delay: 2s" hidden>Отдать случайный зуб</button>
+    <small class="after-title" style="--delay: 2.1s"><span id="ray-ban"></span> · <span>срок рассмотрения: никогда</span></small>
   </div>
-  <small><span id="ray-ban"></span> · <span>срок рассмотрения: никогда</span></small>
+</section>
+
+<section class="banned passed" id="passed" role="alertdialog" aria-labelledby="passed-title" aria-describedby="passed-text" hidden>
+  <div class="rain" id="rain" aria-hidden="true"></div>
+  <div class="banned-inner">
+    <h2 id="passed-title" tabindex="-1" class="burst"><span class="word" style="--i:0">Поздравляем</span><span class="word bang" style="--i:1">!</span></h2>
+    <p id="passed-text" class="after-title" style="--delay: .9s"></p>
+  </div>
 </section>
 
 <script>
   (function () {
+    var TOTAL = 32;
+    // 15% on the first try, +5% after every miss, capped at 50%.
+    var CHANCE = { base: 0.15, step: 0.05, max: 0.5 };
+    var KEY = 'sh-behind-the-scenes:jaw';
+    var TOOTH = 'M-8 -6C-8 -11 -4 -12 0 -10C4 -12 8 -11 8 -6C8 -1 6 1 5 6C4.5 10 3 11 2 9L0 4L-2 9C-3 11 -4.5 10 -5 6C-6 1 -8 -1 -8 -6Z';
+    var SPARK = 'M0 -8C1.2 -1.6 1.6 -1.2 8 0C1.6 1.2 1.2 1.6 0 8C-1.2 1.6 -1.6 1.2 -8 0C-1.6 -1.2 -1.2 -1.6 0 -8Z';
+    var PHRASES = [
+      'Сверяем прикус…',
+      'Пересчитываем зубы…',
+      'Заглядываем под подушку…',
+      'Советуемся с феей…',
+      'Сверяемся с картой зубов…',
+      'Проверяем молочные зубы…',
+      'Ищем зуб мудрости…'
+    ];
+    var NS = 'http://www.w3.org/2000/svg';
+
     var btn = document.getElementById('verify');
     var label = document.getElementById('label');
+    var think = document.getElementById('think');
     var banned = document.getElementById('banned');
+    var passed = document.getElementById('passed');
+    var retry = document.getElementById('retry');
+    var tollText = document.getElementById('toll-text');
+    var jawCard = document.getElementById('jaw-card');
+    var jawBan = document.getElementById('jaw-ban');
+    var still = matchMedia('(prefers-reduced-motion: reduce)').matches;
     var id = Array.from({ length: 16 }, function () {
       return '0123456789abcdef'[Math.floor(Math.random() * 16)];
     }).join('');
 
-    document.getElementById('ray').textContent = 'ID сессии: ' + id;
-    document.getElementById('ray-ban').textContent = 'Номер обращения: ' + id;
+    // gone: which teeth the fairy took; debt: blocked and not paid yet;
+    // misses: failed attempts since the last success.
+    // Teeth do not grow back on reload; ?reset brings all of them back.
+    var state = { gone: [], debt: false, misses: 0 };
+    try {
+      localStorage.removeItem('sh-behind-the-scenes:teeth');
+      if (/[?&]reset\b/.test(location.search)) {
+        localStorage.removeItem(KEY);
+        history.replaceState(null, '', location.pathname);
+      }
+      var saved = JSON.parse(localStorage.getItem(KEY));
+      if (saved && Array.isArray(saved.gone)) {
+        state.gone = saved.gone.filter(function (n) { return n >= 0 && n < TOTAL; });
+        state.debt = !!saved.debt;
+        state.misses = Math.max(0, saved.misses | 0);
+      }
+    } catch (e) {}
 
-    btn.addEventListener('click', function () {
+    function save() {
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    function teeth() { return TOTAL - state.gone.length; }
+
+    function plural(n) {
+      var a = n % 10, b = n % 100;
+      if (a === 1 && b !== 11) return n + ' зуб';
+      if (a >= 2 && a <= 4 && (b < 12 || b > 14)) return n + ' зуба';
+      return n + ' зубов';
+    }
+
+    function left(n) {
+      return (n % 10 === 1 && n % 100 !== 11 ? 'остался ' : 'осталось ') + plural(n);
+    }
+
+    function el(name, attrs, parent) {
+      var node = document.createElementNS(NS, name);
+      for (var k in attrs) node.setAttribute(k, attrs[k]);
+      if (parent) parent.appendChild(node);
+      return node;
+    }
+
+    // Two horseshoe arches like a dentist's chart: from the back of each side
+    // to the front, 3 molars, 2 premolars, a canine and 2 incisors. Teeth are
+    // spaced by arc length and their own width, roots pointing outwards.
+    var KINDS = {
+      molar:    { w: 20,   name: 'коренной зуб', d: 'M-10 -2C-10 -8 -8 -10 -5 -10C-3 -10 -2 -8.5 0 -8.5C2 -8.5 3 -10 5 -10C8 -10 10 -8 10 -2C10 2 8 4 7 9C6.5 13 4.5 13.5 3.5 10L2 5C1 3.5 -1 3.5 -2 5L-3.5 10C-4.5 13.5 -6.5 13 -7 9C-8 4 -10 2 -10 -2Z' },
+      premolar: { w: 14.5, name: 'премоляр', d: 'M-7 -2C-7 -7 -5 -9 -2.5 -9C-1.5 -9 -.8 -8 0 -8C.8 -8 1.5 -9 2.5 -9C5 -9 7 -7 7 -2C7 2 5 4 4 9C3.3 13 1.5 15 0 15C-1.5 15 -3.3 13 -4 9C-5 4 -7 2 -7 -2Z', base: 14 },
+      canine:   { w: 13,   name: 'клык', d: 'M-6.5 -1C-6.5 -5 -3 -9 0 -11C3 -9 6.5 -5 6.5 -1C6.5 3 4.5 5 3.5 10C2.8 14 1.5 17 0 17C-1.5 17 -2.8 14 -3.5 10C-4.5 5 -6.5 3 -6.5 -1Z', base: 13 },
+      lateral:  { w: 10.5, name: 'боковой резец', d: 'M-6 -9C-3 -9.8 3 -9.8 6 -9C6.3 -5 5.5 -1 4.5 2C3.8 6 2 14 0 14C-2 14 -3.8 6 -4.5 2C-5.5 -1 -6.3 -5 -6 -9Z', base: 12 },
+      central:  { w: 12.5, name: 'центральный резец', d: 'M-6 -9C-3 -9.8 3 -9.8 6 -9C6.3 -5 5.5 -1 4.5 2C3.8 6 2 14 0 14C-2 14 -3.8 6 -4.5 2C-5.5 -1 -6.3 -5 -6 -9Z', base: 12 }
+    };
+    KINDS.molar.base = 20;
+    var SIDE = ['molar', 'molar', 'molar', 'premolar', 'premolar', 'canine', 'lateral', 'central'];
+    var ARCH = SIDE.concat(SIDE.slice().reverse());
+
+    // Points along a squarish half-superellipse, so the back teeth stand in
+    // nearly parallel rows like in a real mouth.
+    function archPoints(upper) {
+      var cx = 160, cy = upper ? 112 : 138, rx = 130, ry = 86, e = 0.75;
+      var pts = [], len = 0;
+      for (var k = 0; k <= 400; k++) {
+        var t = Math.PI * (k / 400) * (upper ? 1 : -1) + Math.PI;
+        var c = Math.cos(t), sn = Math.sin(t);
+        var x = cx + rx * (c < 0 ? -1 : 1) * Math.pow(Math.abs(c), e);
+        var y = cy + ry * (sn < 0 ? -1 : 1) * Math.pow(Math.abs(sn), e);
+        if (k) len += Math.hypot(x - pts[k - 1].x, y - pts[k - 1].y);
+        pts.push({ x: x, y: y, len: len, cx: cx, cy: cy });
+      }
+      return pts;
+    }
+
+    function pointAt(pts, at) {
+      var k = 1;
+      while (k < pts.length - 1 && pts[k].len < at) k++;
+      var a = pts[k - 1], b = pts[k];
+      var f = (at - a.len) / (b.len - a.len || 1);
+      var x = a.x + (b.x - a.x) * f, y = a.y + (b.y - a.y) * f;
+      var nx = b.y - a.y, ny = a.x - b.x;
+      if (nx * (x - a.cx) + ny * (y - a.cy) < 0) { nx = -nx; ny = -ny; }
+      return { x: x, y: y, deg: Math.atan2(ny, nx) * 180 / Math.PI - 90 };
+    }
+
+    function buildJaw(svg, choosable) {
+      svg.textContent = '';
+      var GAP = 3.5, EDGE = 4;
+      var sum = ARCH.reduce(function (acc, k) { return acc + KINDS[k].w; }, 0);
+      [true, false].forEach(function (upper) {
+        var pts = archPoints(upper);
+        var total = pts[pts.length - 1].len;
+        var scale = (total - 2 * EDGE - GAP * (ARCH.length - 1)) / sum;
+        var cursor = EDGE;
+        ARCH.forEach(function (kind, j) {
+          var K = KINDS[kind];
+          var w = K.w * scale;
+          var at = pointAt(pts, cursor + w / 2);
+          cursor += w + GAP;
+          var i = (upper ? 0 : 16) + j;
+          var size = (w / K.base).toFixed(3);
+
+          var g = el('g', { 'class': 'tooth', transform: 'translate(' + at.x.toFixed(1) + ' ' + at.y.toFixed(1) + ')' }, svg);
+          g.dataset.n = i;
+          g.style.setProperty('--d', (Math.random() * 3).toFixed(2) + 's');
+          var fly = el('g', { 'class': 'fly' }, g);
+          var lift = el('g', { 'class': 'lift' }, fly);
+          var turn = el('g', { transform: 'rotate(' + at.deg.toFixed(1) + ') scale(' + size + ')' }, lift);
+          el('circle', { 'class': 'hit', r: K.base / 2 + 5, cy: 2 }, turn);
+          el('path', { d: K.d }, turn);
+
+          if (choosable) {
+            g.setAttribute('role', 'button');
+            g.setAttribute('aria-label', (upper ? 'Верхний ' : 'Нижний ') + K.name + (j < 8 ? ' слева' : ' справа'));
+          }
+        });
+      });
+      paintJaw(svg, false);
+    }
+
+    function paintJaw(svg, choosing) {
+      svg.classList.toggle('is-choosing', choosing);
+      Array.prototype.forEach.call(svg.querySelectorAll('.tooth'), function (g) {
+        var gone = state.gone.indexOf(+g.dataset.n) !== -1;
+        g.classList.toggle('is-gone', gone);
+        if (g.getAttribute('role') !== 'button') return;
+        var active = choosing && !gone;
+        g.setAttribute('tabindex', active ? '0' : '-1');
+        g.setAttribute('aria-disabled', active ? 'false' : 'true');
+      });
+    }
+
+    function render() {
+      document.getElementById('teeth-card').textContent = teeth();
+      paintJaw(jawCard, false);
+      if (teeth() > 0) return;
       btn.disabled = true;
+      btn.classList.add('is-empty');
+      label.textContent = 'Зубы закончились';
+    }
+
+    function show(screen, title) {
+      screen.hidden = false;
+      screen.classList.remove('is-shown', 'is-leaving');
+      void screen.offsetWidth;
+      screen.classList.add('is-shown');
+      screen.scrollTop = 0;
+      document.title = title;
+      screen.querySelector('h2').focus({ preventScroll: true });
+    }
+
+    function hide(screen, then) {
+      screen.classList.remove('is-shown');
+      screen.classList.add('is-leaving');
+      setTimeout(function () {
+        screen.hidden = true;
+        screen.classList.remove('is-leaving');
+        then();
+      }, still ? 0 : 280);
+    }
+
+    function setToll(text, rollCount) {
+      tollText.textContent = '';
+      var parts = text.split('{n}');
+      tollText.appendChild(document.createTextNode(parts[0]));
+      if (parts.length > 1) {
+        var c = document.createElement('span');
+        c.className = 'count' + (rollCount ? ' roll' : '');
+        c.textContent = left(teeth());
+        tollText.appendChild(c);
+        tollText.appendChild(document.createTextNode(parts[1]));
+      }
+    }
+
+    function chance() {
+      return Math.min(CHANCE.base + CHANCE.step * state.misses, CHANCE.max);
+    }
+
+    function block() {
+      state.debt = true;
+      state.misses += 1;
+      save();
+      setToll('Фея требует зуб за попытку. Выберите его на схеме — и проверка начнётся снова.');
+      retry.hidden = false;
+      paintJaw(jawBan, true);
+      show(banned, 'Вы заблокированы');
+      // On short screens the jaw ends up below the fold: bring it up once the
+      // stamp has landed, so it is clear what to tap.
+      setTimeout(function () {
+        var box = retry.getBoundingClientRect();
+        if (box.bottom > innerHeight) {
+          retry.scrollIntoView({ block: 'end', behavior: still ? 'auto' : 'smooth' });
+        }
+      }, still ? 50 : 2300);
+    }
+
+    function sparkle(svg, x, y) {
+      for (var s = 0; s < 8; s++) {
+        var a = (-165 + s * 21 + Math.random() * 12) * Math.PI / 180;
+        var dist = 40 + Math.random() * 40;
+        var at = el('g', { transform: 'translate(' + x + ' ' + y + ')' }, svg);
+        var p = el('path', { 'class': 'spark go', d: SPARK }, at);
+        p.style.setProperty('--sx', (Math.cos(a) * dist).toFixed(0) + 'px');
+        p.style.setProperty('--sy', (Math.sin(a) * dist - 40).toFixed(0) + 'px');
+        p.style.setProperty('--sd', (0.15 + s * 0.06).toFixed(2) + 's');
+        setTimeout(at.remove.bind(at), 1600);
+      }
+    }
+
+    function pay(g) {
+      var n = +g.dataset.n;
+      if (!state.debt || state.gone.indexOf(n) !== -1) return;
+      state.gone.push(n);
+      state.debt = false;
+      save();
+      paintJaw(jawBan, false);
+      retry.hidden = true;
+
+      var m = /translate\(([-\d.]+) ([-\d.]+)\)/.exec(g.getAttribute('transform'));
+      g.classList.add('is-flying');
+      g.style.setProperty('--fx', (Math.random() * 60 - 30).toFixed(0) + 'px');
+      g.style.setProperty('--fr', (Math.random() * 120 - 60).toFixed(0) + 'deg');
+      if (!still) sparkle(jawBan, m[1], m[2]);
+
+      setTimeout(function () {
+        g.classList.remove('is-flying');
+        g.classList.add('is-gone');
+        render();
+        if (teeth() > 0) {
+          setToll('Зуб принят. У вас {n}. Проверяем снова…', true);
+          setTimeout(function () { hide(banned, verify); }, still ? 600 : 1100);
+        } else {
+          setToll('Зубная фея забрала последний зуб. Приходите, когда вырастут новые.');
+        }
+      }, still ? 0 : 1000);
+    }
+
+    function rain() {
+      var box = document.getElementById('rain');
+      box.textContent = '';
+      if (still) return;
+      for (var r = 0; r < 14; r++) {
+        var svg = el('svg', { viewBox: '-10 -13 20 25' }, box);
+        el('path', { d: TOOTH }, svg);
+        svg.style.setProperty('--x', (Math.random() * 96).toFixed(1) + '%');
+        svg.style.setProperty('--w', (16 + Math.random() * 18).toFixed(0) + 'px');
+        svg.style.setProperty('--t', (5 + Math.random() * 4).toFixed(1) + 's');
+        svg.style.setProperty('--d', (0.6 + Math.random() * 3).toFixed(1) + 's');
+        svg.style.setProperty('--sway', (Math.random() * 60 - 30).toFixed(0) + 'px');
+        svg.style.setProperty('--r', (Math.random() * 240 - 120).toFixed(0) + 'deg');
+      }
+    }
+
+    function burst() {
+      var title = document.getElementById('passed-title');
+      Array.prototype.forEach.call(title.querySelectorAll('i'), function (i) { i.remove(); });
+      for (var k = 0; k < 14; k++) {
+        var i = document.createElement('i');
+        var a = (k / 14) * Math.PI * 2 + Math.random() * .3;
+        var dist = 220 + Math.random() * 220;
+        i.style.setProperty('--k', k);
+        i.style.setProperty('--bx', (Math.cos(a) * dist).toFixed(0) + 'px');
+        i.style.setProperty('--by', (Math.sin(a) * dist * .7).toFixed(0) + 'px');
+        i.style.setProperty('--bs', (0.9 + Math.random() * 1.1).toFixed(2));
+        if (k % 3 === 0) i.style.setProperty('--c', '#faf9f5');
+        title.appendChild(i);
+      }
+    }
+
+    function succeed() {
+      state.misses = 0;
+      save();
+      var text = document.getElementById('passed-text');
+      text.textContent = 'У вас ';
+      var b = document.createElement('b');
+      b.textContent = left(teeth());
+      text.appendChild(b);
+      text.appendChild(document.createTextNode(', и вы прошли верификацию. Сохраняйте их для проверок в будущем.'));
+      burst();
+      rain();
+      show(passed, 'Верификация пройдена');
+    }
+
+    function verify() {
+      if (teeth() <= 0 || btn.classList.contains('is-loading')) return;
+      var dur = still ? 1200 : 2400;
+      var order = PHRASES.slice().sort(function () { return Math.random() - .5; }).slice(0, 4);
+      var shown = 0;
+
+      btn.disabled = true;
+      btn.style.setProperty('--dur', dur + 'ms');
       btn.classList.add('is-loading');
       label.textContent = 'Проверяем…';
 
+      function next() {
+        if (shown >= order.length) return;
+        think.innerHTML = '';
+        var s = document.createElement('span');
+        s.textContent = order[shown++];
+        think.appendChild(s);
+        setTimeout(next, dur / order.length);
+      }
+      next();
+
       setTimeout(function () {
-        banned.hidden = false;
-        banned.classList.add('is-shown');
-        document.title = 'Вы заблокированы';
-        document.getElementById('banned-title').focus();
-      }, 1600);
+        btn.classList.remove('is-loading');
+        btn.disabled = false;
+        label.textContent = 'Пройти верификацию';
+        think.textContent = '';
+        render();
+        if (Math.random() < chance()) succeed();
+        else block();
+      }, dur);
+    }
+
+    buildJaw(jawCard, false);
+    buildJaw(jawBan, true);
+    document.getElementById('ray').textContent = 'ID сессии: ' + id;
+    document.getElementById('ray-ban').textContent = 'Номер обращения: ' + id;
+    render();
+
+    btn.addEventListener('click', verify);
+    retry.addEventListener('click', function () {
+      var left = jawBan.querySelectorAll('.tooth:not(.is-gone)');
+      if (left.length) pay(left[Math.floor(Math.random() * left.length)]);
     });
+    jawBan.addEventListener('click', function (e) {
+      var g = e.target.closest('.tooth');
+      if (g && jawBan.classList.contains('is-choosing')) pay(g);
+    });
+    jawBan.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var g = e.target.closest('.tooth');
+      if (!g || !jawBan.classList.contains('is-choosing')) return;
+      e.preventDefault();
+      pay(g);
+    });
+
+    // Leaving the page does not cancel the debt.
+    if (state.debt && teeth() > 0) block();
   })();
 </script>
 </body>
